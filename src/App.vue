@@ -30,8 +30,7 @@ export default {
     "network-view": NetworkView,
     "metric-view": MetricView,
     "context-feature-model": ContextFeaureModel,
-    "performance-view": PerformanceView
-    // "d3-test": D3Test
+    "performance-view": PerformanceView,
   },
   data: function() {
     return {
@@ -558,6 +557,11 @@ export default {
         }
       ]
     };
+  },
+  props: {
+
+  },
+  mounted() {
   }
 };
 </script>

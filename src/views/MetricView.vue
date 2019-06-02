@@ -1,78 +1,72 @@
 <template>
   <view-header :elementName="name">
-    <metric-chart :height="150" :width="600" :chart-data="configData" :options="configOptions"></metric-chart>
-    <b-button size="sm" variant="primary" @click="drawIt">Test function</b-button>
+    <apexchart width="650" height="175" type="line" :options="chartOptions" :series="metrics"></apexchart>
   </view-header>
 </template>
 
 <script>
 import ViewHeader from "./ViewHeader.vue";
-import MetricChart from "./MetricChart";
+import VueApexCharts from "vue-apexcharts";
 export default {
   data() {
     return {
       name: "Metric View",
-      configData: {
-        labels: [1, 2, 3, 4, 5, 6],
-        datasets: [
-          {
-            data: [32, 42, 53, 53, 5, 2, 52, 51, 53]
-          }
-        ]
-      },
-      configOptions: {
-        responsive: true,
-        title: {
-          display: false,
-          text: "Metric Chart"
+      chartOptions: {
+        chart: {
+          id: "Metric View"
         },
-        tooltips: {
-          mode: "index",
-          intersect: false
+        stroke: {
+          show: true,
+          curve: "smooth",
+          // lineCap: "butt",
+          width: 5
         },
-        hover: {
-          mode: "nearest",
-          intersect: true
+        legend: {
+          show: true,
+          position: "bottom"
         },
-        scales: {
-          xAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Time"
-              }
-            }
-          ],
-          yAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Metric Performance"
-              }
-            }
-          ]
+        markers: {
+          size: 5,
+          colors: undefined,
+          strokeColor: "#fff",
+          strokeWidth: 2,
+          strokeOpacity: 0.9,
+          fillOpacity: 1,
+          discrete: [],
+          shape: "circle",
+          radius: 2,
+          offsetX: 0,
+          offsetY: 0
+        },
+        xaxis: {
+          //   categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+        },
+        yaxis: {
+          forceNiceScale: true,
+          show: true,
+          decimalsInFloat: 0
         }
-      }
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [30, 40, 35, 50, 49, 60, 70, 91]
+        }
+      ]
     };
+  },
+  computed: {
+    metrics() {
+      return this.$store.state.metrics;
+    }
   },
   components: {
     "view-header": ViewHeader,
-    "metric-chart": MetricChart
+    apexchart: VueApexCharts
   },
-  methods: {
-    drawIt() {
-      // MetricChart.drawChart();
-      console.log("hallo es wurde der button geklickt");
-      this.configData.labels.push("3");
-      this.configData.datasets[0].data.push(312);
-      console.log(this.configData.datasets[0].data);
-      this.$emit("dataChanged");
-    }
-  }
+  methods: {}
 };
-</script> 
+</script>
 
 <style>
 </style>

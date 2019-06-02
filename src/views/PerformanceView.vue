@@ -12,7 +12,6 @@
       <b-col>
         <b-button variant="primary" id="applyButton" @click="applyWeights">Apply</b-button>
       </b-col>
-    </b-row>
   </view-header>
 </template>
 
@@ -25,6 +24,11 @@ export default {
       deadlinesWeight: "",
       performanceWeight: ""
     };
+  },
+  computed: {
+    weights() {
+      return this.$store.state.weights;
+    }
   },
   components: {
     "view-header": ViewHeader
