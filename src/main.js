@@ -1,15 +1,31 @@
-import Vue from "vue"
-import Vuex from "vuex"
-import App from "./App.vue"
-import BootstrapVue from "bootstrap-vue"
-import "bootstrap/dist/css/bootstrap.css"
-import "bootstrap-vue/dist/bootstrap-vue.css"
+import Vue from "vue";
+import Vuex from "vuex";
+import App from "./App.vue";
+import BootstrapVue from "bootstrap-vue";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
 import { store } from "./store/store";
-import { connectToConnector } from "./connector/mqtt-connector"
-import { faChevronDown, faExpandArrowsAlt, faExpand, faCheck, faChevronRight, faCheckSquare, faTimesCircle, faPowerOff, faInfoCircle, faRulerHorizontal, faCalculator, faArrowsAltH, faMapPin, faWeight, faPalette } from "@fortawesome/free-solid-svg-icons"
-import { library } from "@fortawesome/fontawesome-svg-core"
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
-import { VueContext } from 'vue-context';
+import { connectToConnector } from "./connector/mqtt-connector";
+import {
+  faChevronDown,
+  faExpandArrowsAlt,
+  faExpand,
+  faCheck,
+  faChevronRight,
+  faCheckSquare,
+  faTimesCircle,
+  faPowerOff,
+  faInfoCircle,
+  faRulerHorizontal,
+  faCalculator,
+  faArrowsAltH,
+  faMapPin,
+  faWeight,
+  faPalette
+} from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { VueContext } from "vue-context";
 
 library.add(faPowerOff);
 library.add(faChevronDown);
@@ -27,18 +43,18 @@ library.add(faMapPin);
 library.add(faWeight);
 library.add(faPalette);
 
-
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("vue-context", VueContext);
-Vue.com
+Vue.com;
 Vue.use(Vuex);
 Vue.use(BootstrapVue);
 
 // Connec to CoalaViz connector
 connectToConnector();
 
+// eslint-disable-next-line no-unused-vars
 var vm = new Vue({
-  el: '#app',
+  el: "#app",
   store: store,
   render: h => h(App)
-})
+});

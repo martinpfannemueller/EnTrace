@@ -74,15 +74,15 @@ function connectToConnector() {
         newMetric(JSON.parse(message.payloadString), metrics);
         break;
       case "new-metricWeights":
-        console.log("New weights arrived");
+        console.log("New metric weights arrived");
         loadWeights(JSON.parse(message.payloadString));
         break;
       case "fm": // TODO: Create
-        console.log("New CFM");
+        console.log("New initial CFM model arrived");
         store.commit("updateCFM", JSON.parse(message.payloadString));
         break;
       case "cardyFMConfig": // TODO: Create
-        console.log("New CFM values");
+        console.log("New CFM values arrived");
         store.commit("updateCFMValues", JSON.parse(message.payloadString));
         events.push(JSON.parse(message.payloadString));
         createNewEvent(events);
@@ -161,7 +161,6 @@ function connectToConnector() {
     } else {
       // Find index of metric
       let index = metrics.findIndex(x => x.name === newValue.metric);
-      console.log(index);
       // Case metric is not yet in metrics
       if (index == undefined) {
         metrics.push({
@@ -185,7 +184,6 @@ function connectToConnector() {
   function loadWeights(newWeights) {
     weights = newWeights.stringMetricWeights;
     store.commit("updateWeights", weights);
-    // console.log(weights);
   }
 
   // Called when new event enters

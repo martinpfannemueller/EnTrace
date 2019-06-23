@@ -27,7 +27,6 @@
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
 import InputField from "../helper_components/InputField";
-import { mapMutations } from "vuex";
 // eslint-disable-next-line no-unused-vars
 import { client, sendMessage } from "../connector/mqtt-connector";
 export default {
@@ -48,9 +47,8 @@ export default {
   },
   methods: {
     applyWeights() {
-      console.log("Applied");
-      console.log(this.weights);
       sendMessage(this.weights, "startOfSimulation");
+      console.log("New weights applied");
     }
   }
 };

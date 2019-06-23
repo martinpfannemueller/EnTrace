@@ -1,7 +1,8 @@
 <template>
   <b-container fluid>
-    <coala-header/>
+    <coala-header />
     <grid-layout
+      ref="GridInstance"
       :layout.sync="layout"
       :col-num="2"
       :row-height="1"
@@ -9,23 +10,22 @@
       :is-resizable="true"
       :margin="[5, 5]"
       :responsive="true"
-      :autoSize="true"
+      :auto-size="true"
       :breakpoints="{ lg: 1200, md: 800, sm: 400, xs: 300, xxs: 0 }"
       :cols="{ lg: 2, md: 2, sm: 1, xs: 1, xxs: 1 }"
-      ref="GridInstance"
     >
       <grid-item
-        v-for="(item) in layout"
+        v-for="item in layout"
+        :key="item.i"
         :x="item.x"
         :y="item.y"
         :w="item.w"
         :h="item.h"
         :i="item.i"
-        :key="item.i"
-        :isResizable="item.isResizable"
-        :dragIgnoreFrom="'a, button, .card-body'"
+        :is-resizable="item.isResizable"
+        :drag-ignore-from="'a, button, .card-body'"
       >
-        <component :is="item.view"/>
+        <component :is="item.view" />
       </grid-item>
     </grid-layout>
     <!-- <coala-footer/> -->
@@ -120,9 +120,10 @@ export default {
   computed: {
     toggleMap() {
       return this.$store.state.toggleMap;
-    } 
+    }
   },
   mounted() {
+    // eslint-disable-next-line no-unused-vars
     store.subscribe((mutation, state) => {
       // TODO: Fix that this funciton is called so often i.e. use watch
       if (mutation.type == "updateToggle") {
@@ -173,17 +174,4 @@ h5 {
   font-size: 20px;
   margin-bottom: 0px;
 }
-
 </style>
-
-    <!-- <b-row>
-      <b-col class="main">
-        <network-view/>
-        <state-view/>
-      </b-col>
-      <b-col class="main">
-        <metric-view/>
-        <context-feature-model/>
-        <performance-view/>
-      </b-col>
-    </b-row>-->

@@ -152,7 +152,7 @@ export default {
 
     // // Render the CFM
     if (this.root == "") {
-      console.log("Root not ready yet");
+      console.log("CFM not ready yet");
     } else {
       this.renderNewCFM(this.root);
     }
@@ -209,10 +209,8 @@ export default {
       let setMainLabel = this.setMainLabel;
       let setValueLabel = this.setValueLabel;
       let stringifyCardinality = this.stringifyCardinality;
-      let showCardinalities = this.showCardinalities;
       let toggleCardinalities = this.toggleCardinalities;
       let stringifyDomain = this.stringifyDomain;
-      let cfmValues = this.cfmValues;
       let contextMenu = this.$refs.menu.open;
 
       if (!this.autoAdjustHeight) {
@@ -243,10 +241,9 @@ export default {
         .on("mouseout", this.mouseout)
         .on("dblclick", this.select)
         .on("click", this.collapse)
-        .on("contextmenu", function(d, i) {
+        .on("contextmenu", function(d) {
           d3.event.preventDefault();
           this.selectedFeature = d.data.name;
-          console.log(this.selectedFeature);
           contextMenu(d);
         });
 
@@ -391,7 +388,6 @@ export default {
         .attr("fill", "white")
         .attr("stroke", "black")
         .attr("opacity", function(d) {
-          // console.log(d.data.hasAlternatives);
           if (d.data.hasAlternatives) {
             if (d._children) {
               return 0;
@@ -602,6 +598,7 @@ export default {
         });
 
       // EXIT SECTION
+      // eslint-disable-next-line no-unused-vars
       var linkExit = link
         .exit()
         .transition()
@@ -648,7 +645,6 @@ export default {
     },
     setMainLabel(d) {
       let scaleFactor = this.scaleFactor;
-      // console.log(scaleFactor);
       if (scaleFactor > 1.6) {
         if (d.data.name.length > 14) {
           return (

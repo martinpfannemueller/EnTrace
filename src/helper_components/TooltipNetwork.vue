@@ -45,16 +45,50 @@
 
 <script>
 export default {
-  props: [
-    "selectedNode",
-    "x",
-    "y",
-    "selectedEdge",
-    "edgeWeight",
-    "edgeLength",
-    "sourceNode",
-    "targetNode"
-  ]
+  // props: [
+  //   "selectedNode",
+  //   "x",
+  //   "y",
+  //   "selectedEdge",
+  //   "edgeWeight",
+  //   "edgeLength",
+  //   "sourceNode",
+  //   "targetNode"
+  // ]
+  props: {
+    selectedNode: {
+      type: [Number, String],
+      default: ""
+    },
+    x: {
+      type: [Number, String],
+      default: ""
+    },
+    y: {
+      type: [Number, String],
+      default: ""
+    },
+    selectedEdge: {
+      type: [Number, String],
+      default: ""
+    },
+    edgeWeight: {
+      type: [Number, String],
+      default: ""
+    },
+    edgeLength: {
+      type: [Number, String],
+      default: ""
+    },
+    sourceNode: {
+      type: [Number, String],
+      default: ""
+    },
+    targetNode: {
+      type: [Number, String],
+      default: ""
+    }
+  }
 };
 </script>
 

@@ -108,10 +108,7 @@ export default {
       let defaultNodeColor = this.defaultNodeColor;
       let defaultEdgeColor = this.defaultEdgeColor;
       let circleRadius = this.circleRadius;
-      let strokeWidth = this.strokeWidth;
       let fontSize = this.fontSize;
-      let maxX = this.maxX;
-      let maxY = this.maxY;
 
       this.determineSize(nodes);
 
@@ -310,14 +307,13 @@ export default {
         if (truncX > truncMaxX) {
           this.maxX = truncX;
         }
-        if (nodes[i].y > this.maxY) {
+        if (truncY > truncMaxY) {
           this.maxY = truncY;
         }
       }
     },
     mouseoverNode(d, i, n) {
       let circleRadius = this.circleRadius;
-      let strokeWidth = this.strokeWidth;
       let fontSize = this.fontSize;
       let scaleFactor = 1.5;
 
@@ -344,7 +340,6 @@ export default {
     mouseoutNode(d, i, n) {
       let defaultNodeColor = this.defaultNodeColor;
       let circleRadius = this.circleRadius;
-      let strokeWidth = this.strokeWidth;
       let fontSize = this.fontSize;
 
       d3.select(n[i])
@@ -382,13 +377,11 @@ export default {
         .attr("stroke-width", function(d) {
           return d.weight + 5;
         });
-
-      console.log(d);
-
       this.setTooltipElementsEdge(d);
       this.tooltipDiv.style("opacity", 1);
     },
     mouseoutEdge(d, i, n) {
+      let defaultEdgeColor = this.defaultEdgeColor;
       d3.select(n[i])
         .transition()
         .duration(800)
@@ -426,13 +419,11 @@ export default {
     calculateEdgeLength(d) {
       let a = d.targetIdx - d.sourceIdx;
       let b = d.targetIdy - d.sourceIdy;
-      console.log(d);
       return Math.round(Math.sqrt(a * a + b * b));
     },
     centerNetwork() {
       let scale = 0.8;
       let width = this.width;
-      // console.log("Das ist X: " + this.maxX + " und Y: " + this.maxY);
       if (this.maxX > this.width || this.maxY > this.height) {
         scale = Math.min(
           (this.width / this.maxX) * 0.99,

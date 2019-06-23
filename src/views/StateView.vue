@@ -147,7 +147,6 @@ export default {
     renderStateView(states, links) {
       let drawConnection = this.drawConnection;
       let circleDistance = this.circleDistance;
-      let circleRadius = this.circleRadius;
       var state = this.statesSVG.selectAll("g.state").data(states, function(d) {
         return d.id;
       });
@@ -291,7 +290,6 @@ export default {
           " 0"
         );
       } else {
-        console.log(self + " und wir sind bei " + d.source + "+" + d.target);
         return (
           "m" +
           " " +
@@ -319,10 +317,7 @@ export default {
       }
     },
     mouseoverState(d, i, n) {
-      let defaultNodeColor = this.defaultNodeColor;
       let circleRadius = this.circleRadius;
-      let strokeWidth = this.strokeWidth;
-      let fontSize = this.fontSize;
 
       d3.select(n[i])
         .selectAll("circle")
@@ -341,10 +336,7 @@ export default {
         .attr("fill", "white");
     },
     mouseoutState(d, i, n) {
-      let defaultNodeColor = this.defaultNodeColor;
       let circleRadius = this.circleRadius;
-      let strokeWidth = this.strokeWidth;
-      let fontSize = this.fontSize;
 
       d3.select(n[i])
         .selectAll("circle")

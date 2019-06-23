@@ -35,6 +35,7 @@ export default {
   },
   watch: {
     events: function(val) {
+      console.log("New events arrived");
       console.log(val);
     }
   },

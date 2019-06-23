@@ -17,25 +17,40 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
-  props: ["weight", "factor", "index"],
+  // props: ["weight", "factor", "index"],
+  props: {
+    weight: {
+      type: String,
+      default: ""
+    },
+    factor: {
+      type: Number,
+      default: undefined
+    },
+    index: {
+      type: Number,
+      default: undefined
+    }
+  },
   data() {
     return {
       modelledFactor: ""
     };
   },
-  watch: {
-    factor: function() {
-      this.modelledFactor = factor;
-    }
-  },
   computed: {
     ...mapState(["weights"])
   },
-  methods: {
-    ...mapMutations(["updateSingleWeight"])
+  watch: {
+    factor: function() {
+      // eslint-disable-next-line no-undef
+      this.modelledFactor = factor;
+    }
   },
   mounted() {
     this.modelledFactor = this.factor;
+  },
+  methods: {
+    ...mapMutations(["updateSingleWeight"])
   }
 };
 </script>

@@ -13,7 +13,24 @@
 
 <script>
 export default {
-  props: ["eventTitle", "eventText", "eventChannel", "eventTimestamp"]
+  props: {
+    eventTitle: {
+      type: String,
+      default: ""
+    },
+    eventText: {
+      type: String,
+      default: ""
+    },
+    eventChannel: {
+      type: String,
+      default: ""
+    },
+    eventTimestamp: {
+      type: String,
+      default: ""
+    }
+  }
 };
 </script>
 

@@ -29,7 +29,16 @@
 <script>
 import { store } from "../store/store";
 export default {
-  props: ["elementName", "id"],
+  props: {
+    elementName: {
+      type: String,
+      default: ""
+    },
+    id: {
+      type: Number,
+      default: undefined
+    }
+  },
   data() {
     return {
       showCollapse: true
@@ -41,16 +50,13 @@ export default {
     }
   },
   methods: {
-    click(d) {
+    click() {
       let index = this.id; // Get item by using the ID prop of each View
       let toggleMap = this.toggleMap; // Get current toggleMap from store
       toggleMap[index].visible = !toggleMap[index].visible; // Change toggle map to reflect new toggle change
       store.commit("updateToggle", toggleMap); // Commit toggle map to store
       this.showCollapse = !this.showCollapse; // Toggle view
       this.$emit("toggle-clicked"); // Send emit
-    },
-    fullscreen(d) {
-      console.log(d);
     }
   }
 };

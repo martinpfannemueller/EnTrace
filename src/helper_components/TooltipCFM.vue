@@ -35,15 +35,36 @@
 
 <script>
 export default {
-  props: [
-    "showTooltip",
-    "selectedElement",
-    "elementValue",
-    "elementRange",
-    "featureInstanceCardinality",
-    "groupInstanceCardinality",
-    "groupTypeCardinality"
-  ]
+  props: {
+    showTooltip: {
+      type: Boolean,
+      default: false
+    },
+    selectedElement: {
+      type: String,
+      default: ""
+    },
+    elementValue: {
+      type: String,
+      default: ""
+    },
+    elementRange: {
+      type: String,
+      default: ""
+    },
+    featureInstanceCardinality: {
+      type: String,
+      default: ""
+    },
+    groupInstanceCardinality: {
+      type: String,
+      default: ""
+    },
+    groupTypeCardinality: {
+      type: String,
+      default: ""
+    }
+  }
 };
 </script>
 
