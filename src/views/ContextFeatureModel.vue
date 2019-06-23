@@ -1,342 +1,776 @@
 <template>
-  <view-header :elementName="name">
-    <svg id="cfm-view" :width="treeWidth" :height="treeHeight + 30" margin="auto"></svg>
-    <b-button size="sm" variant="primary" @click="defaultCFMposition">Reset size</b-button>
-    <b-button size="sm" variant="primary" @click="loadOtherCFM">Load other CFM</b-button>
+  <view-header :id="id" :element-name="name">
+    <tooltip
+      v-show="showTooltips"
+      class="tooltip"
+      :selected-element="selectedElement"
+      :element-value="elementValue"
+      :element-range="elementRange"
+      :feature-instance-cardinality="featureInstanceCardinality"
+      :group-instance-cardinality="groupInstanceCardinality"
+      :group-type-cardinality="groupTypeCardinality"
+    ></tooltip>
+    <vue-context ref="menu">
+      <li>
+        <a href="#" @click.prevent="sendFeature(selectedFeature)"
+          >Force select feature</a
+        >
+      </li>
+    </vue-context>
+    <svg
+      id="cfm-view"
+      :width="treeWidth - 20"
+      :height="treeHeight + 50"
+      margin="auto"
+    ></svg>
+    <b-row>
+      <b-col>
+        <b-button size="sm" variant="primary" @click="defaultCFMposition">
+          <font-awesome-icon icon="expand" />&nbsp;Center
+        </b-button>
+      </b-col>
+      <b-col>
+        <b-form-checkbox
+          v-model="autoAdjustHeight"
+          class="interface-text"
+          switch
+          >Auto height</b-form-checkbox
+        >
+      </b-col>
+      <b-col>
+        <b-form-checkbox v-model="showTooltips" class="interface-text" switch
+          >Tooltips</b-form-checkbox
+        >
+      </b-col>
+      <b-col>
+        <b-form-checkbox
+          v-model="showCardinalities"
+          class="interface-text"
+          switch
+          >Cardinalities</b-form-checkbox
+        >
+      </b-col>
+    </b-row>
   </view-header>
 </template>
 
 <script>
-import ViewHeader from "./ViewHeader.vue";
+import ViewHeader from "../helper_components/ViewHeader";
+import Tooltip from "../helper_components/TooltipCFM";
+// eslint-disable-next-line no-unused-vars
+import { client, sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
 export default {
   components: {
-    "view-header": ViewHeader
+    "view-header": ViewHeader,
+    tooltip: Tooltip
   },
-  props: ["cfmInput", "cfmInput2"],
   data() {
     return {
       name: "Context Feature Model",
-      treeWidth: 650,
-      treeHeight: 180,
-      treeDepth: 0,
-      treeBreadth: 0,
-      rectWidth: 70,
-      rectHeight: 22,
-      circleRadius: 3,
-      animiationDuration: 1000,
-      cfmTreeMap: "",
-      cfmViewSVG: ""
+      id: 2,
+      cfmViewSVG: "",
+      tooltipDiv: "",
+      tree: "",
+      root: "",
+      treeWidth: 680,
+      treeHeight: 247,
+      treeDepth: 55,
+      rectWidth: 23,
+      rectHeight: 11,
+      circleRadius: 2.5,
+      scaleFactor: 1,
+      animiationDuration: 400,
+      autoAdjustHeight: true,
+      showTooltips: true,
+      showCardinalities: true,
+      i: 0,
+      selectedElement: "",
+      selectedFeature: "",
+      elementValue: "",
+      elementRange: "",
+      featureInstanceCardinality: "",
+      groupInstanceCardinality: "",
+      groupTypeCardinality: ""
     };
   },
-  computed: {},
+  computed: {
+    new_CFM() {
+      if (this.$store.state.cfm_new != "") {
+        return this.$store.state.cfm_new.fm.root;
+      } else return "";
+    },
+    old_CFM() {
+      return this.$store.state.cfm_old;
+    },
+    cfmValues() {
+      return this.$store.state.cfmValues;
+    },
+    hoverColor() {
+      return this.$store.state.hoverColor;
+    }
+  },
+  watch: {
+    autoAdjustHeight: function() {
+      this.renderNewCFM(this.root);
+    },
+    new_CFM: function(val) {
+      if (val == "") {
+        console.log("Error");
+      } else {
+        this.establishRoot();
+        this.renderNewCFM(this.root);
+      }
+    },
+    cfmValues: function(val) {
+      if (val == "") {
+        console.log("Error");
+      } else {
+        this.setCurrentlyChosenAndValues(this.root);
+        this.renderNewCFM(this.root);
+      }
+    },
+    showCardinalities: function() {
+      this.renderNewCFM(this.root);
+    },
+    scaleFactor: function() {
+      this.defaultCFMposition();
+    }
+  },
   mounted() {
-    // Prepare data: Create hierachical tree structure from input data
-    this.createTreeMap(this.cfmInput, this.treeWidth, this.treeHeight);
-
-    // Prepare graphics: Initialize selector for cfmSVG
     this.initializeSelector();
 
-    // Render CFM
-    this.renderCFM(this.cfmTreeMap);
+    // Initilaize the d3 tree
+    this.tree = d3.tree().size([this.treeWidth, this.treeHeight]);
+
+    // // Establish root
+    if (this.new_CFM == "") {
+      console.log("Root not ready yet");
+    } else {
+      this.establishRoot();
+    }
+
+    // // Render the CFM
+    if (this.root == "") {
+      console.log("Root not ready yet");
+    } else {
+      this.renderNewCFM(this.root);
+    }
   },
   methods: {
     initializeSelector() {
       let cfmHelper = d3
         .selectAll("#cfm-view")
         .call(
-          d3.zoom().on("zoom", function(d) {
+          d3.zoom().on("zoom", function() {
             cfmHelper.attr("transform", d3.event.transform);
           })
         )
         .on("dblclick.zoom", null) // Prevent zoom on double click´
         .append("g")
-        .attr("transform", "translate(-60, 5)");
+        .attr("transform", "translate(-10, 20)");
       this.cfmViewSVG = cfmHelper;
+
+      this.tooltipDiv = d3.select(".tooltip");
     },
-    renderCFM(treeMapInput) {
-      console.log("Start to render the CFM ");
-      var nodes = treeMapInput.descendants();
-      var links = treeMapInput.descendants().slice(1);
-      var connections = treeMapInput.links();
+    establishRoot() {
+      this.root = d3.hierarchy(this.new_CFM, function(d) {
+        // console.log(d);
+        if (d.children) {
+          if (d.children.length == 0) {
+            if (d.attributes.length >= 1) {
+              return d.attributes;
+            }
+          }
+        }
+        return d.children;
+      });
+      this.root.x0 = this.treeHeight / 2;
+      this.root.y0 = 0;
+      // console.log(this.root);
+    },
+    renderNewCFM(source) {
+      // Load local variables as "this." does not work inside D3 node operations
+      let i = this.i;
+      let scaleFactor = Math.min(
+        Math.pow(30 / this.root.descendants().length, 0.6),
+        2.75
+      );
+      this.scaleFactor = scaleFactor;
+      let rectWidth = this.rectWidth * Math.sqrt(scaleFactor);
       let rectHeight = this.rectHeight;
-      let rectWidth = this.rectWidth;
       let circleRadius = this.circleRadius;
-      let cfmViewSVG = this.cfmViewSVG;
+      let treeData = this.tree(this.root);
+      let nodes = treeData.descendants();
+      let links = treeData.descendants().slice(1);
+      let colorNodes = this.colorNodes;
+      let colorText = this.colorText;
+      let setMainLabelFontSize = this.setMainLabelFontSize;
+      let setMainLabel = this.setMainLabel;
+      let setValueLabel = this.setValueLabel;
+      let stringifyCardinality = this.stringifyCardinality;
+      let showCardinalities = this.showCardinalities;
+      let toggleCardinalities = this.toggleCardinalities;
+      let stringifyDomain = this.stringifyDomain;
+      let cfmValues = this.cfmValues;
+      let contextMenu = this.$refs.menu.open;
 
-      // nodes.forEach(function(d) {
-      //   d.y = d.depth * 35;
-      // });
+      if (!this.autoAdjustHeight) {
+        // Normalize for fixed-depth if auto adjust is off
+        nodes.forEach(function(d) {
+          d.y = d.depth * 60;
+        });
+      }
 
-      var node = cfmViewSVG.selectAll("g.node").data(nodes, function(d) {
+      // ****************** NODES SECTION ***************************
+
+      // Add IDs for each node (important, because otherwise move event do not work)
+      var node = this.cfmViewSVG.selectAll("g.node").data(nodes, function(d) {
         return d.id || (d.id = ++i);
       });
-
-      var link = cfmViewSVG.selectAll("line").data(connections, function(d) {
-        return d.id;
-      });
-
-      // A - ENTER mode
-
-      // Create links
-      var linkEnter = link
-        .enter()
-        .append("line")
-        .attr("class", "connectorLine")
-        .attr("x1", function(d) {
-          return d.source.x0;
-        })
-        .attr("y1", function(d) {
-          return d.source.y0;
-        })
-        .attr("x2", function(d) {
-          return d.target.x0;
-        })
-        .attr("y2", function(d) {
-          return d.target.y0;
-        });
-
-      // Create nodes
+      // ENTER SECTION
+      // Enter any new nodes (every node is an element in the CFM hierarchy)
       var nodeEnter = node
         .enter()
         .append("g")
         .attr("class", "node")
-        .attr("transform", function(d) {
-          return "translate(" + treeMapInput.x0 + "," + treeMapInput.y0 + ")";
+        .attr("transform", function() {
+          let newX = source.x0 - rectWidth / 2;
+          let newY = source.y0 - rectHeight;
+          return "translate(" + newX + "," + newY + ")";
         })
-        .on("click", this.collapse)
         .on("mouseover", this.mouseover)
-        .on("mouseout", this.mouseout);
+        .on("mouseout", this.mouseout)
+        .on("dblclick", this.select)
+        .on("click", this.collapse)
+        .on("contextmenu", function(d, i) {
+          d3.event.preventDefault();
+          this.selectedFeature = d.data.name;
+          console.log(this.selectedFeature);
+          contextMenu(d);
+        });
 
-      // append CFM alternative circle elements
+      // Add rectangle for GROUP INSTANCE cardinalites for the nodes (first, so it is in the background)
+      nodeEnter
+        .append("rect")
+        .attr("class", "cardinality hideWhenCollapsed group-instance");
+
+      // Add rectangle for FEATURE INSTANCE cardinalites for the nodes (first, so it is in the background)
+      nodeEnter
+        .append("rect")
+        .attr("class", "cardinality hideWhenCollapsed feature-instance");
+
+      // Add alternative circles for the nodes (also first, because this should behind every other element)
       nodeEnter
         .append("circle")
-        .attr("class", "alternativeCircle")
-        .attr("opacity", function(d, i) {
-          if (d.data.hasAlternatives == true) {
-            return 1.0;
-          } else return 0;
-        })
-        .attr("cx", +rectWidth / 2)
-        .attr("cy", +rectHeight * 0.875)
-        .attr("fill", "white")
-        .attr("r", this.circleRadius * 6);
+        .attr("class", "alternative")
+        .attr("r", 0);
 
-      // append CFM elements
+      // Add rectangles for MAIN NODES
       nodeEnter
         .append("rect")
         .attr("class", "node")
-        .attr("width", 1e-6)
-        .attr("height", 1e-6);
-
-      // append CFM text elements
-      nodeEnter
-        .append("text")
-        .attr("dy", function() {
-          return rectHeight / 1.7;
+        .attr("fill", function(d) {
+          return colorNodes(d);
         })
-        .attr("dx", function() {
-          return rectWidth / 2;
-        })
-        .attr("class", "textLabel")
-        .attr("font-size", function(d,i) {
-            if (d.data.child.length > 14) {
-              return 7;
+        .attr("stroke", "black")
+        .attr("stroke-width", 1 / scaleFactor)
+        .attr("stroke-dasharray", function(d) {
+          if (d.data.system) {
+            return "0,0";
+          } else {
+            if (d.data.name == "root") {
+              return "0,0";
+            } else {
+              if (d.parent && d.parent.data.system) {
+                return "0,0";
+              } else {
+                return "0.75,0.75";
+              }
             }
-            else {
-              return 10;
-            }
+          }
         })
-        .text(function(d) {
-          return d.data.child;
+        .attr("rx", function(d) {
+          if (d.parent) {
+            if (d.parent.data.attributes.length >= 1) {
+              if (!d.data.system) {
+                return 5;
+              }
+            }
+          }
+          return 1;
         });
 
-      // append CFM value text elements
+      // Add MAIN labels for the nodes
+      nodeEnter
+        .append("text")
+        .attr("class", "mainLabel")
+        .text(function(d) {
+          return setMainLabel(d);
+        });
+
+      // Add DOMAIN labels for the nodes
+      nodeEnter
+        .append("text")
+        .attr("class", "domainLabel")
+        .text(function(d) {
+          return stringifyDomain(d.data.domain);
+        });
+
+      // Add VALUE labels for the nodes
       nodeEnter
         .append("text")
         .attr("class", "valueLabel")
         .text(function(d) {
-          if (d.data.Value !== "") {
-            return "Value: " + d.data.Value;
-          }
-        })
-        .attr("dx", function() {
-          return rectWidth / 2;
-        })
-        .attr("dy", function() {
-          return rectHeight * 1.85;
+          return setValueLabel(d);
         });
 
-      // append int text elements
+      // Add FEATURE INSTANCE cardinalites for the nodes
       nodeEnter
         .append("text")
-        .attr("class", "intLabel")
+        .attr("class", "cardinality feature-instance")
         .text(function(d) {
-          if (d.data.int !== "") {
-            return "int: " + d.data.int;
-          }
-        })
-        .attr("dx", function(d, i) {
-          return rectWidth / 2;
-        })
-        .attr("dy", function(d) {
-          return rectHeight * 1.45;
+          return stringifyCardinality(d.data.featureInstanceCardinality);
         });
 
-      // append CFM mandatory/optional circle elements
+      // Add GROUP INSTANCE cardinalites for the nodes
+      nodeEnter
+        .append("text")
+        .attr("class", "cardinality group-instance hideWhenCollapsed")
+        .text(function(d) {
+          return stringifyCardinality(d.data.groupInstanceCardinality);
+        });
+
+      // Add GROUP TYPE cardinalites for the nodes
+      nodeEnter
+        .append("text")
+        .attr("class", "cardinality group-type hideWhenCollapsed")
+        .text(function(d) {
+          return stringifyCardinality(d.data.groupTypeCardinality);
+        });
+
+      // Set common attributes for cardinality text
+      nodeEnter
+        .selectAll(".cardinality")
+        .attr("font-size", 4)
+        .attr("opacity", function(d) {
+          return toggleCardinalities(d);
+        });
+
+      // Add mandatory/optional circles for the nodes
       nodeEnter
         .append("circle")
-        .attr("class", function(d) {
-          if (d.data.Required == "Mandatory") {
-            return "mandatoryCircle";
-          }
-          if (d.data.Required == "Optional") {
-            return "optionalCircle";
-          }
-        })
-        .attr("opacity", function(d, i) {
-          if (d.data.Required !== "") {
-            return 100;
-          } else return 0;
-        })
-        .attr("cx", + rectWidth / 2)
-        .attr("r", this.circleRadius);
+        .attr("class", "dot")
+        .attr("r", 0);
 
-      // append cardinality top
-      nodeEnter
-        .append("text")
-        .attr("class", "cardinalityLabel")
-        .attr("opacity", function(d, i) {
-          if (d.data.cardinalityTop !== "") {
-            return 100;
-          } else return 0;
-        })
-        .text(function(d) {
-          if (d.data.cardinalityTop !== "") {
-            return "<" + d.data.cardinalityTop + ">";
-          } else return "";
-        })
-        .attr("dx", function(d) {
-          return rectWidth / 4;
-        })
-        .attr("dy", function(d) {
-          return -rectHeight / 6.5;
-        });
-
-      // B - UPDATE mode
-      var linkUpdate = linkEnter.merge(link);
-      linkUpdate
-        // .transition()
-        // .duration(this.animiationDuration)
-        .attr("x1", function(d) {
-          return d.source.x + rectWidth / 2;
-        })
-        .attr("y1", function(d) {
-          return d.source.y + rectHeight;
-        })
-        .attr("x2", function(d) {
-          return d.target.x + rectWidth / 2;
-        })
-        .attr("y2", function(d) {
-          return d.target.y;
-        });
-
+      // UPDATE SECTION
       var nodeUpdate = nodeEnter.merge(node);
+      // Transition to the proper position for the node
       nodeUpdate
-        // .transition()
-        // .duration(this.animiationDuration)
+        .transition()
+        .duration(this.animiationDuration)
         .attr("transform", function(d) {
-          return "translate(" + d.x + "," + d.y + ")";
+          let newX = d.x - rectWidth / 2 - (rectWidth / 2) * (scaleFactor - 1);
+          let newY = d.y - rectHeight;
+          return (
+            "translate(" +
+            newX +
+            "," +
+            newY +
+            ") scale(" +
+            scaleFactor +
+            "," +
+            scaleFactor +
+            ")"
+          );
         });
+
+      // Update circle for alternatives
+      nodeUpdate
+        .select("circle.alternative")
+        .attr("fill", "white")
+        .attr("stroke", "black")
+        .attr("opacity", function(d) {
+          // console.log(d.data.hasAlternatives);
+          if (d.data.hasAlternatives) {
+            if (d._children) {
+              return 0;
+            } else {
+              return 1;
+            }
+          } else {
+            return 0;
+          }
+        })
+        .attr("cx", rectWidth / 2)
+        .attr("cy", rectHeight)
+        .attr("r", circleRadius * 3.5);
+
+      // Update circle for mandatory/optional
+      nodeUpdate
+        .select("circle.dot")
+        .attr("r", circleRadius)
+        .attr("opacity", function(d) {
+          if (
+            d.data.binaryCardinals == "FILLED_DOT" ||
+            d.data.binaryCardinals == "EMPTY_DOT"
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        })
+        .attr("fill", function(d) {
+          if (d.data.binaryCardinals == "FILLED_DOT") {
+            return "black";
+          }
+          if (d.data.binaryCardinals == "EMPTY_DOT") {
+            return "white";
+          }
+        })
+        .attr("stroke", "black")
+        .attr("cx", rectWidth / 2);
+
+      // Update rectangles for MAIN NODES
       nodeUpdate
         .select("rect.node")
-        .attr("class", function(d) {
-          if (d.data.type == "systemFeature" && d.data.status == "Active") {
-            return "node systemFeatureSelected";
-          }
-          if (d.data.type == "systemAttribute" && d.data.status == "Active") {
-            return "node systemAttributeSelected";
-          } else return "node" + " " + d.data.type;
+        .attr("fill", function(d) {
+          return colorNodes(d);
         })
-        .attr("width", function(d, i) {
-          // console.log(d.data.child.length)
-          if (d.data.child.length > 10) {
-            return rectWidth * 1; // TODO: Fix correct lenght also at positioning
-          } else {
-          return rectWidth;
-          }
+        .attr("stroke-width", 1 / scaleFactor)
+        .attr("width", rectWidth)
+        .attr("height", rectHeight);
 
+      // Update MAIN LABELS
+      nodeUpdate
+        .selectAll("text.mainLabel")
+        .attr("font-size", function(d) {
+          return setMainLabelFontSize(d);
         })
-        .attr("height", function(d) {
-          return rectHeight;
+        .attr("text-anchor", "middle")
+        .attr("fill", function(d) {
+          return colorText(d);
+        })
+        .attr("dx", rectWidth / 2)
+        .attr("dy", rectHeight / 1.6)
+        .text(function(d) {
+          return setMainLabel(d);
         });
 
-      // Remove alternative circle when collapsed
+      // Update VALUE LABELS
       nodeUpdate
-        .selectAll(".alternativeCircle")
-        .attr("opacity", function(d, i) {
-          if (d.data.hasAlternatives == true && d.children !== null) {
-            return 1.0;
+        .selectAll("text.valueLabel")
+        .attr("font-size", 4)
+        .attr("text-anchor", "middle")
+        .attr("dx", rectWidth / 2)
+        .attr("dy", rectHeight * 1.75)
+        .text(function(d) {
+          return setValueLabel(d);
+        });
+
+      // Update DOMAIN LABELS
+      nodeUpdate
+        .selectAll("text.domainLabel")
+        .attr("font-size", 4)
+        .attr("text-anchor", "middle")
+        .attr("dx", rectWidth / 2)
+        .attr("dy", rectHeight * 1.4);
+
+      // Update rectanlge for FEATURE INSTANCE CARDINALITIES
+      nodeUpdate
+        .selectAll("rect.feature-instance")
+        .attr("width", function(d) {
+          if (d.data.featureInstanceCardinality) {
+            return 10;
           } else return 0;
         })
+        .attr("height", 5)
+        .attr("fill", "white")
+        .attr("x", 0)
+        .attr("y", -5);
 
-      // C - EXIT mode
+      // Update position of FEATURE INSTANCE CARDINALITIES
+      nodeUpdate
+        .selectAll(".feature-instance")
+        .attr("text-anchor", "left")
+        .attr("dx", 0)
+        .attr("dy", -rectHeight / 7);
+
+      // Update rectanlge for GROUP INSTANCE CARDINALITIES
+      nodeUpdate
+        .selectAll("rect.group-instance")
+        .attr("width", function(d) {
+          if (d.data.groupInstanceCardinality) {
+            return rectWidth / 2;
+          } else return 0;
+        })
+        .attr("height", 5)
+        .attr("fill", "white")
+        .attr("x", rectWidth / 4)
+        .attr("y", rectHeight);
+
+      // Update position of GROUP INSTANCE CARDINALITIES
+      nodeUpdate
+        .selectAll(".group-instance")
+        .attr("text-anchor", "middle")
+        .attr("dx", rectWidth / 2)
+        .attr("dy", rectHeight * 1.4);
+
+      // Update position of GROUP TYPE CARDINALITIES
+      nodeUpdate
+        .selectAll(".group-type")
+        .attr("text-anchor", "right")
+        .attr("dx", rectWidth / 1.2)
+        .attr("dy", rectHeight * 1.4);
+
+      // Update cardinilaties (if children are collapsed)
+      nodeUpdate
+        .selectAll("text.hideWhenCollapsed")
+        .attr("opacity", function(d) {
+          if (d._children) {
+            return 0;
+          } else {
+            return 1;
+          }
+        });
+
+      // Hide cardinalities if option to hide them is specified
+      nodeUpdate.selectAll(".cardinality").attr("opacity", function(d) {
+        return toggleCardinalities(d);
+      });
+
+      // EXIT SECTION
+      // Remove any exiting nodes
       var nodeExit = node
         .exit()
-        // .transition()
-        // .duration(this.animiationDuration)
-        .attr("transform", function(d) {
-          return "translate(" + treeMapInput.x + "," + treeMapInput.y + ")";
+        .transition()
+        .duration(this.animiationDuration)
+        .attr("transform", function() {
+          return "translate(" + source.x + "," + source.y + ")";
         })
         .remove();
 
+      // On exit reduce the rectangles
       nodeExit
-        .select("rect")
+        .selectAll("rect")
         .attr("width", 1e-6)
         .attr("height", 1e-6);
 
-      nodeExit.select("text").attr("fill-opacity", 1e-6);
+      // On exit reduce the circles
+      nodeExit.selectAll("circle").attr("r", 1e-6);
 
-      nodeExit.select("circle").attr("r", 1e-6);
+      // On exit reduce the text
+      nodeExit.selectAll("text").attr("font-size", 0);
 
-      var linkExit = link
-        .exit()
-        // .transition()
-        // .duration(this.animiationDuration)
+      // ****************** LINKS SECTION ***************************
+      // Set IDs for each link
+      var link = this.cfmViewSVG
+        .selectAll("line.link")
+        .data(links, function(d) {
+          return d.id;
+        });
+      // ENTER SECTION
+      // Enter any new links at the parent's previous position.
+      var linkEnter = link
+        .enter()
+        .insert("line", "g")
+        .attr("class", "link")
+        .attr("stroke", "darkgrey")
+        .attr("x1", source.x0)
+        .attr("y1", source.y0)
+        .attr("x2", source.x0)
+        .attr("y2", source.y0);
+
+      // UPDATE SECTION
+      // Merge links
+      var linkUpdate = linkEnter.merge(link);
+      // Transition back to the parent element position
+      linkUpdate
+        .transition()
+        .duration(this.animiationDuration)
         .attr("x1", function(d) {
-          return d.source.x + rectWidth / 2;
+          return d.x;
         })
         .attr("y1", function(d) {
-          return d.source.y + rectHeight;
+          return d.y - rectHeight;
         })
         .attr("x2", function(d) {
-          return d.source.x + rectWidth / 2;
+          return d.parent.x;
         })
         .attr("y2", function(d) {
-          return d.source.y + rectHeight;
-        })
+          return d.parent.y + rectHeight * (scaleFactor - 1);
+        });
+
+      // EXIT SECTION
+      var linkExit = link
+        .exit()
+        .transition()
+        .duration(this.animiationDuration)
+        .attr("x1", source.x)
+        .attr("y1", source.y)
+        .attr("x2", source.x)
+        .attr("y2", source.y)
         .remove();
 
+      // OTHER OPERATIONS
+      // Store new positions of each node
       nodes.forEach(function(d) {
         d.x0 = d.x;
         d.y0 = d.y;
       });
     },
-    createTreeMap(inputData, width, height) {
-      // Transforms input data into tree with height and weight
-      let treeDataStructure = d3
-        .stratify() // Transform data into tree structure
-        .id(function(d) {
-          return d.child;
-        })
-        .parentId(function(d) {
-          return d.parent;
-        })(inputData);
-      let treeElement = d3.tree().size([width * 1.05, height * 0.875]); // Initialize tree
-      this.cfmTreeMap = treeElement(treeDataStructure); // Return tree-formated variabel
-      this.cfmTreeMap.x0 = this.treeHeight / 2;
-      this.cfmTreeMap.y0 = 0 + this.rectHeight;
-      this.treeDepth = 0;
+    colorNodes(d) {
+      if (d.data.currentlyChosen) {
+        if (d._children) {
+          return "rgb(13, 80, 107)";
+        } else {
+          return "rgb(100, 100, 100)";
+        }
+      } else {
+        if (d._children) {
+          return "rgb(226, 245, 255)";
+        } else {
+          return "rgb(247, 247, 247)";
+        }
+      }
+    },
+    colorText(d) {
+      if (d.data.currentlyChosen) {
+        return "white";
+      } else {
+        return "black";
+      }
+    },
+    setMainLabelFontSize(d) {
+      if (d.data.name.length >= 10) {
+        return 4.5;
+      } else return 4.75;
+    },
+    setMainLabel(d) {
+      let scaleFactor = this.scaleFactor;
+      // console.log(scaleFactor);
+      if (scaleFactor > 1.6) {
+        if (d.data.name.length > 14) {
+          return (
+            d.data.name.substring(0, Math.round(9 * Math.sqrt(scaleFactor))) +
+            "..."
+          );
+        } else return d.data.name;
+      } else {
+        if (d.data.name.length > 9) {
+          let upperCount = d.data.name.replace(/[^A-Z]/g, "").length;
+          if (upperCount > 5) {
+            return (
+              d.data.name.substring(0, Math.round(7 * Math.sqrt(scaleFactor))) +
+              "..."
+            );
+          } else {
+            return (
+              d.data.name.substring(0, Math.round(8 * Math.sqrt(scaleFactor))) +
+              "..."
+            );
+          }
+        } else {
+          let upperCount = d.data.name.replace(/[^A-Z]/g, "").length;
+          if (upperCount > 5) {
+            return (
+              d.data.name.substring(0, Math.round(6 * scaleFactor)) + "..."
+            );
+          }
+        }
+        return d.data.name;
+      }
+    },
+    setValueLabel(d) {
+      if (d.data.value != undefined) {
+        return "Value: " + d.data.value;
+      }
+    },
+    setCurrentlyChosenAndValues(d) {
+      let descendants = d.descendants();
+      let cfmValues = this.cfmValues;
+      descendants.forEach(function(d) {
+        let node = d.data;
+        // Set currently chosen for features
+        cfmValues.stringFeatures.forEach(function(d) {
+          if (node.name == d.name) {
+            node.currentlyChosen = true;
+          }
+        });
+        cfmValues.stringAttributes.forEach(function(d) {
+          if (node.name == d.name) {
+            // Set currently chosen for attributes
+            node.currentlyChosen = true;
+            // Set values for attributes
+            let value = "";
+            if (d.intValue) {
+              value = d.intValue;
+            } else if (d.realValue || d.realValue === 0) {
+              value = d.realValue;
+            }
+            node.value = value;
+          }
+        });
+      });
+    },
+    stringifyCardinality(d) {
+      if (d) {
+        return "<" + d.lb + "," + d.ub + ">";
+      } else return "";
+    },
+    stringifyDomain(d) {
+      if (d) {
+        return d.domainType + ": " + d.lowerBoundary + "..." + d.upperBoundary;
+      }
+    },
+    setTooltipElements(d) {
+      // Name and value
+      this.selectedElement = "Element: " + d.data.name;
+      if (d.data.value != null) {
+        this.elementValue = "Value: " + d.data.value;
+      } else {
+        this.elementValue = "";
+      }
+
+      // Domain
+      if (d.data.domain) {
+        this.elementRange = "Domain: " + this.stringifyDomain(d.data.domain);
+      } else {
+        this.elementRange = "";
+      }
+
+      // Cardinalities
+      if (d.data.featureInstanceCardinality) {
+        this.featureInstanceCardinality =
+          "Feature instance cardinality: " +
+          this.stringifyCardinality(d.data.featureInstanceCardinality);
+      } else {
+        this.featureInstanceCardinality = "";
+      }
+
+      if (d.data.groupInstanceCardinality) {
+        this.groupInstanceCardinality =
+          "Group instance cardinality: " +
+          this.stringifyCardinality(d.data.groupInstanceCardinality);
+      } else {
+        this.groupInstanceCardinality = "";
+      }
+
+      if (d.data.groupTypeCardinality) {
+        this.groupTypeCardinality =
+          "Group type cardinality: " +
+          this.stringifyCardinality(d.data.groupTypeCardinality);
+      } else {
+        this.groupTypeCardinality = "";
+      }
+
+      // Opacity
+      this.tooltipDiv.style("opacity", 1);
+    },
+    toggleCardinalities() {
+      if (this.showCardinalities) {
+        return 1;
+      } else return 0;
     },
     collapse(d) {
       if (d.children) {
@@ -346,183 +780,92 @@ export default {
         d.children = d._children;
         d._children = null;
       }
-      this.renderCFM(this.cfmTreeMap);
-      console.log(this.nodes);
+      this.renderNewCFM(d);
     },
     mouseover(d, i, n) {
-      // Make selection bigger
-      d3.select(n[i]).attr("transform", function(d, i, n) {
-        return (
-          "translate(" + d.x / 1.005 + "," + d.y / 1.005 + ")" + "scale(1.1)"
-        );
-      });
+      // SECTION FOR THE NODE
       // Change color to highlight element
       d3.select(n[i])
-        .selectAll("rect")
-        .attr("class", function(d) {
-          if (d.data.type == "systemFeature" && d.data.status == "Active") {
-            return "selected systemFeatureSelected";
-          }
-          if (d.data.type == "systemAttribute" && d.data.status == "Active") {
-            return "selected systemAttributeSelected";
-          } else return "selected" + " " + d.data.type;
-        });
+        .selectAll("rect.node")
+        .attr("fill", this.hoverColor)
+        .attr("class", "selected");
 
       // Change font color
-       d3.select(n[i])
-        .selectAll(".textLabel")   
+      d3.select(n[i])
+        .selectAll("text.mainLabel")
         .attr("fill", "white");
 
+      // TOOLTIP SECTION
+      this.setTooltipElements(d);
     },
     mouseout(d, i, n) {
-      // Make selection size default again
+      let colorNodes = this.colorNodes;
+      let colorText = this.colorText;
+
+      // SECTION FOR THE NODE
+      // Reset color of rectangle
       d3.select(n[i])
-        .attr("opacity", 1.0)
-        .attr("transform", function(d, i, n) {
-          return "translate(" + d.x + "," + d.y + ")" + "scale(1)";
-        });
-      // Reset color
-      d3.select(n[i])
-        .selectAll("rect")
-        .attr("class", function(d) {
-          if (d.data.type == "systemFeature" && d.data.status == "Active") {
-            return "node systemFeatureSelected";
-          }
-          if (d.data.type == "systemAttribute" && d.data.status == "Active") {
-            return "node systemAttributeSelected";
-          } else return "node" + " " + d.data.type;
+        .selectAll("rect.selected")
+        .attr("class", "node")
+        .attr("fill", function(d) {
+          return colorNodes(d);
         });
 
-      // Change font color
+      // Reset color of text
       d3.select(n[i])
-        .selectAll(".textLabel")   
-        .attr("fill", "black");
+        .selectAll("text.mainLabel")
+        .attr("fill", function(d) {
+          return colorText(d);
+        });
+
+      // TOOLTIP SECTION
+      this.tooltipDiv.style("opacity", 0);
+      this.selectedElement = "";
+      this.elementValue = "";
+      this.elementRange = "";
+      this.featureInstanceCardinality = "";
+      this.groupInstanceCardinality = "";
+      this.groupTypeCardinality = "";
     },
     defaultCFMposition() {
-      this.cfmViewSVG
-        .transition()
-        .duration(this.animiationDuration)
-        .attr("transform", "translate(-60,5) scale(1)");
+      if (this.scaleFactor > 2) {
+        this.cfmViewSVG
+          .transition()
+          .duration(this.animiationDuration)
+          .attr("transform", "translate(-10, 25) scale(0.9)");
+      } else {
+        this.cfmViewSVG
+          .transition()
+          .duration(this.animiationDuration)
+          .attr("transform", "translate(-10, 20) scale(1)");
+      }
     },
-    loadOtherCFM() {
-      this.createTreeMap(this.cfmInput2, this.treeWidth, this.treeHeight);
-      this.renderCFM(this.cfmTreeMap);
-    },
-    moveToBack() {
-      // return this.each(function() { 
-      //       var firstChild = this.parentNode.firstChild; 
-      //       if (firstChild) { 
-      //           this.parentNode.insertBefore(this, firstChild); 
-      //       } 
-      //   });
+    sendFeature(d) {
+      sendMessage(d, "startOfSimulation");
     }
   }
 };
 </script>
 
 <style>
-.selected {
-  fill: #4285f4 !important;
-  stroke-width: 1.5 !important;
-}
-
-.node {
-  cursor: pointer;
-}
-
-.connectorLine {
-  stroke: black;
-  stroke-width: 1;
-}
-
-.root {
-  fill: darkgrey;
-  stroke: black;
-  rx: 1px;
-}
-
-.systemFeature {
-  fill: rgb(244, 244, 244);
-  stroke: black;
-  rx: 1px;
-}
-
-.systemFeatureSelected {
-  fill: darkgrey;
-  stroke: black;
-  rx: 1px;
-}
-
-.contextFeature {
-  fill: darkgrey;
-  stroke-dasharray: 2;
-  stroke: black;
-  rx: 1px;
-}
-
-.systemAttribute {
-  fill: rgb(244, 244, 244);
-  rx: 10;
-  stroke: black;
-}
-
-.systemAttributeSelected {
-  fill: darkgrey;
-  rx: 10;
-  stroke: black;
-}
-
-.contextAttribute {
-  fill: darkgrey;
-  stroke-dasharray: 2;
-  stroke: black;
-  rx: 10;
-}
-
-.alternativeCircle {
-  fill: white;
-  stroke: black;
-}
-
-.mandatoryCircle {
-  fill: black;
-  stroke: black;
-}
-
-.optionalCircle {
-  fill: rgb(244, 244, 244);
-  stroke: black;
-}
-
-.textLabel {
-  text-anchor: middle;
-}
-
-.textLabelBold {
-  text-anchor: middle;
-  font-weight: 600;
-  font-size: 10px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.intLabel {
-  text-anchor: middle;
-  font-size: 10px;
-    color: blue !important;
-}
-
-.valueLabel {
-  text-anchor: middle;
-  font-size: 10px;
-}
-
-.cardinalityLabel {
-  text-anchor: middle;
-  font-size: 10px;
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 5px;
+  font-size: 14px;
+  background: rgb(0, 0, 0, 0.7);
+  border-radius: 3px;
+  color: white;
 }
 
 #cfm-view {
   overflow: scroll;
+}
+
+.node {
+  cursor: pointer;
 }
 </style>

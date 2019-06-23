@@ -1,600 +1,189 @@
 <template>
   <b-container fluid>
-    <h4>
-      🐨
-      <strong>CoalaViz</strong>: Enhanced Traceability in Adaptive Communication Systems
-    </h4>
-    <hr>
-    <b-row>
-      <b-col class="main">
-        <network-view/>
-      </b-col>
-      <b-col class="main">
-        <metric-view/>
-        <context-feature-model :cfmInput="cfm" :cfmInput2="cfm2"/>
-        <!-- <d3-test :cfmInput="cfm" :cfmInput2="cfm2"/> -->
-        <performance-view/>
-      </b-col>
-    </b-row>
+    <coala-header/>
+    <grid-layout
+      :layout.sync="layout"
+      :col-num="2"
+      :row-height="1"
+      :is-draggable="true"
+      :is-resizable="true"
+      :margin="[5, 5]"
+      :responsive="true"
+      :autoSize="true"
+      :breakpoints="{ lg: 1200, md: 800, sm: 400, xs: 300, xxs: 0 }"
+      :cols="{ lg: 2, md: 2, sm: 1, xs: 1, xxs: 1 }"
+      ref="GridInstance"
+    >
+      <grid-item
+        v-for="(item) in layout"
+        :x="item.x"
+        :y="item.y"
+        :w="item.w"
+        :h="item.h"
+        :i="item.i"
+        :key="item.i"
+        :isResizable="item.isResizable"
+        :dragIgnoreFrom="'a, button, .card-body'"
+      >
+        <component :is="item.view"/>
+      </grid-item>
+    </grid-layout>
+    <!-- <coala-footer/> -->
   </b-container>
 </template>
 
 <script>
+import CoalaHeader from "./helper_components/CoalaHeader";
+import CoalaFooter from "./helper_components/CoalaFooter";
 import NetworkView from "./views/NetworkView.vue";
 import MetricView from "./views/MetricView.vue";
 import ContextFeaureModel from "./views/ContextFeatureModel.vue";
 import PerformanceView from "./views/PerformanceView.vue";
+import StateView from "./views/StateView.vue";
+import EventView from "./views/EventView.vue";
+import VueGridLayout from "vue-grid-layout";
+import { store } from "./store/store";
 
 export default {
   components: {
+    "coala-header": CoalaHeader,
+    "coala-footer": CoalaFooter,
     "network-view": NetworkView,
     "metric-view": MetricView,
     "context-feature-model": ContextFeaureModel,
     "performance-view": PerformanceView,
+    "state-view": StateView,
+    "event-view": EventView,
+    "grid-layout": VueGridLayout.GridLayout,
+    "grid-item": VueGridLayout.GridItem
   },
   data: function() {
     return {
-      cfm: [
+      layout: [
         {
-          child: "Tasklet System",
-          parent: "",
-          type: "root",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,*",
-          cardinalityConnector: ""
+          x: 0,
+          y: 0,
+          w: 1,
+          h: 76,
+          i: "0",
+          isResizable: false,
+          view: "network-view"
         },
         {
-          child: "System",
-          parent: "Tasklet System",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
+          x: 0,
+          y: 1,
+          w: 1,
+          h: 51,
+          i: "1",
+          isResizable: false,
+          view: "metric-view"
         },
         {
-          child: "Context",
-          parent: "Tasklet System",
-          type: "contextFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
+          x: 1,
+          y: 0,
+          w: 1,
+          h: 66,
+          i: "2",
+          isResizable: false,
+          view: "context-feature-model"
         },
         {
-          child: "Provider Scheduling",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: true,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,1",
-          cardinalityConnector: ""
+          x: 1,
+          y: 2,
+          w: 1,
+          h: 51,
+          i: "3",
+          isResizable: false,
+          view: "state-view"
         },
         {
-          child: "Pattern Recognition",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Optional",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
+          x: 1,
+          y: 1,
+          w: 1,
+          h: 21,
+          i: "4",
+          isResizable: false,
+          view: "performance-view"
         },
         {
-          child: "RoundRobin",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "AlwaysBest",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Fuzzy",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Random",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "lowThreshold",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "10..40",
-          Value: 32,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "highThreshold",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "60..90",
-          Value: 66,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "percentageSlowProviders",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "25..50",
-          Value: 26,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "percentageFastProviders",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "25..50",
-          Value: 25,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "#Providers",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..250",
-          Value: 110,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "#Consumers",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..25",
-          Value: 13,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Average Utilization",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..1",
-          Value: 0.32,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        }
-      ],
-      cfm2: [
-        {
-          child: "WSN",
-          parent: "",
-          type: "root",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,*",
-          cardinalityConnector: ""
-        },
-        {
-          child: "System",
-          parent: "WSN",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Context",
-          parent: "WSN",
-          type: "contextFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "New feature 1",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,1",
-          cardinalityConnector: ""
-        },
-        {
-          child: "New feature 2",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,1",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Provider Scheduling",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Mandatory",
-          hasAlternatives: true,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "1,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "1,1",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Pattern Recognition",
-          parent: "System",
-          type: "systemFeature",
-          Required: "Optional",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Sub 1",
-          parent: "New feature 1",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Sub 2",
-          parent: "New feature 1",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Sub 3",
-          parent: "New feature 1",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "RoundRobin",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "AlwaysBest",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "Active",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Fuzzy",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Random",
-          parent: "Provider Scheduling",
-          type: "systemFeature",
-          Required: "",
-          hasAlternatives: false,
-          int: "",
-          Value: "",
-          status: "",
-          cardinalityTop: "0,1",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "lowThreshold",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "10..40",
-          Value: 32,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "highThreshold",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "60..90",
-          Value: 66,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "percentageSlowProviders",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "25..50",
-          Value: 26,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "percentageFastProviders",
-          parent: "Fuzzy",
-          type: "systemAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "25..50",
-          Value: 25,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "#Providers",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..250",
-          Value: 110,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "#Consumers",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..25",
-          Value: 13,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
-        },
-        {
-          child: "Average Utilization",
-          parent: "Context",
-          type: "contextAttribute",
-          Required: "",
-          hasAlternatives: false,
-          int: "0..1",
-          Value: 0.32,
-          status: "",
-          cardinalityTop: "",
-          cardinalityBottom: "",
-          cardinalityAlternative: "",
-          cardinalityConnector: ""
+          x: 1,
+          y: 3,
+          w: 1,
+          h: 41,
+          i: "5",
+          isResizable: false,
+          view: "event-view"
         }
       ]
     };
   },
-  props: {
-
+  computed: {
+    toggleMap() {
+      return this.$store.state.toggleMap;
+    } 
   },
   mounted() {
+    store.subscribe((mutation, state) => {
+      // TODO: Fix that this funciton is called so often i.e. use watch
+      if (mutation.type == "updateToggle") {
+        let toggleAll = this.toggleAll;
+        console.log("Layout changed");
+        toggleAll();
+      }
+    });
+  },
+  methods: {
+    toggleAll() {
+      let layout = this.layout;
+      this.toggleMap.forEach(function(element, i) {
+        if (element.visible) {
+          layout[i].h = element.h;
+        } else {
+          layout[i].h = element.h0;
+        }
+      });
+      this.layout = layout;
+      this.$refs.GridInstance.layoutUpdate();
+    }
   }
 };
 </script>
 
 <style>
-.main {
-  /* padding-left: 5px;
-  padding-right: 5px; */
+.vue-grid-item.vue-grid-placeholder {
+  background: radial-gradient(
+    circle,
+    rgba(252, 254, 255, 1) 0%,
+    rgba(233, 244, 254, 1) 100%
+  );
+  border: dashed black 2px;
+  border-radius: 5px;
 }
 
-.card-header {
-  padding-left: 12px;
-  padding-right: 7px;
-  padding-top: 7px;
-  padding-bottom: 7px;
+* {
+  box-sizing: border-box;
 }
 
-.card {
-  margin-top: 10px;
+.interface-text {
+  font-size: 14px;
+  user-select: none;
 }
 
-.card-body {
-  padding: 5px;
-}
-
-.show {
-  overflow: hidden;
-}
-
-h4 {
-  padding-top: 8px;
-}
 h5 {
+  font-size: 20px;
   margin-bottom: 0px;
 }
+
 </style>
+
+    <!-- <b-row>
+      <b-col class="main">
+        <network-view/>
+        <state-view/>
+      </b-col>
+      <b-col class="main">
+        <metric-view/>
+        <context-feature-model/>
+        <performance-view/>
+      </b-col>
+    </b-row>-->

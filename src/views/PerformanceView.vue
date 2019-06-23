@@ -1,28 +1,44 @@
 <template>
-  <view-header :elementName="name">
+  <view-header :id="id" :element-name="name">
     <b-row>
-      <b-col>
-        <b-form-input v-model="deadlinesWeight" placeholder="Enter weight"></b-form-input>
-        <div class="mt-2 text-muted">Matched deadlines: {{ deadlinesWeight }}</div>
-      </b-col>+
-      <b-col>
-        <b-form-input v-model="performanceWeight" placeholder="Enter weight"></b-form-input>
-        <div class="mt-2 text-muted">Performance: {{ performanceWeight }}</div>
+      <input-field
+        v-for="(weight, index) in weights"
+        :key="weight.weight"
+        :weight="weight.weight"
+        :factor="weight.factor"
+        :index="index"
+        size="sm"
+      ></input-field>
+      <b-col v-if="weights.length >= 1" cols="3">
+        <b-button
+          id="applyButton"
+          size="sm"
+          variant="primary"
+          @click="applyWeights"
+        >
+          <font-awesome-icon icon="check" />&nbsp;Apply weights
+        </b-button>
       </b-col>
-      <b-col>
-        <b-button variant="primary" id="applyButton" @click="applyWeights">Apply</b-button>
-      </b-col>
+      <b-col v-else>No weights loaded</b-col>
+    </b-row>
   </view-header>
 </template>
 
 <script>
-import ViewHeader from "./ViewHeader.vue";
+import ViewHeader from "../helper_components/ViewHeader";
+import InputField from "../helper_components/InputField";
+import { mapMutations } from "vuex";
+// eslint-disable-next-line no-unused-vars
+import { client, sendMessage } from "../connector/mqtt-connector";
 export default {
+  components: {
+    "view-header": ViewHeader,
+    "input-field": InputField
+  },
   data() {
     return {
       name: "Performance View",
-      deadlinesWeight: "",
-      performanceWeight: ""
+      id: 4
     };
   },
   computed: {
@@ -30,16 +46,14 @@ export default {
       return this.$store.state.weights;
     }
   },
-  components: {
-    "view-header": ViewHeader
-  },
   methods: {
     applyWeights() {
       console.log("Applied");
+      console.log(this.weights);
+      sendMessage(this.weights, "startOfSimulation");
     }
   }
 };
-</script> 
+</script>
 
-<style>
-</style>
+<style></style>
