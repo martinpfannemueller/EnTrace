@@ -4,7 +4,7 @@
       ref="metricChart"
       type="line"
       :series="metrics"
-      height="208"
+      height="210"
       :options="chartOptions"
     ></apexchart>
     <b-row>

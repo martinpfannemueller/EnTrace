@@ -12,9 +12,19 @@
       :target-node="targetNode"
     ></tooltip>
     <svg id="network-view" :height="height" :width="width" margin="auto"></svg>
-    <b-button size="sm" variant="primary" @click="centerNetwork">
-      <font-awesome-icon icon="expand" />&nbsp;Center
-    </b-button>
+    <!-- <div v-else class="no-network">
+      No network loaded
+    </div> -->
+    <b-row>
+      <b-col>
+        <b-button size="sm" variant="primary" @click="centerNetwork">
+          <font-awesome-icon icon="expand" />&nbsp;Center
+        </b-button>
+      </b-col>
+      <b-col>
+        <b-form-input type="range" min="0" max="5" step="0.1"></b-form-input>
+      </b-col>
+    </b-row>
   </view-header>
 </template>
 
@@ -32,7 +42,7 @@ export default {
       name: "Network View",
       id: 0,
       width: 650,
-      height: 357,
+      height: 360,
       circleRadius: 15,
       strokeWidth: 2,
       fontSize: 14,

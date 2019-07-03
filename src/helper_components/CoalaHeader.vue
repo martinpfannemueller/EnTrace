@@ -11,11 +11,10 @@
       <b-col cols="3">
         <h4 class="float-right" style="margin-right: 5px;">
           Status:
-          <b-badge v-if="connected" variant="success">
-            <font-awesome-icon icon="check-square" />&nbsp;Connected
-          </b-badge>
-          <b-badge v-else variant="danger">
-            <font-awesome-icon icon="times-circle" />&nbsp;Not connected
+          <b-badge :variant="connected ? 'success' : 'danger'">
+            <font-awesome-icon
+              :icon="connected ? 'check-square' : 'times-circle'"
+            />&nbsp; {{ connected ? "Connected" : "Not connected" }}
           </b-badge>
         </h4>
       </b-col>
@@ -36,12 +35,16 @@ export default {
 
 <style scoped>
 .header {
-  padding-top: 8px;
+  background-color: rgba(255, 255, 255, 0.65);
 }
 hr {
   margin-left: 5px;
   margin-right: 5px;
-  margin-top: 2px;
+  margin-top: 0px;
   margin-bottom: 10px;
+}
+
+h4 {
+  margin-top: 8px;
 }
 </style>

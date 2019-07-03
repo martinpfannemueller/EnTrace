@@ -10,7 +10,9 @@
         })
       "
     ></b-form-input>
-    <div class="mt-2 text-muted interface-text">{{ weight }}</div>
+    <div style="margin-top: 5px" class="text-muted interface-text">
+      {{ weight }}
+    </div>
   </b-col>
 </template>
 
@@ -57,6 +59,6 @@ export default {
 
 <style scoped>
 .b-form-input {
-  margin: 3px;
+  margin: 5px;
 }
 </style>

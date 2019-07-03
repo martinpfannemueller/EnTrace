@@ -7,11 +7,9 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import { store } from "./store/store";
 import { connectToConnector } from "./connector/mqtt-connector";
 import {
-  faChevronDown,
   faExpandArrowsAlt,
   faExpand,
   faCheck,
-  faChevronRight,
   faCheckSquare,
   faTimesCircle,
   faPowerOff,
@@ -21,15 +19,20 @@ import {
   faArrowsAltH,
   faMapPin,
   faWeight,
-  faPalette
+  faPalette,
+  faMinusCircle,
+  faPlusCircle,
+  faCogs,
+  faLink,
+  faHashtag
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { VueContext } from "vue-context";
 
 library.add(faPowerOff);
-library.add(faChevronDown);
-library.add(faChevronRight);
+library.add(faPlusCircle);
+library.add(faMinusCircle);
 library.add(faExpandArrowsAlt);
 library.add(faExpand);
 library.add(faCheck);
@@ -42,6 +45,9 @@ library.add(faArrowsAltH);
 library.add(faMapPin);
 library.add(faWeight);
 library.add(faPalette);
+library.add(faCogs);
+library.add(faLink);
+library.add(faHashtag);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("vue-context", VueContext);

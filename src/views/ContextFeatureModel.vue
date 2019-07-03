@@ -2,7 +2,7 @@
   <view-header :id="id" :element-name="name">
     <tooltip
       v-show="showTooltips"
-      class="tooltip"
+      class="tooltip-cfm"
       :selected-element="selectedElement"
       :element-value="elementValue"
       :element-range="elementRange"
@@ -23,6 +23,9 @@
       :height="treeHeight + 50"
       margin="auto"
     ></svg>
+    <!-- <div v-else class="no-cfm">
+      No context feature model loaded
+    </div> -->
     <b-row>
       <b-col>
         <b-button size="sm" variant="primary" @click="defaultCFMposition">
@@ -60,6 +63,8 @@ import Tooltip from "../helper_components/TooltipCFM";
 // eslint-disable-next-line no-unused-vars
 import { client, sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
+import { store } from "../store/store";
+import { mapMutations } from "vuex";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -74,7 +79,7 @@ export default {
       tree: "",
       root: "",
       treeWidth: 680,
-      treeHeight: 247,
+      treeHeight: 250,
       treeDepth: 55,
       rectWidth: 23,
       rectHeight: 11,
@@ -99,9 +104,6 @@ export default {
       if (this.$store.state.cfm_new != "") {
         return this.$store.state.cfm_new.fm.root;
       } else return "";
-    },
-    old_CFM() {
-      return this.$store.state.cfm_old;
     },
     cfmValues() {
       return this.$store.state.cfmValues;
@@ -158,6 +160,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["updateAttributeDomainList"]),
     initializeSelector() {
       let cfmHelper = d3
         .selectAll("#cfm-view")
@@ -171,7 +174,7 @@ export default {
         .attr("transform", "translate(-10, 20)");
       this.cfmViewSVG = cfmHelper;
 
-      this.tooltipDiv = d3.select(".tooltip");
+      this.tooltipDiv = d3.select(".tooltip-cfm");
     },
     establishRoot() {
       this.root = d3.hierarchy(this.new_CFM, function(d) {
@@ -211,6 +214,7 @@ export default {
       let stringifyCardinality = this.stringifyCardinality;
       let toggleCardinalities = this.toggleCardinalities;
       let stringifyDomain = this.stringifyDomain;
+      let createAttributeDomainList = this.createAttributeDomainList;
       let contextMenu = this.$refs.menu.open;
 
       if (!this.autoAdjustHeight) {
@@ -311,7 +315,10 @@ export default {
         .append("text")
         .attr("class", "domainLabel")
         .text(function(d) {
-          return stringifyDomain(d.data.domain);
+          if (d.data.domain) {
+            createAttributeDomainList(d.data); // Load into store for state view
+            return stringifyDomain(d.data.domain);
+          }
         });
 
       // Add VALUE labels for the nodes
@@ -715,9 +722,16 @@ export default {
       } else return "";
     },
     stringifyDomain(d) {
-      if (d) {
-        return d.domainType + ": " + d.lowerBoundary + "..." + d.upperBoundary;
-      }
+      return d.domainType + ": " + d.lowerBoundary + "..." + d.upperBoundary;
+    },
+    createAttributeDomainList(d) {
+      let newAttribute = {
+        name: d.name,
+        domainType: d.domain.domainType,
+        lowerBoundary: d.domain.lowerBoundary,
+        upperBoundary: d.domain.upperBoundary
+      };
+      store.commit("updateAttributeDomainList", newAttribute);
     },
     setTooltipElements(d) {
       // Name and value
@@ -844,7 +858,7 @@ export default {
 </script>
 
 <style>
-.tooltip {
+.tooltip-cfm {
   position: absolute;
   pointer-events: none;
   padding-top: 5px;

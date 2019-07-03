@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <coala-header />
+    <coala-header class="header" />
     <grid-layout
       ref="GridInstance"
       :layout.sync="layout"
@@ -61,58 +61,64 @@ export default {
     return {
       layout: [
         {
+          view: "network-view",
+          i: 0,
           x: 0,
           y: 0,
           w: 1,
-          h: 76,
-          i: "0",
+          h: NaN,
           isResizable: false,
-          view: "network-view"
+          visible: true
         },
         {
+          view: "metric-view",
+          i: 1,
           x: 0,
           y: 1,
           w: 1,
-          h: 51,
-          i: "1",
+          h: NaN,
           isResizable: false,
-          view: "metric-view"
+          visible: true
         },
         {
+          view: "context-feature-model",
+          i: 2,
           x: 1,
           y: 0,
           w: 1,
-          h: 66,
-          i: "2",
+          h: NaN,
           isResizable: false,
-          view: "context-feature-model"
+          visible: true
         },
         {
+          view: "state-view",
+          i: 3,
           x: 1,
           y: 2,
           w: 1,
-          h: 51,
-          i: "3",
+          h: NaN,
           isResizable: false,
-          view: "state-view"
+          visible: true
         },
         {
+          view: "performance-view",
+          i: 4,
           x: 1,
           y: 1,
           w: 1,
-          h: 21,
-          i: "4",
+          h: NaN,
           isResizable: false,
-          view: "performance-view"
+          visible: true
         },
         {
+          view: "event-view",
+          i: 5,
           x: 1,
           y: 3,
           w: 1,
-          h: 41,
-          i: "5",
+          h: NaN,
           isResizable: false,
-          view: "event-view"
+          visible: true
         }
       ]
     };
@@ -132,6 +138,13 @@ export default {
         toggleAll();
       }
     });
+    // Adapt height values for layout based on toggleMap
+    let layout = this.layout;
+    this.toggleMap.forEach(function(element, i) {
+      layout[i].h = element.h;
+      layout[i].h0 = element.h0;
+    });
+    this.layout = layout;
   },
   methods: {
     toggleAll() {
@@ -151,6 +164,11 @@ export default {
 </script>
 
 <style>
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
 .vue-grid-item.vue-grid-placeholder {
   background: radial-gradient(
     circle,
@@ -166,7 +184,7 @@ export default {
 }
 
 .interface-text {
-  font-size: 14px;
+  font-size: 12px;
   user-select: none;
 }
 

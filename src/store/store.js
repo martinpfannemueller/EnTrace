@@ -14,42 +14,42 @@ export const store = new Vuex.Store({
     toggleMap: [
       {
         visible: true,
-        h0: 11,
-        h: 76,
+        h0: 10,
+        h: 75,
         id: 0,
         view: "network-view"
       },
       {
         visible: true,
-        h0: 11,
-        h: 51,
+        h0: 10,
+        h: 50,
         id: 1,
         view: "metric-view"
       },
       {
         visible: true,
-        h0: 11,
-        h: 66,
+        h0: 10,
+        h: 65,
         id: 2,
         view: "context-feature-model"
       },
       {
         visible: true,
-        h0: 11,
-        h: 51,
+        h0: 10,
+        h: 55,
         id: 3,
         view: "state-view"
       },
       {
         visible: true,
-        h0: 11,
-        h: 21,
+        h0: 10,
+        h: 19,
         id: 4,
         view: "performance-view"
       },
       {
         visible: true,
-        h0: 11,
+        h0: 10,
         h: 21,
         id: 5,
         view: "event-view"
@@ -57,6 +57,7 @@ export const store = new Vuex.Store({
     ],
     cfm_new: "",
     cfmValues: "",
+    cfmAttributeDomainList: [],
     events: [],
     hoverColor: "rgb(23, 162, 184)"
   },
@@ -95,6 +96,9 @@ export const store = new Vuex.Store({
     },
     updateToggle(state, payload) {
       state.toggleMap = payload;
+    },
+    updateAttributeDomainList(state, payload) {
+      state.cfmAttributeDomainList.push(payload);
     }
   }
 });

@@ -19,7 +19,7 @@
           <font-awesome-icon icon="check" />&nbsp;Apply weights
         </b-button>
       </b-col>
-      <b-col v-else>No weights loaded</b-col>
+      <b-col v-else class="no-weights" height="270px">&nbsp;</b-col>
     </b-row>
   </view-header>
 </template>
@@ -54,4 +54,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.no-weights {
+  display: block;
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 55px;
+}
+</style>

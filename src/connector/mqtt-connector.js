@@ -71,6 +71,7 @@ function connectToConnector() {
         modifyEdges(JSON.parse(message.payloadString), edges);
         break;
       case "new-metric-value":
+        console.log(JSON.parse(message.payloadString).metric);
         newMetric(JSON.parse(message.payloadString), metrics);
         break;
       case "new-metricWeights":

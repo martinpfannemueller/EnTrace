@@ -12,8 +12,10 @@
           style="margin-left: 5px"
           @click="click"
         >
-          <font-awesome-icon v-if="showCollapse" icon="chevron-down" />
-          <font-awesome-icon v-else icon="chevron-right" />&nbsp;Toggle
+          <font-awesome-icon
+            :icon="showCollapse ? 'minus-circle' : 'plus-circle'"
+          />&nbsp;
+          {{ showCollapse ? "Minimize" : "Expand" }}
         </b-button>
         <!-- <b-button variant="outline-secondary" size="sm" class="float-right" @click="fullscreen">
           <font-awesome-icon icon="expand-arrows-alt"/>&nbsp;Fullscreen
@@ -85,7 +87,7 @@ export default {
 }
 
 .card-body {
-  padding: 8px;
+  padding: 6px;
   clear: both;
 }
 
