@@ -1,13 +1,19 @@
 <template>
-  <b-card>
-    <h4>
-      <b-badge variant="info">{{ eventChannel }}</b-badge
-      >&nbsp;{{ eventTitle }}
-    </h4>
-    <b-card-text>{{ eventText }} </b-card-text>
-    <div slot="footer">
-      <p class="text-muted">Timestamp: {{ eventTimestamp }}</p>
-    </div>
+  <b-card style="margin-bottom: 5px">
+    <b-row>
+      <b-col class="vertical" cols="3">
+        <b-badge> {{ eventChannel }}</b-badge>
+      </b-col>
+      <b-col class="vertical" cols="9" style="border-left: 1px solid grey">
+        <p>
+          <font-awesome-icon icon="stopwatch" />
+          &nbsp;Timestamp:
+          <strong class="important-text">{{ eventTimestamp }}</strong
+          >&nbsp;| <strong>{{ eventTitle }}: </strong>
+          {{ eventText }}
+        </p>
+      </b-col>
+    </b-row>
   </b-card>
 </template>
 
@@ -35,33 +41,19 @@ export default {
 </script>
 
 <style scoped>
-h4 {
-  font-size: 14px;
-  margin-bottom: 3px;
-}
-
-h6 {
-  font-size: 10px;
-  margin: 0px;
-}
-
 p {
   font-size: 10px;
   margin: 0px;
-}
-
-.card-subtitle {
-  margin-bottom: 0px;
 }
 
 .card-body {
   padding: 7px;
 }
 
-.card-footer {
-  padding-left: 7px;
-  padding-right: 10px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+.vertical {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

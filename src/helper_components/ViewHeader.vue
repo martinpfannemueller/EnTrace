@@ -65,10 +65,6 @@ export default {
 </script>
 
 <style scoped>
-#view-slot {
-  overflow: hidden;
-}
-
 .card-header {
   padding-left: 12px;
   padding-right: 3px;

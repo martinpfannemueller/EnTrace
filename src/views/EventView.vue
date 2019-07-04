@@ -1,8 +1,11 @@
 <template>
   <view-header :id="id" height="400px" :element-name="name">
-    <b-row>
+    <b-row class="interface-text">
       <b-col>
-        <b-form-group label="Select channels:">
+        <strong style="margin-left: 3px">Channels: </strong>
+      </b-col>
+      <b-col cols="10">
+        <b-form-group>
           <b-form-checkbox-group
             v-model="selected"
             :options="options"
@@ -10,12 +13,16 @@
         </b-form-group>
       </b-col>
     </b-row>
-    <event-message
-      event-title="New CFM Value"
-      event-channel="New CFM"
-      event-text="object object"
-      event-timestamp="40 ms"
-    ></event-message>
+    <div class="event-holder">
+      <event-message
+        v-for="event in events"
+        :key="event.eventTimestamp"
+        :event-title="event.eventTitle"
+        :event-channel="event.eventChannel"
+        :event-text="event.eventText"
+        :event-timestamp="event.eventTimestamp"
+      ></event-message>
+    </div>
   </view-header>
 </template>
 
@@ -54,7 +61,10 @@ export default {
 </script>
 
 <style>
-#id {
-  overflow: scroll;
+.event-holder {
+  display: block;
+  height: 200px;
+  margin: 3px;
+  overflow-y: auto;
 }
 </style>

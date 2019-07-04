@@ -91,129 +91,8 @@ export default {
       animiationDuration: 1500,
       adjustedCFMValues: [],
       cfmValuesHash: "",
-      stateCollection: [
-        {
-          id: 1,
-          hash: -623965318,
-          state: {
-            stringFeatures: [
-              { name: "root" },
-              { name: "fsSystem" },
-              { name: "fsWOpt" },
-              { name: "fsTCAlgo" },
-              { name: "fsEKTC" },
-              { name: "fcContext" },
-              { name: "fcMobSpeed" },
-              { name: "fcScenario" },
-              { name: "fcDATACOLLECTION" },
-              { name: "fcTopology" }
-            ],
-            stringAttributes: [
-              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
-              { intValue: 1, name: "fsTCint" },
-              { name: "parameterEKtcK", interval: "[1, 1.1]" },
-              { name: "mobilitySpeed", interval: "[0, 0.5]" },
-              { name: "topologyDensity", interval: "[0, 50]" },
-              { intValue: 40, name: "nodeCount" },
-              { intValue: 136, name: "edgeCount" },
-              { intValue: 700, name: "worldSize" }
-            ],
-            type: "cardyFMConfig"
-          }
-        },
-        {
-          id: 2,
-          hash: 2104244028,
-          state: {
-            stringFeatures: [
-              { name: "root" },
-              { name: "fsSystem" },
-              { name: "fsWOpt" },
-              { name: "fsTCAlgo" },
-              { name: "fsEKTC" },
-              { name: "fcContext" },
-              { name: "fcMobSpeed" },
-              { name: "fcScenario" },
-              { name: "fcDATACOLLECTION" },
-              { name: "fcTopology" }
-            ],
-            stringAttributes: [
-              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
-              { intValue: 1, name: "fsTCint" },
-              { name: "parameterEKtcK", interval: "[1, 1.1]" },
-              { name: "mobilitySpeed", interval: "[0, 0.5]" },
-              { name: "topologyDensity", interval: "[0, 50]" },
-              { intValue: 40, name: "nodeCount" },
-              { intValue: 134, name: "edgeCount" },
-              { intValue: 700, name: "worldSize" }
-            ],
-            type: "cardyFMConfig"
-          }
-        },
-        {
-          id: 3,
-          hash: -2027318470,
-          state: {
-            stringFeatures: [
-              { name: "root" },
-              { name: "fsSystem" },
-              { name: "fsWOpt" },
-              { name: "fsTCAlgo" },
-              { name: "fsEKTC" },
-              { name: "fcContext" },
-              { name: "fcMobSpeed" },
-              { name: "fcScenario" },
-              { name: "fcDATACOLLECTION" },
-              { name: "fcTopology" }
-            ],
-            stringAttributes: [
-              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
-              { intValue: 1, name: "fsTCint" },
-              { name: "parameterEKtcK", interval: "[1, 1.1]" },
-              { name: "mobilitySpeed", interval: "[0, 0.5]" },
-              { name: "topologyDensity", interval: "[0, 50]" },
-              { intValue: 40, name: "nodeCount" },
-              { intValue: 158, name: "edgeCount" },
-              { intValue: 700, name: "worldSize" }
-            ],
-            type: "cardyFMConfig"
-          }
-        },
-        {
-          id: 4,
-          hash: 377286721,
-          state: {
-            stringFeatures: [
-              { name: "root" },
-              { name: "fsSystem" },
-              { name: "fsWOpt" },
-              { name: "fsTCAlgo" },
-              { name: "fsEKTC" },
-              { name: "fcContext" },
-              { name: "fcMobSpeed" },
-              { name: "fcScenario" },
-              { name: "fcDATACOLLECTION" },
-              { name: "fcTopology" }
-            ],
-            stringAttributes: [
-              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
-              { intValue: 1, name: "fsTCint" },
-              { name: "parameterEKtcK", interval: "[1, 1.1]" },
-              { name: "mobilitySpeed", interval: "[0, 0.5]" },
-              { name: "topologyDensity", interval: "[0, 50]" },
-              { intValue: 40, name: "nodeCount" },
-              { intValue: 162, name: "edgeCount" },
-              { intValue: 700, name: "worldSize" }
-            ],
-            type: "cardyFMConfig"
-          }
-        }
-      ],
-      linkCollection: [
-        { source: 1, target: 2, count: 1, id: "1->2" },
-        { source: 2, target: 3, count: 1, id: "2->3" },
-        { source: 3, target: 4, count: 1, id: "3->4" }
-      ],
+      stateCollection: [],
+      linkCollection: [],
       oldStateID: "",
       newStateID: "",
       selectedStateID: 1,
@@ -718,12 +597,6 @@ export default {
   color: black;
   overflow-y: auto;
   height: 290px;
-}
-
-.important-text {
-  color: rgb(0, 123, 255);
-  /* font-size: 11px; */
-  font-weight: bold;
 }
 
 .ui-col {

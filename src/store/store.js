@@ -58,7 +58,38 @@ export const store = new Vuex.Store({
     cfm_new: "",
     cfmValues: "",
     cfmAttributeDomainList: [],
-    events: [],
+    events: [
+      {
+        eventChannel: "Reconfigurations",
+        eventTimestamp: "20:28:41",
+        eventTitle: "New CFM",
+        eventText: "New initial CFM model arrived"
+      },
+      {
+        eventChannel: "Reconfigurations",
+        eventTimestamp: "20:29:18",
+        eventTitle: "New CFM config",
+        eventText: "The adaptation logic has changed the configuration"
+      },
+      {
+        eventChannel: "Reconfigurations",
+        eventTimestamp: "20:29:45",
+        eventTitle: "New CFM config",
+        eventText: "The adaptation logic has changed the configuration"
+      },
+      {
+        eventChannel: "Reconfigurations",
+        eventTimestamp: "20:30:06",
+        eventTitle: "New CFM config",
+        eventText: "The adaptation logic has changed the configuration"
+      },
+      {
+        eventChannel: "Reconfigurations",
+        eventTimestamp: "20:30:37",
+        eventTitle: "New CFM config",
+        eventText: "The adaptation logic has changed the configuration"
+      }
+    ],
     hoverColor: "rgb(23, 162, 184)"
   },
   mutations: {
@@ -92,7 +123,7 @@ export const store = new Vuex.Store({
       state.cfmValues = payload;
     },
     updateEvents(state, payload) {
-      state.events = payload;
+      state.events.push(payload);
     },
     updateToggle(state, payload) {
       state.toggleMap = payload;

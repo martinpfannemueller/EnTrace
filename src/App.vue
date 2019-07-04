@@ -188,6 +188,12 @@ export default {
   user-select: none;
 }
 
+.important-text {
+  color: rgb(0, 123, 255);
+  /* font-size: 11px; */
+  font-weight: bold;
+}
+
 h5 {
   font-size: 20px;
   margin-bottom: 0px;

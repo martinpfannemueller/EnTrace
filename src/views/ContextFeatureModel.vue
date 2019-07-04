@@ -871,10 +871,6 @@ export default {
   color: white;
 }
 
-#cfm-view {
-  overflow: scroll;
-}
-
 .node {
   cursor: pointer;
 }

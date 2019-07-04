@@ -10,7 +10,6 @@ function connectToConnector() {
   var metrics = [];
   var timestamps = [];
   var weights = [];
-  var events = [];
 
   // Set callback handlers
   client.onConnectionLost = onConnectionLost;
@@ -79,14 +78,22 @@ function connectToConnector() {
         loadWeights(JSON.parse(message.payloadString));
         break;
       case "fm": // TODO: Create
+        createNewEvent(
+          "Reconfigurations",
+          "New CFM",
+          "New initial CFM model arrived"
+        );
         console.log("New initial CFM model arrived");
         store.commit("updateCFM", JSON.parse(message.payloadString));
         break;
       case "cardyFMConfig": // TODO: Create
+        createNewEvent(
+          "Reconfigurations",
+          "New CFM config",
+          "The adaptation logic has changed the configuration"
+        );
         console.log("New CFM values arrived");
         store.commit("updateCFMValues", JSON.parse(message.payloadString));
-        events.push(JSON.parse(message.payloadString));
-        createNewEvent(events);
         break;
     }
   }
@@ -188,8 +195,15 @@ function connectToConnector() {
   }
 
   // Called when new event enters
-  function createNewEvent(events) {
-    store.commit("updateEvents", events);
+  function createNewEvent(channel, title, text) {
+    let timestamp = new Date().toLocaleTimeString();
+    let event = {
+      eventChannel: channel,
+      eventTimestamp: timestamp,
+      eventTitle: title,
+      eventText: text
+    };
+    store.commit("updateEvents", event);
   }
 }
 

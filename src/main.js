@@ -25,7 +25,8 @@ import {
   faCogs,
   faLink,
   faHashtag,
-  faTools
+  faTools,
+  faStopwatch
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -50,6 +51,7 @@ library.add(faCogs);
 library.add(faLink);
 library.add(faHashtag);
 library.add(faTools);
+library.add(faStopwatch);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("vue-context", VueContext);
