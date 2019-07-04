@@ -50,7 +50,7 @@ export const store = new Vuex.Store({
       {
         visible: true,
         h0: 10,
-        h: 21,
+        h: 51,
         id: 5,
         view: "event-view"
       }

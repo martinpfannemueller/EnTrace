@@ -1,12 +1,15 @@
 <template>
   <div>
     <b-row class="header">
-      <b-col>
+      <b-col cols="7">
         <h4>
           🐨
           <strong>CoalaViz</strong>: Enhanced Traceability in Adaptive
           Communication Systems
         </h4>
+      </b-col>
+      <b-col style="margin-top: 10px">
+        Hallo
       </b-col>
       <b-col cols="3">
         <h4 class="float-right" style="margin-right: 5px;">

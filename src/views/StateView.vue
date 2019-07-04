@@ -48,7 +48,9 @@
         </b-row>
       </b-col>
       <b-col cols="4">
+        <div v-if="stateCollection.length == 0" class="tooltip-state"></div>
         <tooltip
+          v-else
           class="tooltip-state"
           :state-collection="stateCollection"
           :selected-state="selectedStateID"
@@ -75,21 +77,143 @@ export default {
     return {
       name: "State View",
       id: 3,
-      width: 550,
-      height: 240,
+      width: 465,
+      height: 237,
       numberOfIntervals: 10,
       numberOfIntervalsEdit: 10,
       intervalChangeable: true,
-      circleRadius: 30,
+      circleRadius: 40,
       circleDistance: 150,
       stateViewSVG: "",
       statesSVG: "",
       linksSVG: "",
+      arrowsSVG: "",
       animiationDuration: 1500,
       adjustedCFMValues: [],
       cfmValuesHash: "",
-      stateCollection: [],
-      linkCollection: [],
+      stateCollection: [
+        {
+          id: 1,
+          hash: -623965318,
+          state: {
+            stringFeatures: [
+              { name: "root" },
+              { name: "fsSystem" },
+              { name: "fsWOpt" },
+              { name: "fsTCAlgo" },
+              { name: "fsEKTC" },
+              { name: "fcContext" },
+              { name: "fcMobSpeed" },
+              { name: "fcScenario" },
+              { name: "fcDATACOLLECTION" },
+              { name: "fcTopology" }
+            ],
+            stringAttributes: [
+              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
+              { intValue: 1, name: "fsTCint" },
+              { name: "parameterEKtcK", interval: "[1, 1.1]" },
+              { name: "mobilitySpeed", interval: "[0, 0.5]" },
+              { name: "topologyDensity", interval: "[0, 50]" },
+              { intValue: 40, name: "nodeCount" },
+              { intValue: 136, name: "edgeCount" },
+              { intValue: 700, name: "worldSize" }
+            ],
+            type: "cardyFMConfig"
+          }
+        },
+        {
+          id: 2,
+          hash: 2104244028,
+          state: {
+            stringFeatures: [
+              { name: "root" },
+              { name: "fsSystem" },
+              { name: "fsWOpt" },
+              { name: "fsTCAlgo" },
+              { name: "fsEKTC" },
+              { name: "fcContext" },
+              { name: "fcMobSpeed" },
+              { name: "fcScenario" },
+              { name: "fcDATACOLLECTION" },
+              { name: "fcTopology" }
+            ],
+            stringAttributes: [
+              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
+              { intValue: 1, name: "fsTCint" },
+              { name: "parameterEKtcK", interval: "[1, 1.1]" },
+              { name: "mobilitySpeed", interval: "[0, 0.5]" },
+              { name: "topologyDensity", interval: "[0, 50]" },
+              { intValue: 40, name: "nodeCount" },
+              { intValue: 134, name: "edgeCount" },
+              { intValue: 700, name: "worldSize" }
+            ],
+            type: "cardyFMConfig"
+          }
+        },
+        {
+          id: 3,
+          hash: -2027318470,
+          state: {
+            stringFeatures: [
+              { name: "root" },
+              { name: "fsSystem" },
+              { name: "fsWOpt" },
+              { name: "fsTCAlgo" },
+              { name: "fsEKTC" },
+              { name: "fcContext" },
+              { name: "fcMobSpeed" },
+              { name: "fcScenario" },
+              { name: "fcDATACOLLECTION" },
+              { name: "fcTopology" }
+            ],
+            stringAttributes: [
+              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
+              { intValue: 1, name: "fsTCint" },
+              { name: "parameterEKtcK", interval: "[1, 1.1]" },
+              { name: "mobilitySpeed", interval: "[0, 0.5]" },
+              { name: "topologyDensity", interval: "[0, 50]" },
+              { intValue: 40, name: "nodeCount" },
+              { intValue: 158, name: "edgeCount" },
+              { intValue: 700, name: "worldSize" }
+            ],
+            type: "cardyFMConfig"
+          }
+        },
+        {
+          id: 4,
+          hash: 377286721,
+          state: {
+            stringFeatures: [
+              { name: "root" },
+              { name: "fsSystem" },
+              { name: "fsWOpt" },
+              { name: "fsTCAlgo" },
+              { name: "fsEKTC" },
+              { name: "fcContext" },
+              { name: "fcMobSpeed" },
+              { name: "fcScenario" },
+              { name: "fcDATACOLLECTION" },
+              { name: "fcTopology" }
+            ],
+            stringAttributes: [
+              { name: "weightOptimizationThreshold", interval: "[0, 2]" },
+              { intValue: 1, name: "fsTCint" },
+              { name: "parameterEKtcK", interval: "[1, 1.1]" },
+              { name: "mobilitySpeed", interval: "[0, 0.5]" },
+              { name: "topologyDensity", interval: "[0, 50]" },
+              { intValue: 40, name: "nodeCount" },
+              { intValue: 162, name: "edgeCount" },
+              { intValue: 700, name: "worldSize" }
+            ],
+            type: "cardyFMConfig"
+          }
+        }
+      ],
+      linkCollection: [
+        { source: 1, target: 2, count: 1, id: "1->2" },
+        { source: 2, target: 3, count: 1, id: "2->3" },
+        { source: 3, target: 4, count: 1, id: "3->4" }
+      ],
       oldStateID: "",
       newStateID: "",
       selectedStateID: 1,
@@ -132,6 +256,7 @@ export default {
   },
   methods: {
     initializeSelector() {
+      let drawArrow = this.drawArrow;
       let cfmHelper = d3
         .selectAll("#state-view")
         .call(
@@ -146,18 +271,20 @@ export default {
       this.statesSVG = this.stateViewSVG.append("g");
       this.linksSVG = this.stateViewSVG.append("g");
       // Add arrow for link lines
-      this.stateViewSVG
+      this.arrowsSVG = this.stateViewSVG
         .append("svg:defs")
         .append("svg:marker")
         .attr("id", "triangle")
-        .attr("refX", 9)
-        .attr("refY", 9)
+        .attr("refX", this.circleRadius / 3)
+        .attr("refY", this.circleRadius / 3)
         .attr("markerWidth", this.circleRadius)
         .attr("markerHeight", this.circleRadius)
         .attr("markerUnits", "userSpaceOnUse")
         .attr("orient", "auto")
         .append("path")
-        .attr("d", "M 0 0 18 9 0 18 0 9")
+        .attr("d", function() {
+          return drawArrow();
+        })
         .style("fill", "black");
     },
     adjustIntervals() {
@@ -219,6 +346,7 @@ export default {
       // Check if new state or existing
       if (this.stateCollection.length === 0) {
         // Case of first state
+        this.selectedStateID = 1;
         console.log("A new state collection is created");
         this.stateCollection.push({
           id: 1,
@@ -283,6 +411,7 @@ export default {
       }
     },
     renderStateView(states, links) {
+      this.centerState();
       let drawConnection = this.drawConnection;
       let circleDistance = this.circleDistance;
       var state = this.statesSVG.selectAll("g.state").data(states, function(d) {
@@ -299,7 +428,11 @@ export default {
         .attr("class", "state")
         .attr("transform", function(d) {
           return (
-            "translate(" + d.id * circleDistance + "," + circleDistance + ")"
+            "translate(" +
+            d.id * circleDistance +
+            "," +
+            circleDistance / 2 +
+            ")"
           );
         })
         .on("mouseover", this.mouseoverState)
@@ -434,6 +567,34 @@ export default {
         return returnVariant;
       }
     },
+    drawArrow() {
+      let d =
+        "M 0 0 " +
+        (this.circleRadius / 3) * 2 +
+        " " +
+        this.circleRadius / 3 +
+        " 0 " +
+        (this.circleRadius / 3) * 2 +
+        " 0 " +
+        this.circleRadius / 3;
+      console.log(d);
+      return d;
+    },
+    adjustArrowSize() {
+      // @TODO: Implement
+      // let drawArrow = this.drawArrow;
+      // console.log(this.arrowsSVG);
+      // // this.arrowsSVG
+      // //   .selectAll("#triangle")
+      // //   .attr("refX", this.circleRadius / 3)
+      // //   .attr("refY", this.circleRadius / 3)
+      // //   .attr("markerWidth", this.circleRadius)
+      // //   .attr("markerHeight", this.circleRadius)
+      // //   .attr("d", function() {
+      // //     return drawArrow();
+      // //   });
+      // this.arrowsSVG.selectAll("marker").attr("refX", 300);
+    },
     mouseoverState(d, i, n) {
       let circleRadius = this.circleRadius;
 
@@ -497,6 +658,54 @@ export default {
         });
       this.selectedLinkID = "";
       this.selectedLinkCount = undefined;
+    },
+    centerState() {
+      // this.adjustArrowSize();
+      let numberOfStates = this.stateCollection.length;
+      let xTransform;
+      let yTransform;
+      let scale = 1;
+      let renderWidth =
+        (numberOfStates - 1) * this.circleDistance + 2 * this.circleRadius;
+
+      if (numberOfStates == 1) {
+        // Center single state
+        xTransform = this.width / 2 - this.circleDistance;
+        yTransform = this.height / 2 - this.circleDistance;
+      } else {
+        if (renderWidth < this.width) {
+          xTransform =
+            this.width / 2 -
+            this.circleDistance -
+            0.5 * this.circleDistance * (numberOfStates - 1);
+          yTransform = this.height / 2 - this.circleDistance;
+        } else {
+          scale = (this.width / renderWidth) * 0.99;
+          xTransform =
+            -this.circleDistance * scale + this.circleRadius * scale * 1.05;
+          yTransform =
+            (-this.circleDistance + this.circleRadius / 2) * scale +
+            this.height / 2;
+        }
+      }
+
+      console.log("This is the render width: " + renderWidth);
+      console.log("This is the scale: " + scale);
+      console.log("This is the xTransform: " + xTransform);
+      console.log("This is the yTransform: " + yTransform);
+      this.stateViewSVG
+        .transition()
+        .duration(this.animiationDuration)
+        .attr(
+          "transform",
+          "translate(" +
+            xTransform +
+            "," +
+            yTransform +
+            ") scale(" +
+            scale +
+            ")"
+        );
     }
   }
 };
@@ -504,22 +713,15 @@ export default {
 
 <style>
 .tooltip-state {
-  /* position: absolute; */
-  /* pointer-events: none; */
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 5px;
   font-size: 10px;
-  background: rgb(0, 0, 0, 0.7);
   border-radius: 3px;
-  color: white;
+  color: black;
   overflow-y: auto;
-  height: 270px;
+  height: 290px;
 }
 
 .important-text {
-  color: lightblue;
+  color: rgb(0, 123, 255);
   /* font-size: 11px; */
   font-weight: bold;
 }

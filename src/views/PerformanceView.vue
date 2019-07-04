@@ -12,7 +12,7 @@
       <b-col v-if="weights.length >= 1" cols="3">
         <b-button
           id="applyButton"
-          style="margin-top: 6px"
+          style="margin-top: 3px"
           size="sm"
           variant="primary"
           @click="applyWeights"

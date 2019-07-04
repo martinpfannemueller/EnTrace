@@ -12,9 +12,6 @@
       :target-node="targetNode"
     ></tooltip>
     <svg id="network-view" :height="height" :width="width" margin="auto"></svg>
-    <!-- <div v-else class="no-network">
-      No network loaded
-    </div> -->
     <b-row>
       <b-col>
         <b-button size="sm" variant="primary" @click="centerNetwork">

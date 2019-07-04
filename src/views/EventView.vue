@@ -1,8 +1,15 @@
 <template>
   <view-header :id="id" height="400px" :element-name="name">
-    <!-- <transition-group name="messages">
-      <event-message v-for="message in messages" :key="message.i"/>
-    </transition-group> -->
+    <b-row>
+      <b-col>
+        <b-form-group label="Select channels:">
+          <b-form-checkbox-group
+            v-model="selected"
+            :options="options"
+          ></b-form-checkbox-group>
+        </b-form-group>
+      </b-col>
+    </b-row>
     <event-message
       event-title="New CFM Value"
       event-channel="New CFM"
@@ -25,7 +32,9 @@ export default {
       name: "Event View",
       id: 5,
       width: 650,
-      height: 300
+      height: 300,
+      selected: ["Reconfigurations", "Network events", "Performance changes"],
+      options: ["Reconfigurations", "Network events", "Performance changes"]
     };
   },
   computed: {
