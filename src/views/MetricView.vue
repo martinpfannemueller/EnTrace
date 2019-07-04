@@ -26,6 +26,14 @@
       <b-col>
         <b-form-input v-model="timeInterval" size="sm"></b-form-input>
       </b-col>
+      <!-- <b-col>
+        <b-input-group size="sm">
+          <b-input-group-prepend is-text>
+            <input v-model="cutInterval" type="checkbox" />
+          </b-input-group-prepend>
+          <b-form-input v-model="timeInterval"></b-form-input>
+        </b-input-group>
+      </b-col> -->
     </b-row>
   </view-header>
 </template>

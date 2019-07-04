@@ -1,6 +1,7 @@
 <template>
   <view-header :id="id" :element-name="name">
     <tooltip
+      v-if="selectedElement != ''"
       v-show="showTooltips"
       class="tooltip-cfm"
       :selected-element="selectedElement"
@@ -173,7 +174,6 @@ export default {
         .append("g")
         .attr("transform", "translate(-10, 20)");
       this.cfmViewSVG = cfmHelper;
-
       this.tooltipDiv = d3.select(".tooltip-cfm");
     },
     establishRoot() {

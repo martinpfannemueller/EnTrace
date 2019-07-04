@@ -5,15 +5,6 @@
         <svg id="state-view" :height="height" :width="width" margin="auto" />
         <b-row>
           <b-col class="ui-col">
-            <b-button
-              size="sm"
-              variant="primary"
-              @click="renderStateView(stateCollection, linkCollection)"
-            >
-              <font-awesome-icon icon="expand" />&nbsp;Center
-            </b-button>
-          </b-col>
-          <b-col class="ui-col">
             <b-form-input v-model="circleDistance" size="sm"></b-form-input>
             <div style="margin-top: 0px" class="text-muted interface-text">
               Distance
@@ -26,13 +17,27 @@
             </div>
           </b-col>
           <b-col class="ui-col">
+            <b-button
+              size="sm"
+              variant="primary"
+              @click="renderStateView(stateCollection, linkCollection)"
+            >
+              <font-awesome-icon icon="tools" />&nbsp;Adjust
+            </b-button>
+          </b-col>
+
+          <b-col class="ui-col">
             <b-input-group size="sm">
-              <b-form-input v-model="numberOfIntervals"></b-form-input>
+              <b-form-input
+                v-model="numberOfIntervalsEdit"
+                :disabled="!intervalChangeable"
+              ></b-form-input>
               <b-input-group-append
                 ><b-button
                   variant="outline-secondary"
+                  :disabled="!intervalChangeable"
                   @click="adjustIntervals()"
-                  >Apply</b-button
+                  ><font-awesome-icon icon="check" />&nbsp;Set</b-button
                 ></b-input-group-append
               >
             </b-input-group>
@@ -73,6 +78,8 @@ export default {
       width: 550,
       height: 240,
       numberOfIntervals: 10,
+      numberOfIntervalsEdit: 10,
+      intervalChangeable: true,
       circleRadius: 30,
       circleDistance: 150,
       stateViewSVG: "",
@@ -152,6 +159,128 @@ export default {
         .append("path")
         .attr("d", "M 0 0 18 9 0 18 0 9")
         .style("fill", "black");
+    },
+    adjustIntervals() {
+      this.numberOfIntervals = this.numberOfIntervalsEdit;
+    },
+    adjustCFMValues(d) {
+      // Ensure interval button is set to inactive once the first values are adjusted
+      this.intervalChangeable = false;
+      let cfmAttributeDomainList = this.cfmAttributeDomainList;
+      let numberOfIntervals = parseInt(this.numberOfIntervals);
+      let index;
+      d.stringAttributes.forEach(function(d) {
+        if (d.realValue || d.realValue === 0) {
+          // console.log(cfmAttributeDomainList.findIndex(x => x.name === d.name));
+          index = cfmAttributeDomainList.findIndex(x => x.name === d.name);
+          // console.log(index);
+          let lowerBoundary = cfmAttributeDomainList[index].lowerBoundary;
+          let upperBoundary = cfmAttributeDomainList[index].upperBoundary;
+          let intervalSize =
+            (upperBoundary - lowerBoundary) / numberOfIntervals;
+          console.log("Lower boundary is: " + lowerBoundary);
+          console.log("Upper boundary is: " + upperBoundary);
+          console.log("Thus, the interval size is: " + intervalSize);
+          console.log("And finally, the real value is: " + d.realValue);
+          let interval = Math.floor(
+            (d.realValue - lowerBoundary) / intervalSize
+          );
+          // console.log(d.realValue - lowerBoundary);
+          console.log("Thus, our interval is: " + interval);
+          let result =
+            "[" +
+            (lowerBoundary + intervalSize * interval) +
+            ", " +
+            (lowerBoundary + intervalSize * (interval + 1)) +
+            "]";
+          d.interval = result;
+          console.log(
+            "This is the resulting interval for " + d.name + ": " + result
+          );
+          delete d.realValue;
+        }
+      });
+      return d;
+    },
+    hashStates(d) {
+      var inputString = JSON.stringify(d);
+      var hash = 0,
+        i,
+        chr;
+      if (inputString.length === 0) return hash;
+      for (i = 0; i < inputString.length; i++) {
+        chr = inputString.charCodeAt(i);
+        hash = (hash << 5) - hash + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash;
+    },
+    createStates() {
+      // Check if new state or existing
+      if (this.stateCollection.length === 0) {
+        // Case of first state
+        console.log("A new state collection is created");
+        this.stateCollection.push({
+          id: 1,
+          hash: this.cfmValuesHash,
+          state: this.adjustedCFMValues
+        });
+        // Set ID of current state
+        this.newStateID = 1;
+        // State collection already exists
+      } else {
+        // Set old stage ID to current (new) state ID (newStateID will be changed later)
+        console.log("The state collection already exists");
+        this.oldStateID = this.newStateID;
+        let index = this.stateCollection.findIndex(
+          x => x.hash === this.cfmValuesHash
+        );
+        console.log("The calculated index is: " + index);
+        console.log("And the new hash is: " + this.cfmValuesHash);
+        // Check if hash already exisits
+        if (index === -1) {
+          console.log("The new hash does not already exisit...");
+          // Update state ID (is +1 for the maximum link lenght)
+          this.newStateID = this.stateCollection.length + 1;
+          // Hash does not exist, push new hash into array
+          this.stateCollection.push({
+            id: this.newStateID,
+            hash: this.cfmValuesHash,
+            state: this.adjustedCFMValues
+          });
+          // Update links
+          this.linkCollection.push({
+            source: this.oldStateID,
+            target: this.newStateID,
+            count: 1,
+            id: this.oldStateID + "->" + this.newStateID
+          });
+        } else {
+          console.log("The state (hash) already exisits");
+          // hash already exists
+          // Update state ID (we are in the same state, so new = old)
+          this.newStateID = this.oldStateID;
+          // Update links
+          let index = this.linkCollection.findIndex(
+            x => x.source === this.oldStateID && x.target === this.newStateID
+          );
+          if (index === undefined) {
+            console.log("But it is a new connection");
+            // Case when connection does not exist yet
+            this.linkCollection.push({
+              source: this.oldStateID,
+              target: this.newStateID,
+              count: 1,
+              id: this.oldStateID.toString + "->" + this.newStateID.toString
+            });
+          } else {
+            console.log("The old state is equal to thew new state");
+            // Case when connection already exists
+            this.linkCollection[index].count =
+              this.linkCollection[index].count + 1;
+          }
+        }
+      }
     },
     renderStateView(states, links) {
       let drawConnection = this.drawConnection;
@@ -249,118 +378,6 @@ export default {
         .attr("d", function(d) {
           return drawConnection(d);
         });
-    },
-    hashStates(d) {
-      var inputString = JSON.stringify(d);
-      var hash = 0,
-        i,
-        chr;
-      if (inputString.length === 0) return hash;
-      for (i = 0; i < inputString.length; i++) {
-        chr = inputString.charCodeAt(i);
-        hash = (hash << 5) - hash + chr;
-        hash |= 0; // Convert to 32bit integer
-      }
-      return hash;
-    },
-    adjustCFMValues(d) {
-      let cfmAttributeDomainList = this.cfmAttributeDomainList;
-      let numberOfIntervals = this.numberOfIntervals;
-      let index;
-      d.stringAttributes.forEach(function(d) {
-        if (d.realValue || d.realValue === 0) {
-          // console.log(cfmAttributeDomainList.findIndex(x => x.name === d.name));
-          index = cfmAttributeDomainList.findIndex(x => x.name === d.name);
-          // console.log(index);
-          let lowerBoundary = cfmAttributeDomainList[index].lowerBoundary;
-          let upperBoundary = cfmAttributeDomainList[index].upperBoundary;
-          let intervalSize =
-            (upperBoundary - lowerBoundary) / numberOfIntervals;
-          // console.log("Lower boundary is: " + lowerBoundary);
-          // console.log("Upper boundary is: " + upperBoundary);
-          // console.log("Thus, the interval size is: " + intervalSize);
-          // console.log("And finally, the real value is: " + d.realValue);
-          let interval = (d.realValue - lowerBoundary) / intervalSize;
-          // console.log(d.realValue - lowerBoundary);
-          // console.log(interval);
-          let result =
-            "[" +
-            intervalSize * interval +
-            ", " +
-            intervalSize * (interval + 1) +
-            "]";
-          d.interval = interval;
-          console.log("This is the resulting interval: " + result);
-          delete d.realValue;
-        }
-      });
-      return d;
-    },
-    createStates() {
-      // Check if new state or existing
-      if (this.stateCollection.length === 0) {
-        // Case of first state
-        console.log("A new state collection is created");
-        this.stateCollection.push({
-          id: 1,
-          hash: this.cfmValuesHash,
-          state: this.cfmValues
-        });
-        // Set ID of current state
-        this.newStateID = 1;
-        // State collection already exists
-      } else {
-        // Set old stage ID to current (new) state ID (newStateID will be changed later)
-        console.log("The state collection already exists");
-        this.oldStateID = this.newStateID;
-        let index = this.stateCollection.findIndex(
-          x => x.hash === this.cfmValuesHash
-        );
-        console.log("The calculated index is: " + index);
-        console.log("And the new hash is: " + this.cfmValuesHash);
-        // Check if hash already exisits
-        if (index === -1) {
-          console.log("The new hash does not already exisit...");
-          // Update state ID (is +1 for the maximum link lenght)
-          this.newStateID = this.stateCollection.length + 1;
-          // Hash does not exist, push new hash into array
-          this.stateCollection.push({
-            id: this.newStateID,
-            hash: this.cfmValuesHash,
-            state: this.cfmValues
-          });
-          // Update links
-          this.linkCollection.push({
-            source: this.oldStateID,
-            target: this.newStateID,
-            count: 1,
-            id: this.oldStateID + "->" + this.newStateID
-          });
-        } else {
-          console.log("The state (hash) already exisits");
-          // hash already exists
-          // Update state ID (we are in the same state, so new = old)
-          this.newStateID = this.oldStateID;
-          // Update links
-          let index = this.linkCollection.findIndex(
-            x => x.source === this.oldStateID && x.target === this.newStateID
-          );
-          if (index === undefined) {
-            console.log("But it is a new connection");
-            // Case when connection does not exist yet
-            this.linkCollection.push({
-              source: this.oldStateID,
-              target: this.newStateID,
-              count: 1,
-              id: this.oldStateID.toString + "->" + this.newStateID.toString
-            });
-          } else {
-            console.log("The old state is equal to thew new state");
-            // Case when connection already exists
-            this.linkCollection[index].count++;
-          }
-        }
-      }
     },
     drawConnection(d) {
       let circleRadius = parseInt(this.circleRadius);

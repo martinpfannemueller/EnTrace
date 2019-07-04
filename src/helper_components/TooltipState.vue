@@ -47,7 +47,7 @@
         {{
           attribute.intValue != undefined
             ? attribute.intValue
-            : attribute.realValue
+            : attribute.interval
         }}</span
       ><span
         v-show="

@@ -12,6 +12,7 @@
       <b-col v-if="weights.length >= 1" cols="3">
         <b-button
           id="applyButton"
+          style="margin-top: 6px"
           size="sm"
           variant="primary"
           @click="applyWeights"
@@ -59,7 +60,6 @@ export default {
   display: block;
   width: 100%;
   text-align: center;
-  vertical-align: middle;
   line-height: 55px;
 }
 </style>

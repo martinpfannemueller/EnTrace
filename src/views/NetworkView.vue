@@ -21,9 +21,6 @@
           <font-awesome-icon icon="expand" />&nbsp;Center
         </b-button>
       </b-col>
-      <b-col>
-        <b-form-input type="range" min="0" max="5" step="0.1"></b-form-input>
-      </b-col>
     </b-row>
   </view-header>
 </template>

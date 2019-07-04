@@ -184,7 +184,7 @@ export default {
 }
 
 .interface-text {
-  font-size: 12px;
+  font-size: 14px;
   user-select: none;
 }
 

@@ -36,7 +36,7 @@ export const store = new Vuex.Store({
       {
         visible: true,
         h0: 10,
-        h: 55,
+        h: 58,
         id: 3,
         view: "state-view"
       },

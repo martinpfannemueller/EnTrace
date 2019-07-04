@@ -24,7 +24,8 @@ import {
   faPlusCircle,
   faCogs,
   faLink,
-  faHashtag
+  faHashtag,
+  faTools
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -48,6 +49,7 @@ library.add(faPalette);
 library.add(faCogs);
 library.add(faLink);
 library.add(faHashtag);
+library.add(faTools);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("vue-context", VueContext);

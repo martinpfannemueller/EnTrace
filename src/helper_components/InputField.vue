@@ -2,6 +2,7 @@
   <b-col>
     <b-form-input
       v-model="modelledFactor"
+      style="margin-top: 6px"
       size="sm"
       @blur="
         updateSingleWeight({
@@ -10,7 +11,7 @@
         })
       "
     ></b-form-input>
-    <div style="margin-top: 5px" class="text-muted interface-text">
+    <div class="text-muted interface-text">
       {{ weight }}
     </div>
   </b-col>
