@@ -1,19 +1,23 @@
 <template>
   <b-card style="margin-bottom: 5px">
-    <b-row>
-      <b-col class="vertical" cols="3">
-        <b-badge> {{ eventChannel }}</b-badge>
-      </b-col>
-      <b-col class="vertical" cols="9" style="border-left: 1px solid grey">
-        <p>
-          <font-awesome-icon icon="stopwatch" />
-          &nbsp;Timestamp:
-          <strong class="important-text">{{ eventTimestamp }}</strong
-          >&nbsp;| <strong>{{ eventTitle }}: </strong>
-          {{ eventText }}
-        </p>
-      </b-col>
-    </b-row>
+    <p>
+      <span>
+        <b-badge style="font-size: 12px;">
+          <!-- eslint-disable-next-line prettier/prettier -->
+          <font-awesome-icon icon="clock" />&nbsp;{{ eventTimestamp }}</b-badge>
+      </span>
+      <span style="text-align: right;">
+        <!-- eslint-disable-next-line prettier/prettier -->
+        <b-badge style="font-size: 12px;" :variant="eventIncomming ? 'info' : 'primary'">
+          <!-- eslint-disable-next-line prettier/prettier -->
+          <font-awesome-icon :icon="eventIncomming ? 'sign-in-alt' : 'sign-out-alt'"/>
+          &nbsp;{{ eventChannel }}
+        </b-badge>
+      </span>
+    </p>
+    <p>
+      <strong>{{ eventTitle }}: </strong> {{ eventText }}
+    </p>
   </b-card>
 </template>
 
@@ -35,25 +39,28 @@ export default {
     eventTimestamp: {
       type: String,
       default: ""
+    },
+    eventIncomming: {
+      type: Boolean,
+      default: true
     }
   }
 };
 </script>
 
 <style scoped>
-p {
-  font-size: 10px;
+h4 {
+  font-size: 12px;
   margin: 0px;
 }
 
-.card-body {
-  padding: 7px;
+p {
+  font-size: 12px;
+  margin: 0px;
+  width: 100%;
 }
 
-.vertical {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+.card-body {
+  padding: 4px;
 }
 </style>

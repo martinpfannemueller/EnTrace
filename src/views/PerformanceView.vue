@@ -30,6 +30,7 @@ import ViewHeader from "../helper_components/ViewHeader";
 import InputField from "../helper_components/InputField";
 // eslint-disable-next-line no-unused-vars
 import { client, sendMessage } from "../connector/mqtt-connector";
+import { createNewEvent } from "../store/store";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -49,7 +50,12 @@ export default {
   methods: {
     applyWeights() {
       sendMessage(this.weights, "startOfSimulation");
-      console.log("New weights applied");
+      createNewEvent(
+        "Performance View",
+        "Weights sent",
+        "The following weights have been sent: " + JSON.stringify(this.weights),
+        false
+      );
     }
   }
 };

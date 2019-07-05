@@ -56,7 +56,7 @@ export default {
       let index = this.id; // Get item by using the ID prop of each View
       let toggleMap = this.toggleMap; // Get current toggleMap from store
       toggleMap[index].visible = !toggleMap[index].visible; // Change toggle map to reflect new toggle change
-      store.commit("updateToggle", toggleMap); // Commit toggle map to store
+      store.commit("updateToggleMap", toggleMap); // Commit toggle map to store
       this.showCollapse = !this.showCollapse; // Toggle view
       this.$emit("toggle-clicked"); // Send emit
     }
@@ -72,24 +72,9 @@ export default {
   padding-bottom: 3px;
 }
 
-.card-title {
-  padding-top: 1px;
-  padding-bottom: 1px;
-  /* margin-bottom: 8px; */
-}
-
-.card-subtitle {
-  margin-bottom: 4px;
-}
-
 .card-body {
   padding: 6px;
   clear: both;
-}
-
-.card-footer {
-  padding-top: 1px;
-  padding-bottom: 1px;
 }
 
 .vertical {

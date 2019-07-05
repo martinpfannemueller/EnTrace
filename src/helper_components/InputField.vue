@@ -20,7 +20,6 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
-  // props: ["weight", "factor", "index"],
   props: {
     weight: {
       type: String,
@@ -58,8 +57,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.b-form-input {
-  margin: 5px;
-}
-</style>
+<style></style>

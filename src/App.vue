@@ -28,13 +28,11 @@
         <component :is="item.view" />
       </grid-item>
     </grid-layout>
-    <!-- <coala-footer/> -->
   </b-container>
 </template>
 
 <script>
 import CoalaHeader from "./helper_components/CoalaHeader";
-import CoalaFooter from "./helper_components/CoalaFooter";
 import NetworkView from "./views/NetworkView.vue";
 import MetricView from "./views/MetricView.vue";
 import ContextFeaureModel from "./views/ContextFeatureModel.vue";
@@ -47,7 +45,6 @@ import { store } from "./store/store";
 export default {
   components: {
     "coala-header": CoalaHeader,
-    "coala-footer": CoalaFooter,
     "network-view": NetworkView,
     "metric-view": MetricView,
     "context-feature-model": ContextFeaureModel,
@@ -73,8 +70,8 @@ export default {
         {
           view: "metric-view",
           i: 1,
-          x: 0,
-          y: 1,
+          x: 1,
+          y: 2,
           w: 1,
           h: NaN,
           isResizable: false,
@@ -83,8 +80,8 @@ export default {
         {
           view: "context-feature-model",
           i: 2,
-          x: 1,
-          y: 0,
+          x: 0,
+          y: 1,
           w: 1,
           h: NaN,
           isResizable: false,
@@ -94,7 +91,7 @@ export default {
           view: "state-view",
           i: 3,
           x: 1,
-          y: 2,
+          y: 1,
           w: 1,
           h: NaN,
           isResizable: false,
@@ -103,8 +100,8 @@ export default {
         {
           view: "performance-view",
           i: 4,
-          x: 1,
-          y: 1,
+          x: 0,
+          y: 2,
           w: 1,
           h: NaN,
           isResizable: false,
@@ -114,7 +111,7 @@ export default {
           view: "event-view",
           i: 5,
           x: 1,
-          y: 3,
+          y: 0,
           w: 1,
           h: NaN,
           isResizable: false,
@@ -132,9 +129,8 @@ export default {
     // eslint-disable-next-line no-unused-vars
     store.subscribe((mutation, state) => {
       // TODO: Fix that this funciton is called so often i.e. use watch
-      if (mutation.type == "updateToggle") {
+      if (mutation.type == "updateToggleMap") {
         let toggleAll = this.toggleAll;
-        console.log("Layout changed");
         toggleAll();
       }
     });
@@ -167,7 +163,7 @@ export default {
 .header {
   position: sticky;
   top: 0;
-  z-index: 1020;
+  z-index: 1;
 }
 .vue-grid-item.vue-grid-placeholder {
   background: radial-gradient(

@@ -1,28 +1,29 @@
 <template>
   <view-header :id="id" height="400px" :element-name="name">
-    <b-row class="interface-text">
-      <b-col>
-        <strong style="margin-left: 3px">Channels: </strong>
-      </b-col>
-      <b-col cols="10">
+    <b-row>
+      <!-- <b-col cols="2" class="interface-text">
+        Channels:
         <b-form-group>
           <b-form-checkbox-group
             v-model="selected"
             :options="options"
           ></b-form-checkbox-group>
         </b-form-group>
+      </b-col> -->
+      <b-col>
+        <div class="event-holder">
+          <event-message
+            v-for="(event, index) in events"
+            :key="index"
+            :event-title="event.eventTitle"
+            :event-channel="event.eventChannel"
+            :event-text="event.eventText"
+            :event-timestamp="event.eventTimestamp"
+            :event-incomming="event.eventIncomming"
+          ></event-message>
+        </div>
       </b-col>
     </b-row>
-    <div class="event-holder">
-      <event-message
-        v-for="event in events"
-        :key="event.eventTimestamp"
-        :event-title="event.eventTitle"
-        :event-channel="event.eventChannel"
-        :event-text="event.eventText"
-        :event-timestamp="event.eventTimestamp"
-      ></event-message>
-    </div>
   </view-header>
 </template>
 
@@ -49,12 +50,7 @@ export default {
       return this.$store.state.events;
     }
   },
-  watch: {
-    events: function(val) {
-      console.log("New events arrived");
-      console.log(val);
-    }
-  },
+  watch: {},
   mounted() {},
   methods: {}
 };
@@ -63,7 +59,7 @@ export default {
 <style>
 .event-holder {
   display: block;
-  height: 200px;
+  height: 242px;
   margin: 3px;
   overflow-y: auto;
 }

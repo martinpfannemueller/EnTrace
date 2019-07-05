@@ -7,12 +7,10 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import { store } from "./store/store";
 import { connectToConnector } from "./connector/mqtt-connector";
 import {
-  faExpandArrowsAlt,
   faExpand,
   faCheck,
   faCheckSquare,
   faTimesCircle,
-  faPowerOff,
   faInfoCircle,
   faRulerHorizontal,
   faCalculator,
@@ -26,16 +24,16 @@ import {
   faLink,
   faHashtag,
   faTools,
-  faStopwatch
+  faSignInAlt,
+  faSignOutAlt,
+  faClock
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { VueContext } from "vue-context";
 
-library.add(faPowerOff);
 library.add(faPlusCircle);
 library.add(faMinusCircle);
-library.add(faExpandArrowsAlt);
 library.add(faExpand);
 library.add(faCheck);
 library.add(faCheckSquare);
@@ -51,11 +49,12 @@ library.add(faCogs);
 library.add(faLink);
 library.add(faHashtag);
 library.add(faTools);
-library.add(faStopwatch);
+library.add(faClock);
+library.add(faSignInAlt);
+library.add(faSignOutAlt);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.component("vue-context", VueContext);
-Vue.com;
 Vue.use(Vuex);
 Vue.use(BootstrapVue);
 

@@ -1,6 +1,7 @@
 <template>
   <view-header :id="id" :element-name="name">
     <tooltip
+      v-if="selectedNode != '' || selectedEdge != ''"
       class="tooltip-network"
       :selected-node="selectedNode"
       :x="x"
@@ -42,7 +43,7 @@ export default {
       fontSize: 14,
       maxY: 0,
       maxX: 0,
-      animiationDuration: 200,
+      animiationDuration: 1000,
       networkViewSVG: "",
       nodesSVG: "",
       edgesSVG: "",

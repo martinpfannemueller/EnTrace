@@ -64,7 +64,7 @@ import Tooltip from "../helper_components/TooltipCFM";
 // eslint-disable-next-line no-unused-vars
 import { client, sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
-import { store } from "../store/store";
+import { createNewEvent, store } from "../store/store";
 import { mapMutations } from "vuex";
 export default {
   components: {
@@ -101,9 +101,9 @@ export default {
     };
   },
   computed: {
-    new_CFM() {
-      if (this.$store.state.cfm_new != "") {
-        return this.$store.state.cfm_new.fm.root;
+    cfm() {
+      if (this.$store.state.cfm != "") {
+        return this.$store.state.cfm.fm.root;
       } else return "";
     },
     cfmValues() {
@@ -117,7 +117,7 @@ export default {
     autoAdjustHeight: function() {
       this.renderNewCFM(this.root);
     },
-    new_CFM: function(val) {
+    cfm: function(val) {
       if (val == "") {
         console.log("Error");
       } else {
@@ -147,15 +147,15 @@ export default {
     this.tree = d3.tree().size([this.treeWidth, this.treeHeight]);
 
     // // Establish root
-    if (this.new_CFM == "") {
-      console.log("Root not ready yet");
+    if (this.cfm == "") {
+      // console.log("Root not ready yet");
     } else {
       this.establishRoot();
     }
 
     // // Render the CFM
     if (this.root == "") {
-      console.log("CFM not ready yet");
+      // console.log("CFM not ready yet");
     } else {
       this.renderNewCFM(this.root);
     }
@@ -177,7 +177,7 @@ export default {
       this.tooltipDiv = d3.select(".tooltip-cfm");
     },
     establishRoot() {
-      this.root = d3.hierarchy(this.new_CFM, function(d) {
+      this.root = d3.hierarchy(this.cfm, function(d) {
         // console.log(d);
         if (d.children) {
           if (d.children.length == 0) {
@@ -190,7 +190,6 @@ export default {
       });
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
-      // console.log(this.root);
     },
     renderNewCFM(source) {
       // Load local variables as "this." does not work inside D3 node operations
@@ -247,7 +246,6 @@ export default {
         .on("click", this.collapse)
         .on("contextmenu", function(d) {
           d3.event.preventDefault();
-          this.selectedFeature = d.data.name;
           contextMenu(d);
         });
 
@@ -807,6 +805,7 @@ export default {
 
       // TOOLTIP SECTION
       this.setTooltipElements(d);
+      this.selectedFeature = d.data.name;
     },
     mouseout(d, i, n) {
       let colorNodes = this.colorNodes;
@@ -852,6 +851,13 @@ export default {
     },
     sendFeature(d) {
       sendMessage(d, "startOfSimulation");
+      createNewEvent(
+        "Context Feature Model",
+        "Feature sent",
+        "The following feature has been sent to the adaption logic for force adaptation: " +
+          d,
+        false
+      );
     }
   }
 };

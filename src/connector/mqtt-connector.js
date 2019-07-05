@@ -1,10 +1,12 @@
 import Paho from "paho-mqtt";
-import { store } from "../store/store";
+import { createNewEvent, store } from "../store/store";
 
+// Create a client instance
 const client = new Paho.Client("localhost", 8080, "clientId");
 
+// Function to connect, handles all incomming event messages
 function connectToConnector() {
-  // Create a client instance
+  // Helper variables, will be committed to the store
   var edges = [];
   var nodes = [];
   var metrics = [];
@@ -20,9 +22,15 @@ function connectToConnector() {
     onSuccess: onConnect
   });
 
+  // Connecting and subscribing to all necessary channels
   function onConnect() {
     // Connect
-    console.log("Connection successful!");
+    createNewEvent(
+      "General",
+      "Connection successful",
+      "CoalaViz is now connected to the MQTT connector"
+    );
+    // Set "connected" status to true
     store.commit("simulationStatusChange", true);
     client.subscribe("startOfSimulation");
     client.subscribe("add-edge");
@@ -36,9 +44,13 @@ function connectToConnector() {
     client.subscribe("cardyFMConfig");
   }
 
+  // Function to handle lost connections
   function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
-      console.log("onConnectionLost:" + responseObject.errorMessage);
+      let eventText =
+        "CoalaViz lost its connection to the MQTT connector: " +
+        responseObject.errorMessage;
+      createNewEvent("General", "Connection lost", eventText);
       store.commit("simulationStatusChange", false);
     }
   }
@@ -47,6 +59,7 @@ function connectToConnector() {
   function onMessageArrived(message) {
     switch (message.destinationName) {
       case "startOfSimulation":
+        console.log(JSON.parse(message.payloadString));
         store.commit("simulationStatusChange", true);
         break;
       case "add-node":
@@ -70,29 +83,30 @@ function connectToConnector() {
         modifyEdges(JSON.parse(message.payloadString), edges);
         break;
       case "new-metric-value":
-        console.log(JSON.parse(message.payloadString).metric);
         newMetric(JSON.parse(message.payloadString), metrics);
         break;
       case "new-metricWeights":
-        console.log("New metric weights arrived");
-        loadWeights(JSON.parse(message.payloadString));
+        createNewEvent(
+          "Performance View",
+          "New metric weights arrived",
+          "The adaptation logic has sent initial performance weights"
+        );
+        newWeights(JSON.parse(message.payloadString));
         break;
       case "fm": // TODO: Create
         createNewEvent(
-          "Reconfigurations",
-          "New CFM",
-          "New initial CFM model arrived"
+          "Context Feature Model",
+          "New context feature model",
+          "A new initial context feature model has arrived"
         );
-        console.log("New initial CFM model arrived");
         store.commit("updateCFM", JSON.parse(message.payloadString));
         break;
       case "cardyFMConfig": // TODO: Create
         createNewEvent(
-          "Reconfigurations",
-          "New CFM config",
+          "Context Feature Model",
+          "New configuration",
           "The adaptation logic has changed the configuration"
         );
-        console.log("New CFM values arrived");
         store.commit("updateCFMValues", JSON.parse(message.payloadString));
         break;
     }
@@ -131,8 +145,7 @@ function connectToConnector() {
   // Called when edges are modified/deleted
   function modifyEdges(modEdge, edges) {
     // Set index to determine which edge element is to be modified
-    let index;
-    index = edges.findIndex(x => x.edgeId === modEdge.edgeId);
+    let index = edges.findIndex(x => x.edgeId === modEdge.edgeId);
 
     if (modEdge.type == "remove-edge") {
       // Remove edge if type is set to remove
@@ -170,7 +183,7 @@ function connectToConnector() {
       // Find index of metric
       let index = metrics.findIndex(x => x.name === newValue.metric);
       // Case metric is not yet in metrics
-      if (index == undefined) {
+      if (index == undefined || index == -1) {
         metrics.push({
           name: newValue.metric,
           data: [newValue.value]
@@ -189,24 +202,13 @@ function connectToConnector() {
   }
 
   // Called when new metric weights arrive
-  function loadWeights(newWeights) {
+  function newWeights(newWeights) {
     weights = newWeights.stringMetricWeights;
     store.commit("updateWeights", weights);
   }
-
-  // Called when new event enters
-  function createNewEvent(channel, title, text) {
-    let timestamp = new Date().toLocaleTimeString();
-    let event = {
-      eventChannel: channel,
-      eventTimestamp: timestamp,
-      eventTitle: title,
-      eventText: text
-    };
-    store.commit("updateEvents", event);
-  }
 }
 
+// Called when a new messge is send back to the adaptation logic
 function sendMessage(payload, channel) {
   let stringMessage = JSON.stringify(payload);
   let message = new Paho.Message(stringMessage);

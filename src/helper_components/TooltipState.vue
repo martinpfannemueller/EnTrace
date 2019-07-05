@@ -1,18 +1,12 @@
 <template>
   <b-card>
     <div v-if="stateCollection.length >= 1" class="tooltip-state">
-      <!-- Number of states:
-    <span class="important-text">{{ stateCollection.length }}</span>
-    <br /> -->
-      <transition name="fade">
-        <div v-show="selectedLink != ''">
-          <font-awesome-icon icon="link" />&nbsp;Selected link:
-          <span class="important-text"> {{ selectedLink }}</span> <br />
-          <font-awesome-icon icon="weight" />&nbsp;Link count:
-          <span class="important-text"> {{ linkCount }}</span> <br />
-          <hr />
-        </div>
-      </transition>
+      <div v-show="selectedLink != ''">
+        <font-awesome-icon icon="link" />&nbsp;Selected link:
+        <span class="important-text"> {{ selectedLink }}</span> <br />
+        <font-awesome-icon icon="weight" />&nbsp;Link count:
+        <span class="important-text"> {{ linkCount }}</span> <br />
+      </div>
       <font-awesome-icon icon="cogs" />&nbsp;Selected state:
       <span class="important-text"> {{ selectedState }}</span> <br />
       <font-awesome-icon icon="hashtag" />&nbsp;Hash:
@@ -26,13 +20,7 @@
         :key="feature.name"
       >
         <!-- eslint-disable-next-line prettier/prettier -->
-      {{ feature.name}}<span
-          v-show="
-            index !=
-              stateCollection[selectedState - 1].state.stringFeatures.length - 1
-          "
-          >,</span
-        >
+      {{ feature.name }}<span v-show=" index !=stateCollection[selectedState - 1].state.stringFeatures.length - 1">,</span>
       </span>
       <br />
       <br />
@@ -97,19 +85,6 @@ export default {
 </script>
 
 <style scoped>
-hr {
-  border: 0.5px solid white;
-  margin-top: 4px;
-  margin-bottom: 4px;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-
 .card-body {
   padding: 7px;
 }

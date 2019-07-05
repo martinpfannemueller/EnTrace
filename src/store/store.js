@@ -3,7 +3,19 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
+function createNewEvent(channel, title, text, incomming = true) {
+  let timestamp = new Date().toLocaleTimeString();
+  let event = {
+    eventChannel: channel,
+    eventTimestamp: timestamp,
+    eventTitle: title,
+    eventText: text,
+    eventIncomming: incomming
+  };
+  store.commit("updateEvents", event);
+}
+
+const store = new Vuex.Store({
   state: {
     connected: false,
     edges: [],
@@ -55,41 +67,10 @@ export const store = new Vuex.Store({
         view: "event-view"
       }
     ],
-    cfm_new: "",
+    cfm: "",
     cfmValues: "",
     cfmAttributeDomainList: [],
-    events: [
-      {
-        eventChannel: "Reconfigurations",
-        eventTimestamp: "20:28:41",
-        eventTitle: "New CFM",
-        eventText: "New initial CFM model arrived"
-      },
-      {
-        eventChannel: "Reconfigurations",
-        eventTimestamp: "20:29:18",
-        eventTitle: "New CFM config",
-        eventText: "The adaptation logic has changed the configuration"
-      },
-      {
-        eventChannel: "Reconfigurations",
-        eventTimestamp: "20:29:45",
-        eventTitle: "New CFM config",
-        eventText: "The adaptation logic has changed the configuration"
-      },
-      {
-        eventChannel: "Reconfigurations",
-        eventTimestamp: "20:30:06",
-        eventTitle: "New CFM config",
-        eventText: "The adaptation logic has changed the configuration"
-      },
-      {
-        eventChannel: "Reconfigurations",
-        eventTimestamp: "20:30:37",
-        eventTitle: "New CFM config",
-        eventText: "The adaptation logic has changed the configuration"
-      }
-    ],
+    events: [],
     hoverColor: "rgb(23, 162, 184)"
   },
   mutations: {
@@ -117,15 +98,15 @@ export const store = new Vuex.Store({
       state.weights[index] = newWeight;
     },
     updateCFM(state, payload) {
-      state.cfm_new = payload;
+      state.cfm = payload;
     },
     updateCFMValues(state, payload) {
       state.cfmValues = payload;
     },
     updateEvents(state, payload) {
-      state.events.push(payload);
+      state.events.unshift(payload);
     },
-    updateToggle(state, payload) {
+    updateToggleMap(state, payload) {
       state.toggleMap = payload;
     },
     updateAttributeDomainList(state, payload) {
@@ -133,3 +114,5 @@ export const store = new Vuex.Store({
     }
   }
 });
+
+export { createNewEvent, store };

@@ -1,18 +1,15 @@
 <template>
   <div>
     <b-row class="header">
-      <b-col cols="7">
+      <b-col cols="9">
         <h4>
           🐨
           <strong>CoalaViz</strong>: Enhanced Traceability in Adaptive
           Communication Systems
         </h4>
       </b-col>
-      <b-col style="margin-top: 10px">
-        x
-      </b-col>
       <b-col cols="3">
-        <h4 class="float-right" style="margin-right: 5px;">
+        <h4 class="float-right">
           Status:
           <b-badge :variant="connected ? 'success' : 'danger'">
             <font-awesome-icon
@@ -44,10 +41,13 @@ hr {
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 0px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 h4 {
-  margin-top: 8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 </style>

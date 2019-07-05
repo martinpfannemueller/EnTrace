@@ -68,6 +68,7 @@
 import ViewHeader from "../helper_components/ViewHeader";
 import * as d3 from "d3";
 import Tooltip from "../helper_components/TooltipState.vue";
+import { createNewEvent } from "../store/store";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -78,7 +79,7 @@ export default {
       name: "State View",
       id: 3,
       width: 465,
-      height: 237,
+      height: 232,
       numberOfIntervals: 10,
       numberOfIntervalsEdit: 10,
       intervalChangeable: true,
@@ -123,7 +124,6 @@ export default {
         );
         // Hash the adjusted states
         this.cfmValuesHash = this.hashStates(this.adjustedCFMValues);
-        console.log(this.cfmValuesHash);
         // Based on the states, adjust the stateCollection and linkCollection
         this.createStates();
         this.renderStateView(this.stateCollection, this.linkCollection);
@@ -168,6 +168,13 @@ export default {
     },
     adjustIntervals() {
       this.numberOfIntervals = this.numberOfIntervalsEdit;
+      createNewEvent(
+        "State View",
+        "Interval changed",
+        "Intervals for real value split were changed to " +
+          this.numberOfIntervals,
+        false
+      );
     },
     adjustCFMValues(d) {
       // Ensure interval button is set to inactive once the first values are adjusted
@@ -184,15 +191,15 @@ export default {
           let upperBoundary = cfmAttributeDomainList[index].upperBoundary;
           let intervalSize =
             (upperBoundary - lowerBoundary) / numberOfIntervals;
-          console.log("Lower boundary is: " + lowerBoundary);
-          console.log("Upper boundary is: " + upperBoundary);
-          console.log("Thus, the interval size is: " + intervalSize);
-          console.log("And finally, the real value is: " + d.realValue);
+          // console.log("Lower boundary is: " + lowerBoundary);
+          // console.log("Upper boundary is: " + upperBoundary);
+          // console.log("Thus, the interval size is: " + intervalSize);
+          // console.log("And finally, the real value is: " + d.realValue);
           let interval = Math.floor(
             (d.realValue - lowerBoundary) / intervalSize
           );
           // console.log(d.realValue - lowerBoundary);
-          console.log("Thus, our interval is: " + interval);
+          // console.log("Thus, our interval is: " + interval);
           let result =
             "[" +
             (lowerBoundary + intervalSize * interval) +
@@ -200,9 +207,9 @@ export default {
             (lowerBoundary + intervalSize * (interval + 1)) +
             "]";
           d.interval = result;
-          console.log(
-            "This is the resulting interval for " + d.name + ": " + result
-          );
+          // console.log(
+          //   "This is the resulting interval for " + d.name + ": " + result
+          // );
           delete d.realValue;
         }
       });
@@ -234,6 +241,12 @@ export default {
         });
         // Set ID of current state
         this.newStateID = 1;
+        createNewEvent(
+          "State View",
+          "New hash state created",
+          "Based on the reconfiguration, a new hash state was created: " +
+            this.cfmValuesHash
+        );
         // State collection already exists
       } else {
         // Set old stage ID to current (new) state ID (newStateID will be changed later)
@@ -242,7 +255,7 @@ export default {
         let index = this.stateCollection.findIndex(
           x => x.hash === this.cfmValuesHash
         );
-        console.log("The calculated index is: " + index);
+        // console.log("The calculated index is: " + index);
         console.log("And the new hash is: " + this.cfmValuesHash);
         // Check if hash already exisits
         if (index === -1) {
@@ -262,11 +275,22 @@ export default {
             count: 1,
             id: this.oldStateID + "->" + this.newStateID
           });
+          createNewEvent(
+            "State View",
+            "New hash state created",
+            "Based on the reconfiguration, a new hash state was created: " +
+              this.cfmValuesHash
+          );
         } else {
           console.log("The state (hash) already exisits");
           // hash already exists
           // Update state ID (we are in the same state, so new = old)
           this.newStateID = this.oldStateID;
+          createNewEvent(
+            "State View",
+            "Hash state already exisits",
+            "The new reconfiguration was hased before as: " + this.cfmValuesHash
+          );
           // Update links
           let index = this.linkCollection.findIndex(
             x => x.source === this.oldStateID && x.target === this.newStateID
@@ -456,7 +480,6 @@ export default {
         (this.circleRadius / 3) * 2 +
         " 0 " +
         this.circleRadius / 3;
-      console.log(d);
       return d;
     },
     adjustArrowSize() {
@@ -480,7 +503,7 @@ export default {
       d3.select(n[i])
         .selectAll("circle")
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("r", circleRadius * 1)
         .attr("stroke-width", 5)
         .attr("fill", this.hoverColor);
@@ -489,11 +512,9 @@ export default {
       d3.select(n[i])
         .selectAll(".textLabel")
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("font-size", 30)
         .attr("fill", "white");
-
-      console.log(d);
       this.selectedStateID = d.id;
     },
     mouseoutState(d, i, n) {
@@ -502,7 +523,7 @@ export default {
       d3.select(n[i])
         .selectAll("circle")
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("r", circleRadius)
         .attr("stroke-width", 2)
         .attr("fill", "white");
@@ -511,26 +532,25 @@ export default {
       d3.select(n[i])
         .selectAll(".textLabel")
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("font-size", 20)
         .attr("fill", "black");
     },
     mouseoverLink(d, i, n) {
       d3.select(n[i])
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("stroke", this.hoverColor)
         .attr("stroke-width", function(d) {
           return d.count + 3;
         });
       this.selectedLinkID = d.id;
-      console.log(d.id);
       this.selectedLinkCount = d.count;
     },
     mouseoutLink(d, i, n) {
       d3.select(n[i])
         .transition()
-        .duration(200)
+        .duration(800)
         .attr("stroke", "black")
         .attr("stroke-width", function(d) {
           return d.count + 1;
@@ -568,10 +588,10 @@ export default {
         }
       }
 
-      console.log("This is the render width: " + renderWidth);
-      console.log("This is the scale: " + scale);
-      console.log("This is the xTransform: " + xTransform);
-      console.log("This is the yTransform: " + yTransform);
+      // console.log("This is the render width: " + renderWidth);
+      // console.log("This is the scale: " + scale);
+      // console.log("This is the xTransform: " + xTransform);
+      // console.log("This is the yTransform: " + yTransform);
       this.stateViewSVG
         .transition()
         .duration(this.animiationDuration)
@@ -596,7 +616,7 @@ export default {
   border-radius: 3px;
   color: black;
   overflow-y: auto;
-  height: 290px;
+  height: 288px;
 }
 
 .ui-col {
