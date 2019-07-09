@@ -65,6 +65,11 @@ export default {
 </script>
 
 <style scoped>
+h5 {
+  font-size: 20px;
+  margin-bottom: 0px;
+}
+
 .card-header {
   padding-left: 12px;
   padding-right: 3px;

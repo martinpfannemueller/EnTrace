@@ -165,6 +165,21 @@ export default {
   top: 0;
   z-index: 1;
 }
+
+.interface-text {
+  font-size: 14px;
+  user-select: none;
+}
+
+.interface-text-small {
+  font-size: 11px;
+}
+
+.important-text {
+  color: rgb(0, 123, 255);
+  font-weight: bold;
+}
+
 .vue-grid-item.vue-grid-placeholder {
   background: radial-gradient(
     circle,
@@ -173,25 +188,5 @@ export default {
   );
   border: dashed black 2px;
   border-radius: 5px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-.interface-text {
-  font-size: 14px;
-  user-select: none;
-}
-
-.important-text {
-  color: rgb(0, 123, 255);
-  /* font-size: 11px; */
-  font-weight: bold;
-}
-
-h5 {
-  font-size: 20px;
-  margin-bottom: 0px;
 }
 </style>

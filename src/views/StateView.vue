@@ -19,13 +19,12 @@
           <b-col class="ui-col">
             <b-button
               size="sm"
-              variant="primary"
+              variant="outline-primary"
               @click="renderStateView(stateCollection, linkCollection)"
             >
               <font-awesome-icon icon="tools" />&nbsp;Adjust
             </b-button>
           </b-col>
-
           <b-col class="ui-col">
             <b-input-group size="sm">
               <b-form-input
@@ -34,7 +33,7 @@
               ></b-form-input>
               <b-input-group-append
                 ><b-button
-                  variant="outline-secondary"
+                  variant="primary"
                   :disabled="!intervalChangeable"
                   @click="adjustIntervals()"
                   ><font-awesome-icon icon="check" />&nbsp;Set</b-button
@@ -48,10 +47,8 @@
         </b-row>
       </b-col>
       <b-col cols="4">
-        <div v-if="stateCollection.length == 0" class="tooltip-state"></div>
         <tooltip
-          v-else
-          class="tooltip-state"
+          class="interface-text-small state-info-holder"
           :state-collection="stateCollection"
           :selected-state="selectedStateID"
           :selected-link="selectedLinkID"
@@ -79,7 +76,7 @@ export default {
       name: "State View",
       id: 3,
       width: 465,
-      height: 232,
+      height: 238,
       numberOfIntervals: 10,
       numberOfIntervalsEdit: 10,
       intervalChangeable: true,
@@ -123,7 +120,7 @@ export default {
           JSON.parse(JSON.stringify(this.cfmValues))
         );
         // Hash the adjusted states
-        this.cfmValuesHash = this.hashStates(this.adjustedCFMValues);
+        this.cfmValuesHash = this.hashState(this.adjustedCFMValues);
         // Based on the states, adjust the stateCollection and linkCollection
         this.createStates();
         this.renderStateView(this.stateCollection, this.linkCollection);
@@ -215,9 +212,9 @@ export default {
       });
       return d;
     },
-    hashStates(d) {
-      var inputString = JSON.stringify(d);
-      var hash = 0,
+    hashState(d) {
+      let inputString = JSON.stringify(d);
+      let hash = 0,
         i,
         chr;
       if (inputString.length === 0) return hash;
@@ -355,7 +352,7 @@ export default {
         .append("text")
         .attr("class", "textLabel")
         .attr("text-anchor", "middle")
-        .attr("font-size", 20)
+        .attr("font-size", (this.circleRadius * 2) / 3)
         .attr("dy", "0.35em")
         .text(function(d) {
           return d.id;
@@ -372,6 +369,12 @@ export default {
             "translate(" + d.id * circleDistance + "," + circleDistance + ")"
           );
         });
+
+      stateUpdate
+        .selectAll("text")
+        .transition()
+        .duration(this.animiationDuration)
+        .attr("font-size", (this.circleRadius * 2) / 3);
 
       stateUpdate.selectAll("circle").attr("r", this.circleRadius);
 
@@ -419,7 +422,7 @@ export default {
       let circleRadius = parseInt(this.circleRadius);
       let circleDistance = parseInt(this.circleDistance);
       let bottom = 1; // If 1, connection will be drawn on top, if 0, connection will be drawn at the bottom
-      var self = false; // If true, connection will be drawn on the same node
+      let self = false; // If true, connection will be drawn on the same node
       if (d.source > d.target) {
         bottom = -1;
       }
@@ -497,67 +500,6 @@ export default {
       // //   });
       // this.arrowsSVG.selectAll("marker").attr("refX", 300);
     },
-    mouseoverState(d, i, n) {
-      let circleRadius = this.circleRadius;
-
-      d3.select(n[i])
-        .selectAll("circle")
-        .transition()
-        .duration(800)
-        .attr("r", circleRadius * 1)
-        .attr("stroke-width", 5)
-        .attr("fill", this.hoverColor);
-
-      // Change font color
-      d3.select(n[i])
-        .selectAll(".textLabel")
-        .transition()
-        .duration(800)
-        .attr("font-size", 30)
-        .attr("fill", "white");
-      this.selectedStateID = d.id;
-    },
-    mouseoutState(d, i, n) {
-      let circleRadius = this.circleRadius;
-
-      d3.select(n[i])
-        .selectAll("circle")
-        .transition()
-        .duration(800)
-        .attr("r", circleRadius)
-        .attr("stroke-width", 2)
-        .attr("fill", "white");
-
-      // Change font color
-      d3.select(n[i])
-        .selectAll(".textLabel")
-        .transition()
-        .duration(800)
-        .attr("font-size", 20)
-        .attr("fill", "black");
-    },
-    mouseoverLink(d, i, n) {
-      d3.select(n[i])
-        .transition()
-        .duration(800)
-        .attr("stroke", this.hoverColor)
-        .attr("stroke-width", function(d) {
-          return d.count + 3;
-        });
-      this.selectedLinkID = d.id;
-      this.selectedLinkCount = d.count;
-    },
-    mouseoutLink(d, i, n) {
-      d3.select(n[i])
-        .transition()
-        .duration(800)
-        .attr("stroke", "black")
-        .attr("stroke-width", function(d) {
-          return d.count + 1;
-        });
-      this.selectedLinkID = "";
-      this.selectedLinkCount = undefined;
-    },
     centerState() {
       // this.adjustArrowSize();
       let numberOfStates = this.stateCollection.length;
@@ -605,18 +547,77 @@ export default {
             scale +
             ")"
         );
+    },
+    mouseoverState(d, i, n) {
+      let circleRadius = this.circleRadius;
+
+      d3.select(n[i])
+        .selectAll("circle")
+        .transition()
+        .duration(200)
+        .attr("r", circleRadius * 1)
+        .attr("stroke-width", 5)
+        .attr("fill", this.hoverColor);
+
+      // Change font color
+      d3.select(n[i])
+        .selectAll(".textLabel")
+        .transition()
+        .duration(200)
+        .attr("font-size", this.circleRadius)
+        .attr("fill", "white");
+      this.selectedStateID = d.id;
+    },
+    mouseoutState(d, i, n) {
+      let circleRadius = this.circleRadius;
+
+      d3.select(n[i])
+        .selectAll("circle")
+        .transition()
+        .duration(400)
+        .attr("r", circleRadius)
+        .attr("stroke-width", 2)
+        .attr("fill", "white");
+
+      // Change font color
+      d3.select(n[i])
+        .selectAll(".textLabel")
+        .transition()
+        .duration(400)
+        .attr("font-size", (this.circleRadius * 2) / 3)
+        .attr("fill", "black");
+    },
+    mouseoverLink(d, i, n) {
+      d3.select(n[i])
+        .transition()
+        .duration(50)
+        .attr("stroke", this.hoverColor)
+        .attr("stroke-width", function(d) {
+          return d.count + 3;
+        });
+      this.selectedLinkID = d.id;
+      this.selectedLinkCount = d.count;
+    },
+    mouseoutLink(d, i, n) {
+      d3.select(n[i])
+        .transition()
+        .duration(400)
+        .attr("stroke", "black")
+        .attr("stroke-width", function(d) {
+          return d.count + 1;
+        });
+      this.selectedLinkID = "";
+      this.selectedLinkCount = undefined;
     }
   }
 };
 </script>
 
 <style>
-.tooltip-state {
-  font-size: 10px;
-  border-radius: 3px;
-  color: black;
+.state-info-holder {
+  display: block;
+  height: 289px;
   overflow-y: auto;
-  height: 288px;
 }
 
 .ui-col {

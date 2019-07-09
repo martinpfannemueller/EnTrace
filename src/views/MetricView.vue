@@ -4,8 +4,9 @@
       ref="metricChart"
       type="line"
       :series="metrics"
-      height="210"
+      height="219"
       :options="chartOptions"
+      style="margin-top: -20px; margin-bottom: -10px"
     ></apexchart>
     <b-row>
       <b-col>
@@ -19,21 +20,24 @@
         >
       </b-col>
       <b-col>
-        <b-form-checkbox v-model="cutInterval" class="interface-text" switch
-          >Limit to last x s</b-form-checkbox
-        >
+        <b-input-group append="%" size="sm">
+          <b-form-input v-model="percentageThreshold"></b-form-input>
+        </b-input-group>
+        <div style="margin-top: 0px" class="text-muted interface-text">
+          Percentage threshold
+        </div>
       </b-col>
       <b-col>
-        <b-form-input v-model="timeInterval" size="sm"></b-form-input>
-      </b-col>
-      <!-- <b-col>
-        <b-input-group size="sm">
+        <b-input-group size="sm" append="sec">
           <b-input-group-prepend is-text>
             <input v-model="cutInterval" type="checkbox" />
           </b-input-group-prepend>
           <b-form-input v-model="timeInterval"></b-form-input>
         </b-input-group>
-      </b-col> -->
+        <div style="margin-top: 0px" class="text-muted interface-text">
+          Limit interval
+        </div>
+      </b-col>
     </b-row>
   </view-header>
 </template>
@@ -41,6 +45,7 @@
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
 import VueApexCharts from "vue-apexcharts";
+import { createNewEvent } from "../store/store";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -80,7 +85,9 @@ export default {
         legend: {
           show: true,
           showForSingleSeries: true,
-          position: "bottom"
+          position: "top",
+          offsetY: 16,
+          fontSize: "10px"
         },
         xaxis: {
           categories: [],
@@ -98,7 +105,7 @@ export default {
       showMarkers: false,
       cutInterval: true,
       timeInterval: 20,
-      adjustedMetrics: []
+      percentageThreshold: 100
     };
   },
   computed: {
@@ -197,6 +204,10 @@ export default {
       this.$refs.metricChart.updateSeries();
     },
     originalTimestamps: function() {
+      let checkValueChange = this.checkValueChange;
+      this.$store.state.metrics.forEach(function(d) {
+        checkValueChange(d);
+      });
       this.changeTimestamps(this.timestamps);
     },
     modifiedTimestamps: function() {
@@ -213,6 +224,34 @@ export default {
           }
         }
       };
+    },
+    checkValueChange(d) {
+      let percentageThreshold = this.percentageThreshold;
+      if (d.data.length >= 2) {
+        let oldValue = d.data[d.data.length - 2];
+        let newValue = d.data[d.data.length - 1];
+        let higher = Math.max(oldValue, newValue);
+        let lower = Math.min(oldValue, newValue);
+        if (higher / lower - 1 >= percentageThreshold / 100) {
+          createNewEvent(
+            "Metric View",
+            "Threshold difference reached",
+            "For the metric '" +
+              d.name +
+              "', the new value (" +
+              Math.round(newValue * 100) / 100 +
+              ")" +
+              " differs more than the threshold percentage (" +
+              percentageThreshold +
+              "%) from the previous value (" +
+              Math.round(oldValue * 100) / 100 +
+              ")"
+          );
+        }
+        // console.log(
+        //   "The new value: " + newValue + " and the previous value: " + oldValue
+        // );
+      }
     }
   }
 };

@@ -3,14 +3,23 @@ import Vuex from "vuex";
 
 Vue.use(Vuex);
 
-function createNewEvent(channel, title, text, incomming = true) {
+function createNewEvent(
+  channel,
+  title,
+  text,
+  incomming = true,
+  success = false,
+  warn = false
+) {
   let timestamp = new Date().toLocaleTimeString();
   let event = {
     eventChannel: channel,
     eventTimestamp: timestamp,
     eventTitle: title,
     eventText: text,
-    eventIncomming: incomming
+    eventIncomming: incomming,
+    eventSuccess: success,
+    eventWarn: warn
   };
   store.commit("updateEvents", event);
 }

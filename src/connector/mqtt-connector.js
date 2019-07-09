@@ -28,20 +28,25 @@ function connectToConnector() {
     createNewEvent(
       "General",
       "Connection successful",
-      "CoalaViz is now connected to the MQTT connector"
+      "CoalaViz is now connected to the MQTT connector",
+      true,
+      true,
+      false
     );
     // Set "connected" status to true
     store.commit("simulationStatusChange", true);
     client.subscribe("startOfSimulation");
+    // Network View
     client.subscribe("add-edge");
     client.subscribe("mod-edge");
     client.subscribe("remove-edge");
     client.subscribe("add-node");
     client.subscribe("mod-node");
-    client.subscribe("new-metric-value");
-    client.subscribe("new-metricWeights");
-    client.subscribe("fm");
-    client.subscribe("cardyFMConfig");
+    client.subscribe("remove-node");
+    client.subscribe("new-metric-value"); // Metric View
+    client.subscribe("new-metricWeights"); // Performance View
+    client.subscribe("fm"); // Configuration View
+    client.subscribe("cardyFMConfig"); // Configuration View
   }
 
   // Function to handle lost connections
@@ -50,7 +55,14 @@ function connectToConnector() {
       let eventText =
         "CoalaViz lost its connection to the MQTT connector: " +
         responseObject.errorMessage;
-      createNewEvent("General", "Connection lost", eventText);
+      createNewEvent(
+        "General",
+        "Connection lost",
+        eventText,
+        true,
+        false,
+        true
+      );
       store.commit("simulationStatusChange", false);
     }
   }
@@ -95,7 +107,7 @@ function connectToConnector() {
         break;
       case "fm": // TODO: Create
         createNewEvent(
-          "Context Feature Model",
+          "Configuration View",
           "New context feature model",
           "A new initial context feature model has arrived"
         );
@@ -103,7 +115,7 @@ function connectToConnector() {
         break;
       case "cardyFMConfig": // TODO: Create
         createNewEvent(
-          "Context Feature Model",
+          "Configuration View",
           "New configuration",
           "The adaptation logic has changed the configuration"
         );

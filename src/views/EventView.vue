@@ -1,25 +1,31 @@
 <template>
-  <view-header :id="id" height="400px" :element-name="name">
+  <view-header :id="id" :element-name="name">
     <b-row>
-      <!-- <b-col cols="2" class="interface-text">
-        Channels:
-        <b-form-group>
-          <b-form-checkbox-group
-            v-model="selected"
-            :options="options"
-          ></b-form-checkbox-group>
-        </b-form-group>
-      </b-col> -->
-      <b-col>
+      <b-col cols="3" class="interface-text-small" style="padding-right: 6px">
+        <b-card class="event-holder">
+          <strong>Filter events by channel</strong>
+          <br />
+          <b-form-group>
+            <b-form-checkbox-group
+              v-model="selectedChannel"
+              class="verical"
+              :options="optionsChannel"
+            ></b-form-checkbox-group>
+          </b-form-group>
+        </b-card>
+      </b-col>
+      <b-col style="padding-left: 0px">
         <div class="event-holder">
           <event-message
-            v-for="(event, index) in events"
+            v-for="(event, index) in filteredEvents"
             :key="index"
             :event-title="event.eventTitle"
             :event-channel="event.eventChannel"
             :event-text="event.eventText"
             :event-timestamp="event.eventTimestamp"
             :event-incomming="event.eventIncomming"
+            :event-success="event.eventSuccess"
+            :event-warn="event.eventWarn"
           ></event-message>
         </div>
       </b-col>
@@ -39,28 +45,50 @@ export default {
     return {
       name: "Event View",
       id: 5,
-      width: 650,
-      height: 300,
-      selected: ["Reconfigurations", "Network events", "Performance changes"],
-      options: ["Reconfigurations", "Network events", "Performance changes"]
+      selectedChannel: [
+        "General",
+        "State View",
+        "Configuration View",
+        "Performance View",
+        "Metric View"
+      ],
+      optionsChannel: [
+        "General",
+        "Configuration View",
+        "State View",
+        "Performance View",
+        "Metric View"
+      ]
     };
   },
   computed: {
-    events() {
-      return this.$store.state.events;
+    filteredEvents() {
+      let selectedChannel = this.selectedChannel;
+      return this.$store.state.events.filter(function(event) {
+        return selectedChannel.includes(event.eventChannel);
+      });
     }
-  },
-  watch: {},
-  mounted() {},
-  methods: {}
+  }
 };
 </script>
 
 <style>
 .event-holder {
   display: block;
-  height: 242px;
-  margin: 3px;
+  height: 247px;
   overflow-y: auto;
+}
+
+.card-body {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 6px;
+  padding-right: 4px;
+}
+
+.custom-control,
+.custom-control-inline,
+.custom-checkbox {
+  margin-right: 0px;
 }
 </style>

@@ -4,8 +4,8 @@
       <b-col cols="9">
         <h4>
           🐨
-          <strong>CoalaViz</strong>: Enhanced Traceability in Adaptive
-          Communication Systems
+          <strong>CoalaViz.<span style="color: #007bff;">js</span></strong
+          >: Enhanced Traceability in Adaptive Communication Systems
         </h4>
       </b-col>
       <b-col cols="3">
@@ -45,8 +45,8 @@ hr {
 }
 
 h4 {
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   margin-left: 5px;
   margin-right: 5px;
 }

@@ -24,12 +24,13 @@
       :height="treeHeight + 50"
       margin="auto"
     ></svg>
-    <!-- <div v-else class="no-cfm">
-      No context feature model loaded
-    </div> -->
     <b-row>
       <b-col>
-        <b-button size="sm" variant="primary" @click="defaultCFMposition">
+        <b-button
+          size="sm"
+          variant="outline-primary"
+          @click="defaultCFMposition"
+        >
           <font-awesome-icon icon="expand" />&nbsp;Center
         </b-button>
       </b-col>
@@ -73,7 +74,7 @@ export default {
   },
   data() {
     return {
-      name: "Context Feature Model",
+      name: "Configuration View",
       id: 2,
       cfmViewSVG: "",
       tooltipDiv: "",
@@ -115,14 +116,14 @@ export default {
   },
   watch: {
     autoAdjustHeight: function() {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     },
     cfm: function(val) {
       if (val == "") {
         console.log("Error");
       } else {
         this.establishRoot();
-        this.renderNewCFM(this.root);
+        this.renderCFM(this.root);
       }
     },
     cfmValues: function(val) {
@@ -130,11 +131,11 @@ export default {
         console.log("Error");
       } else {
         this.setCurrentlyChosenAndValues(this.root);
-        this.renderNewCFM(this.root);
+        this.renderCFM(this.root);
       }
     },
     showCardinalities: function() {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     },
     scaleFactor: function() {
       this.defaultCFMposition();
@@ -157,11 +158,13 @@ export default {
     if (this.root == "") {
       // console.log("CFM not ready yet");
     } else {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     }
   },
   methods: {
+    // Imports the updateAttributeDomainList mutation function from the store
     ...mapMutations(["updateAttributeDomainList"]),
+    // Initializes the SVG handler variables for D3 as well as the tooltiü
     initializeSelector() {
       let cfmHelper = d3
         .selectAll("#cfm-view")
@@ -176,9 +179,15 @@ export default {
       this.cfmViewSVG = cfmHelper;
       this.tooltipDiv = d3.select(".tooltip-cfm");
     },
+    // Uses D3.hierarchy on the CFM input data to create a child-node hierarchy
     establishRoot() {
       this.root = d3.hierarchy(this.cfm, function(d) {
-        // console.log(d);
+        // Add attributes to children in case they are both existent
+        if (d.children && d.children.length > 0 && d.attributes.length >= 1) {
+          d.attributes.forEach(function(k) {
+            d.children.push(k);
+          });
+        }
         if (d.children) {
           if (d.children.length == 0) {
             if (d.attributes.length >= 1) {
@@ -188,10 +197,14 @@ export default {
         }
         return d.children;
       });
+      console.log(
+        "Das ist die Länge von Rooty: " + this.root.descendants().length
+      );
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
     },
-    renderNewCFM(source) {
+    // Renders the CFM, calls most of the other functions, requires a root-hierarchy
+    renderCFM(source) {
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;
       let scaleFactor = Math.min(
@@ -243,7 +256,7 @@ export default {
         .on("mouseover", this.mouseover)
         .on("mouseout", this.mouseout)
         .on("dblclick", this.select)
-        .on("click", this.collapse)
+        .on("click", this.collapseElement)
         .on("contextmenu", function(d) {
           d3.event.preventDefault();
           contextMenu(d);
@@ -290,14 +303,11 @@ export default {
           }
         })
         .attr("rx", function(d) {
-          if (d.parent) {
-            if (d.parent.data.attributes.length >= 1) {
-              if (!d.data.system) {
-                return 5;
-              }
-            }
+          if (!d.children && d.data.domain) {
+            return 5;
+          } else {
+            return 1;
           }
-          return 1;
         });
 
       // Add MAIN labels for the nodes
@@ -621,6 +631,7 @@ export default {
         d.y0 = d.y;
       });
     },
+    // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {
       if (d.data.currentlyChosen) {
         if (d._children) {
@@ -636,6 +647,7 @@ export default {
         }
       }
     },
+    // Sets the appropriate color for the text of an element in the CFM
     colorText(d) {
       if (d.data.currentlyChosen) {
         return "white";
@@ -643,11 +655,13 @@ export default {
         return "black";
       }
     },
+    // Sets the font size of the main label based on the length of the name of an element
     setMainLabelFontSize(d) {
       if (d.data.name.length >= 10) {
         return 4.5;
       } else return 4.75;
     },
+    // Sets the text for the main label, trunctuates based on the style factor and upper case characters
     setMainLabel(d) {
       let scaleFactor = this.scaleFactor;
       if (scaleFactor > 1.6) {
@@ -682,11 +696,13 @@ export default {
         return d.data.name;
       }
     },
+    // Creates the label for the value of an element
     setValueLabel(d) {
       if (d.data.value != undefined) {
         return "Value: " + d.data.value;
       }
     },
+    // Sets the Boolean property of the currently chosen elements as well as their values based on the cfmValues input
     setCurrentlyChosenAndValues(d) {
       let descendants = d.descendants();
       let cfmValues = this.cfmValues;
@@ -714,14 +730,17 @@ export default {
         });
       });
     },
+    // Creates a string in the appropriate format for the cardinalities
     stringifyCardinality(d) {
       if (d) {
         return "<" + d.lb + "," + d.ub + ">";
       } else return "";
     },
+    // Creates a string in the appropriate format for the domains
     stringifyDomain(d) {
       return d.domainType + ": " + d.lowerBoundary + "..." + d.upperBoundary;
     },
+    // Creates the attribute domain list used for the State View
     createAttributeDomainList(d) {
       let newAttribute = {
         name: d.name,
@@ -731,6 +750,7 @@ export default {
       };
       store.commit("updateAttributeDomainList", newAttribute);
     },
+    // Prepares the data of the selected element for the tooltip
     setTooltipElements(d) {
       // Name and value
       this.selectedElement = "Element: " + d.data.name;
@@ -775,12 +795,14 @@ export default {
       // Opacity
       this.tooltipDiv.style("opacity", 1);
     },
+    // Turns the cardinalities in the redering of the CFM on and off
     toggleCardinalities() {
       if (this.showCardinalities) {
         return 1;
       } else return 0;
     },
-    collapse(d) {
+    // Collapses the CFM after the clicked element, saves the children-info in shadow-variable d._children
+    collapseElement(d) {
       if (d.children) {
         d._children = d.children;
         d.children = null;
@@ -788,8 +810,9 @@ export default {
         d.children = d._children;
         d._children = null;
       }
-      this.renderNewCFM(d);
+      this.renderCFM(d);
     },
+    // Manages the mouse-over event for the elements of the CFM
     mouseover(d, i, n) {
       // SECTION FOR THE NODE
       // Change color to highlight element
@@ -807,6 +830,7 @@ export default {
       this.setTooltipElements(d);
       this.selectedFeature = d.data.name;
     },
+    // Manages the mouseout-event for the elements of the CFM
     mouseout(d, i, n) {
       let colorNodes = this.colorNodes;
       let colorText = this.colorText;
@@ -836,6 +860,7 @@ export default {
       this.groupInstanceCardinality = "";
       this.groupTypeCardinality = "";
     },
+    // Zooms the CFM out to be in the default position
     defaultCFMposition() {
       if (this.scaleFactor > 2) {
         this.cfmViewSVG
@@ -849,10 +874,11 @@ export default {
           .attr("transform", "translate(-10, 20) scale(1)");
       }
     },
+    // Allows sending the feature selected to the adaptation logic, triggers the appropriate event
     sendFeature(d) {
       sendMessage(d, "startOfSimulation");
       createNewEvent(
-        "Context Feature Model",
+        "Configuration View",
         "Feature sent",
         "The following feature has been sent to the adaption logic for force adaptation: " +
           d,

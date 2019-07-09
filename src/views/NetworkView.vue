@@ -15,7 +15,7 @@
     <svg id="network-view" :height="height" :width="width" margin="auto"></svg>
     <b-row>
       <b-col>
-        <b-button size="sm" variant="primary" @click="centerNetwork">
+        <b-button size="sm" variant="outline-primary" @click="centerNetwork">
           <font-awesome-icon icon="expand" />&nbsp;Center
         </b-button>
       </b-col>
@@ -181,9 +181,7 @@ export default {
         .transition()
         .duration(this.animiationDuration)
         .attr("transform", function(d) {
-          let newX = d.x;
-          let newY = d.y;
-          return "translate(" + newX + "," + newY + ")";
+          return "translate(" + d.x + "," + d.y + ")";
         });
 
       nodeUpdate
@@ -317,6 +315,23 @@ export default {
         }
       }
     },
+    centerNetwork() {
+      let scale = 0.8;
+      let width = this.width;
+      if (this.maxX > this.width || this.maxY > this.height) {
+        scale = Math.min(
+          (this.width / this.maxX) * 0.99,
+          (this.height / this.maxY) * 0.99
+        );
+      }
+      this.networkViewSVG
+        .transition()
+        .duration(this.animiationDuration)
+        .attr(
+          "transform",
+          "translate(" + width / 4 + ",0) scale(" + scale * 0.975 + ")"
+        );
+    },
     mouseoverNode(d, i, n) {
       let circleRadius = this.circleRadius;
       let fontSize = this.fontSize;
@@ -350,7 +365,7 @@ export default {
       d3.select(n[i])
         .selectAll("circle")
         .transition()
-        .duration(200)
+        .duration(400)
         .attr("fill", function(d) {
           if (d.color != null) {
             return d.color;
@@ -365,7 +380,7 @@ export default {
       d3.select(n[i])
         .selectAll(".textLabel")
         .transition()
-        .duration(200)
+        .duration(400)
         .attr("font-size", fontSize)
         .attr("fill", "black");
 
@@ -389,7 +404,7 @@ export default {
       let defaultEdgeColor = this.defaultEdgeColor;
       d3.select(n[i])
         .transition()
-        .duration(800)
+        .duration(400)
         .attr("stroke", function(d) {
           if (d.color != null) {
             return d.color;
@@ -425,23 +440,6 @@ export default {
       let a = d.targetIdx - d.sourceIdx;
       let b = d.targetIdy - d.sourceIdy;
       return Math.round(Math.sqrt(a * a + b * b));
-    },
-    centerNetwork() {
-      let scale = 0.8;
-      let width = this.width;
-      if (this.maxX > this.width || this.maxY > this.height) {
-        scale = Math.min(
-          (this.width / this.maxX) * 0.99,
-          (this.height / this.maxY) * 0.99
-        );
-      }
-      this.networkViewSVG
-        .transition()
-        .duration(this.animiationDuration)
-        .attr(
-          "transform",
-          "translate(" + width / 4 + ",0) scale(" + scale * 0.975 + ")"
-        );
     }
   }
 };

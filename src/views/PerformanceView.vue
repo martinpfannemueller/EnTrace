@@ -15,7 +15,7 @@
           style="margin-top: 3px"
           size="sm"
           variant="primary"
-          @click="applyWeights"
+          @click="sendWeights"
         >
           <font-awesome-icon icon="check" />&nbsp;Apply weights
         </b-button>
@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    applyWeights() {
+    sendWeights() {
       sendMessage(this.weights, "startOfSimulation");
       createNewEvent(
         "Performance View",
@@ -65,7 +65,6 @@ export default {
 .no-weights {
   display: block;
   width: 100%;
-  text-align: center;
   line-height: 55px;
 }
 </style>
