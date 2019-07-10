@@ -2,6 +2,7 @@
   <view-header :id="id" :element-name="name">
     <tooltip
       v-if="selectedNode != '' || selectedEdge != ''"
+      v-show="showTooltips"
       class="tooltip-network"
       :selected-node="selectedNode"
       :x="x"
@@ -19,13 +20,18 @@
           <font-awesome-icon icon="expand" />&nbsp;Center
         </b-button>
       </b-col>
+      <b-col>
+        <b-form-checkbox v-model="showTooltips" class="interface-text" switch
+          >Tooltips</b-form-checkbox
+        >
+      </b-col>
     </b-row>
   </view-header>
 </template>
 
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
-import Tooltip from "../helper_components/TooltipNetwork";
+import Tooltip from "../tooltips/TooltipNetworkView";
 import * as d3 from "d3";
 export default {
   components: {
@@ -35,6 +41,10 @@ export default {
   data() {
     return {
       name: "Network View",
+      networkViewSVG: "",
+      nodesSVG: "",
+      edgesSVG: "",
+      tooltipDiv: "",
       id: 0,
       width: 650,
       height: 360,
@@ -43,11 +53,8 @@ export default {
       fontSize: 14,
       maxY: 0,
       maxX: 0,
-      animiationDuration: 1000,
-      networkViewSVG: "",
-      nodesSVG: "",
-      edgesSVG: "",
-      tooltipDiv: "",
+      animationDuration: 1000,
+      showTooltips: true,
       defaultNodeColor: "rgb(226, 245, 255)",
       defaultEdgeColor: "rgb(211, 19, 12)",
       selectedNode: "",
@@ -90,6 +97,7 @@ export default {
     this.renderNetwork(this.nodes, this.edges);
   },
   methods: {
+    // Initializes the SVG handler variables for D3 as well as the tooltip
     initializeSelector() {
       let cfmHelper = d3
         .selectAll("#network-view")
@@ -105,9 +113,8 @@ export default {
       this.edgesSVG = this.networkViewSVG.append("g");
       this.nodesSVG = this.networkViewSVG.append("g");
       this.tooltipDiv = d3.select(".tooltip-network");
-      this.tooltipDiv.style("opacity", 0);
-      this.centerNetwork();
     },
+    // Renders the network topology with nodes and edges, calls most of the other functions
     renderNetwork(nodes, edges) {
       // Create local variables for colors and radius
       let defaultNodeColor = this.defaultNodeColor;
@@ -179,7 +186,7 @@ export default {
       // Transition to the proper position for the node
       nodeUpdate
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
         });
@@ -204,7 +211,7 @@ export default {
       var nodeExit = node
         .exit()
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .remove();
 
       // On exit reduce the circles
@@ -257,7 +264,7 @@ export default {
       // Transition back to the parent element position
       edgeUpdate
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("stroke", function(d) {
           if (d.color != null) {
             return d.color;
@@ -286,7 +293,7 @@ export default {
       var edgeExit = edge
         .exit()
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("x1", function(d) {
           return d.sourceIdx;
         })
@@ -301,6 +308,7 @@ export default {
         })
         .remove();
     },
+    // Determines the x and y max size for the network which are used to center/zoom the network diagram
     determineSize(nodes) {
       for (let i = 0; i < nodes.length; i++) {
         let truncX = Math.trunc(nodes[i].x);
@@ -315,6 +323,7 @@ export default {
         }
       }
     },
+    // Centers the network diagram based on the maxX and maxY parameters
     centerNetwork() {
       let scale = 0.8;
       let width = this.width;
@@ -326,12 +335,13 @@ export default {
       }
       this.networkViewSVG
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr(
           "transform",
           "translate(" + width / 4 + ",0) scale(" + scale * 0.975 + ")"
         );
     },
+    // Manages the mouseover event for the node elements of the Network View
     mouseoverNode(d, i, n) {
       let circleRadius = this.circleRadius;
       let fontSize = this.fontSize;
@@ -357,6 +367,7 @@ export default {
       this.setTooltipElementsNode(d);
       this.tooltipDiv.style("opacity", 1);
     },
+    // Manages the mouseout event for the node elements of the Network View
     mouseoutNode(d, i, n) {
       let defaultNodeColor = this.defaultNodeColor;
       let circleRadius = this.circleRadius;
@@ -384,11 +395,11 @@ export default {
         .attr("font-size", fontSize)
         .attr("fill", "black");
 
-      this.tooltipDiv.style("opacity", 0);
       this.selectedNode = "";
       this.x = "";
       this.y = "";
     },
+    // Manages the mouseover event for the edges of the Network View
     mouseoverEdge(d, i, n) {
       d3.select(n[i])
         .transition()
@@ -400,6 +411,7 @@ export default {
       this.setTooltipElementsEdge(d);
       this.tooltipDiv.style("opacity", 1);
     },
+    // Manages the mouseout event for the edges of the Network View
     mouseoutEdge(d, i, n) {
       let defaultEdgeColor = this.defaultEdgeColor;
       d3.select(n[i])
@@ -423,19 +435,21 @@ export default {
       this.sourceNode = "";
       this.targetNode = "";
     },
+    // Prepares the data of the selected node tooltip
     setTooltipElementsNode(d) {
       this.selectedNode = d.nodeId;
       this.x = Math.trunc(d.x);
       this.y = Math.trunc(d.y);
     },
+    // Prepares the data of the selected edge tooltip
     setTooltipElementsEdge(d) {
-      let calculateEdgeLength = this.calculateEdgeLength;
       this.selectedEdge = d.edgeId;
       this.edgeWeight = d.weight;
-      this.edgeLength = calculateEdgeLength(d);
+      this.edgeLength = this.calculateEdgeLength(d);
       this.sourceNode = d.sourceId;
       this.targetNode = d.targetId;
     },
+    // Calculates the length of a node based on the coordinates of the nodes it links
     calculateEdgeLength(d) {
       let a = d.targetIdx - d.sourceIdx;
       let b = d.targetIdy - d.sourceIdy;

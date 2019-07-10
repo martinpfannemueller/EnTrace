@@ -183,8 +183,6 @@ function connectToConnector() {
 
   // Called when new metric value arrives
   function newMetric(newValue, metrics) {
-    // TODO: Make ready for several metrics
-    // Check if metrics already exists
     if (metrics.length == 0) {
       metrics.push({
         name: newValue.metric,

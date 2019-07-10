@@ -61,8 +61,7 @@ Vue.use(BootstrapVue);
 // Connec to CoalaViz connector
 connectToConnector();
 
-// eslint-disable-next-line no-unused-vars
-var vm = new Vue({
+new Vue({
   el: "#app",
   store: store,
   render: h => h(App)

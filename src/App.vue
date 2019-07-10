@@ -35,7 +35,7 @@
 import CoalaHeader from "./helper_components/CoalaHeader";
 import NetworkView from "./views/NetworkView.vue";
 import MetricView from "./views/MetricView.vue";
-import ContextFeaureModel from "./views/ContextFeatureModel.vue";
+import ConfigurationView from "./views/Configuration View.vue";
 import PerformanceView from "./views/PerformanceView.vue";
 import StateView from "./views/StateView.vue";
 import EventView from "./views/EventView.vue";
@@ -47,7 +47,7 @@ export default {
     "coala-header": CoalaHeader,
     "network-view": NetworkView,
     "metric-view": MetricView,
-    "context-feature-model": ContextFeaureModel,
+    "configuration-view": ConfigurationView,
     "performance-view": PerformanceView,
     "state-view": StateView,
     "event-view": EventView,
@@ -78,7 +78,7 @@ export default {
           visible: true
         },
         {
-          view: "context-feature-model",
+          view: "configuration-view",
           i: 2,
           x: 0,
           y: 1,
@@ -134,7 +134,7 @@ export default {
         toggleAll();
       }
     });
-    // Adapt height values for layout based on toggleMap
+    // Adapt height values for layout based on toggleMap variable from store
     let layout = this.layout;
     this.toggleMap.forEach(function(element, i) {
       layout[i].h = element.h;
@@ -143,6 +143,7 @@ export default {
     this.layout = layout;
   },
   methods: {
+    // Toggles ("expand", "minimize") the views, calls layoutUpdate to change the height of the layout
     toggleAll() {
       let layout = this.layout;
       this.toggleMap.forEach(function(element, i) {

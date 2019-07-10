@@ -48,6 +48,7 @@ export default {
     }
   },
   methods: {
+    // Allows sending the newly entered weights to the adaptation logic, triggers the appropriate event
     sendWeights() {
       sendMessage(this.weights, "startOfSimulation");
       createNewEvent(

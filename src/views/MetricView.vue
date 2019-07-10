@@ -215,6 +215,7 @@ export default {
     }
   },
   methods: {
+    // Updates the timestamps by changing the approporiate properties in the options
     changeTimestamps(d) {
       this.chartOptions = {
         ...this.chartOptions,
@@ -225,6 +226,7 @@ export default {
         }
       };
     },
+    // Checks whether the threshold values as defined by the user (default 100) is reached, creates an event if it is the case
     checkValueChange(d) {
       let percentageThreshold = this.percentageThreshold;
       if (d.data.length >= 2) {
@@ -248,9 +250,6 @@ export default {
               ")"
           );
         }
-        // console.log(
-        //   "The new value: " + newValue + " and the previous value: " + oldValue
-        // );
       }
     }
   }

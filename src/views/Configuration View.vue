@@ -61,9 +61,8 @@
 
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
-import Tooltip from "../helper_components/TooltipCFM";
-// eslint-disable-next-line no-unused-vars
-import { client, sendMessage } from "../connector/mqtt-connector";
+import Tooltip from "../tooltips/TooltipConfigurationView";
+import { sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
 import { createNewEvent, store } from "../store/store";
 import { mapMutations } from "vuex";
@@ -82,12 +81,11 @@ export default {
       root: "",
       treeWidth: 680,
       treeHeight: 250,
-      treeDepth: 55,
       rectWidth: 23,
       rectHeight: 11,
       circleRadius: 2.5,
       scaleFactor: 1,
-      animiationDuration: 400,
+      animationDuration: 400,
       autoAdjustHeight: true,
       showTooltips: true,
       showCardinalities: true,
@@ -164,7 +162,7 @@ export default {
   methods: {
     // Imports the updateAttributeDomainList mutation function from the store
     ...mapMutations(["updateAttributeDomainList"]),
-    // Initializes the SVG handler variables for D3 as well as the tooltiü
+    // Initializes the SVG handler variables for D3 as well as the tooltip
     initializeSelector() {
       let cfmHelper = d3
         .selectAll("#cfm-view")
@@ -197,9 +195,6 @@ export default {
         }
         return d.children;
       });
-      console.log(
-        "Das ist die Länge von Rooty: " + this.root.descendants().length
-      );
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
     },
@@ -380,7 +375,7 @@ export default {
       // Transition to the proper position for the node
       nodeUpdate
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("transform", function(d) {
           let newX = d.x - rectWidth / 2 - (rectWidth / 2) * (scaleFactor - 1);
           let newY = d.y - rectHeight;
@@ -555,7 +550,7 @@ export default {
       var nodeExit = node
         .exit()
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("transform", function() {
           return "translate(" + source.x + "," + source.y + ")";
         })
@@ -598,7 +593,7 @@ export default {
       // Transition back to the parent element position
       linkUpdate
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("x1", function(d) {
           return d.x;
         })
@@ -617,7 +612,7 @@ export default {
       var linkExit = link
         .exit()
         .transition()
-        .duration(this.animiationDuration)
+        .duration(this.animationDuration)
         .attr("x1", source.x)
         .attr("y1", source.y)
         .attr("x2", source.x)
@@ -791,9 +786,6 @@ export default {
       } else {
         this.groupTypeCardinality = "";
       }
-
-      // Opacity
-      this.tooltipDiv.style("opacity", 1);
     },
     // Turns the cardinalities in the redering of the CFM on and off
     toggleCardinalities() {
@@ -865,12 +857,12 @@ export default {
       if (this.scaleFactor > 2) {
         this.cfmViewSVG
           .transition()
-          .duration(this.animiationDuration)
+          .duration(this.animationDuration)
           .attr("transform", "translate(-10, 25) scale(0.9)");
       } else {
         this.cfmViewSVG
           .transition()
-          .duration(this.animiationDuration)
+          .duration(this.animationDuration)
           .attr("transform", "translate(-10, 20) scale(1)");
       }
     },

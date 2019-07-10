@@ -64,7 +64,7 @@
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
 import * as d3 from "d3";
-import Tooltip from "../helper_components/TooltipState.vue";
+import Tooltip from "../tooltips/TooltipStateView";
 import { createNewEvent } from "../store/store";
 export default {
   components: {
@@ -131,6 +131,7 @@ export default {
     this.initializeSelector();
   },
   methods: {
+    // Initializes the SVG handler variables for D3 as well as the tooltip
     initializeSelector() {
       let drawArrow = this.drawArrow;
       let cfmHelper = d3
@@ -163,6 +164,7 @@ export default {
         })
         .style("fill", "black");
     },
+    // Changes the intervals used for the intervalization of the CFM's real values
     adjustIntervals() {
       this.numberOfIntervals = this.numberOfIntervalsEdit;
       createNewEvent(
@@ -173,6 +175,7 @@ export default {
         false
       );
     },
+    // Adjusts real values based on interval property
     adjustCFMValues(d) {
       // Ensure interval button is set to inactive once the first values are adjusted
       this.intervalChangeable = false;
@@ -181,9 +184,7 @@ export default {
       let index;
       d.stringAttributes.forEach(function(d) {
         if (d.realValue || d.realValue === 0) {
-          // console.log(cfmAttributeDomainList.findIndex(x => x.name === d.name));
           index = cfmAttributeDomainList.findIndex(x => x.name === d.name);
-          // console.log(index);
           let lowerBoundary = cfmAttributeDomainList[index].lowerBoundary;
           let upperBoundary = cfmAttributeDomainList[index].upperBoundary;
           let intervalSize =
@@ -195,7 +196,6 @@ export default {
           let interval = Math.floor(
             (d.realValue - lowerBoundary) / intervalSize
           );
-          // console.log(d.realValue - lowerBoundary);
           // console.log("Thus, our interval is: " + interval);
           let result =
             "[" +
@@ -212,6 +212,7 @@ export default {
       });
       return d;
     },
+    // Hashes the current configuration as an integer (same state results in same hash)
     hashState(d) {
       let inputString = JSON.stringify(d);
       let hash = 0,
@@ -225,12 +226,13 @@ export default {
       }
       return hash;
     },
+    // Creates the states and links variables based on the hashed states
     createStates() {
       // Check if new state or existing
       if (this.stateCollection.length === 0) {
         // Case of first state
         this.selectedStateID = 1;
-        console.log("A new state collection is created");
+        // console.log("A new state collection is created");
         this.stateCollection.push({
           id: 1,
           hash: this.cfmValuesHash,
@@ -292,7 +294,7 @@ export default {
           let index = this.linkCollection.findIndex(
             x => x.source === this.oldStateID && x.target === this.newStateID
           );
-          if (index === undefined) {
+          if (index == undefined || index == -1) {
             console.log("But it is a new connection");
             // Case when connection does not exist yet
             this.linkCollection.push({
@@ -310,6 +312,7 @@ export default {
         }
       }
     },
+    // Renders the State View, calls most of the other functions
     renderStateView(states, links) {
       this.centerState();
       let drawConnection = this.drawConnection;
@@ -418,6 +421,7 @@ export default {
           return drawConnection(d);
         });
     },
+    // Draws the connection path for the links of the State View
     drawConnection(d) {
       let circleRadius = parseInt(this.circleRadius);
       let circleDistance = parseInt(this.circleDistance);
@@ -473,6 +477,7 @@ export default {
         return returnVariant;
       }
     },
+    // Draws the arrows path at the end of the links based on the parameter circleRadius
     drawArrow() {
       let d =
         "M 0 0 " +
@@ -485,6 +490,7 @@ export default {
         this.circleRadius / 3;
       return d;
     },
+    // adjusts the arrow of the State View based on the parameter circleRadius
     adjustArrowSize() {
       // @TODO: Implement
       // let drawArrow = this.drawArrow;
@@ -500,6 +506,7 @@ export default {
       // //   });
       // this.arrowsSVG.selectAll("marker").attr("refX", 300);
     },
+    // Centers the states and links of the State View, zooms to the appropriate level when too many states are there
     centerState() {
       // this.adjustArrowSize();
       let numberOfStates = this.stateCollection.length;
@@ -530,10 +537,6 @@ export default {
         }
       }
 
-      // console.log("This is the render width: " + renderWidth);
-      // console.log("This is the scale: " + scale);
-      // console.log("This is the xTransform: " + xTransform);
-      // console.log("This is the yTransform: " + yTransform);
       this.stateViewSVG
         .transition()
         .duration(this.animiationDuration)
@@ -548,6 +551,7 @@ export default {
             ")"
         );
     },
+    // Manages the mouseover-event for the state elements of the State View
     mouseoverState(d, i, n) {
       let circleRadius = this.circleRadius;
 
@@ -568,6 +572,7 @@ export default {
         .attr("fill", "white");
       this.selectedStateID = d.id;
     },
+    // Manages the mouseout-event for the state elements of the State View
     mouseoutState(d, i, n) {
       let circleRadius = this.circleRadius;
 
@@ -587,6 +592,7 @@ export default {
         .attr("font-size", (this.circleRadius * 2) / 3)
         .attr("fill", "black");
     },
+    // Manages the mouseover-event for the links of the State View
     mouseoverLink(d, i, n) {
       d3.select(n[i])
         .transition()
@@ -598,6 +604,7 @@ export default {
       this.selectedLinkID = d.id;
       this.selectedLinkCount = d.count;
     },
+    // Manages the mouseout-event for the links of the State View
     mouseoutLink(d, i, n) {
       d3.select(n[i])
         .transition()
@@ -624,7 +631,8 @@ export default {
   padding-right: 0px;
 }
 
-.state {
+.state,
+.link {
   cursor: pointer;
 }
 </style>
