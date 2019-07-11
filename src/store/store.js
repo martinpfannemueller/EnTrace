@@ -29,7 +29,12 @@ const store = new Vuex.Store({
     connected: false,
     edges: [],
     nodes: [],
-    weights: [],
+    weights: [
+      { weight: "mEndToEndDropRate", factor: 0.25 },
+      { weight: "mEndToEndLatency", factor: 0.25 },
+      { weight: "mEJain", factor: 0.25 },
+      { weight: "mEMean", factor: 0.25 }
+    ],
     metrics: [],
     timestamps: [],
     toggleMap: [

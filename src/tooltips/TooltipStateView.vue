@@ -9,6 +9,8 @@
       </div>
       <font-awesome-icon icon="cogs" />&nbsp;Selected state:
       <span class="important-text"> {{ selectedState }}</span> <br />
+      <font-awesome-icon icon="weight" />&nbsp;State count:
+      <span class="important-text"> {{ stateCount }}</span> <br />
       <font-awesome-icon icon="hashtag" />&nbsp;Hash:
       {{ stateCollection[selectedState - 1].hash }} <br />
       <br />
@@ -67,6 +69,10 @@ export default {
     selectedLink: {
       type: String,
       default: ""
+    },
+    stateCount: {
+      type: Number,
+      default: undefined
     },
     linkCount: {
       type: Number,

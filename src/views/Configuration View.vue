@@ -198,7 +198,7 @@ export default {
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
     },
-    // Renders the CFM, calls most of the other functions, requires a root-hierarchy
+    // Renders the CFM, calls most of the other functions, requires a root-hierarchy, inspired by http://bl.ocks.org/d3noob/8375092
     renderCFM(source) {
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;

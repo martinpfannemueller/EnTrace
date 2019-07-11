@@ -52,6 +52,7 @@
           :state-collection="stateCollection"
           :selected-state="selectedStateID"
           :selected-link="selectedLinkID"
+          :state-count="selectedStateCount"
           :link-count="selectedLinkCount"
           :new-state="newStateID"
           :old-state="oldStateID"
@@ -94,6 +95,7 @@ export default {
       oldStateID: "",
       newStateID: "",
       selectedStateID: 1,
+      selectedStateCount: undefined,
       selectedLinkID: "",
       selectedLinkCount: undefined
     };
@@ -212,7 +214,8 @@ export default {
       });
       return d;
     },
-    // Hashes the current configuration as an integer (same state results in same hash)
+    // Hashes the current configuration as an integer (same state results in same hash), taken from https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript/8831937#8831937
+
     hashState(d) {
       let inputString = JSON.stringify(d);
       let hash = 0,
@@ -236,7 +239,8 @@ export default {
         this.stateCollection.push({
           id: 1,
           hash: this.cfmValuesHash,
-          state: this.adjustedCFMValues
+          state: this.adjustedCFMValues,
+          count: 1
         });
         // Set ID of current state
         this.newStateID = 1;
@@ -265,7 +269,8 @@ export default {
           this.stateCollection.push({
             id: this.newStateID,
             hash: this.cfmValuesHash,
-            state: this.adjustedCFMValues
+            state: this.adjustedCFMValues,
+            count: 1
           });
           // Update links
           this.linkCollection.push({
@@ -281,15 +286,26 @@ export default {
               this.cfmValuesHash
           );
         } else {
+          // Hash already exists
           console.log("The state (hash) already exisits");
-          // hash already exists
           // Update state ID (we are in the same state, so new = old)
           this.newStateID = this.oldStateID;
+
+          // Increase count
+          this.stateCollection[index].count =
+            this.stateCollection[index].count + 1;
+
+          // Create event
           createNewEvent(
             "State View",
             "Hash state already exisits",
-            "The new reconfiguration was hased before as: " + this.cfmValuesHash
+            "The new reconfiguration was hashed before as: " +
+              this.cfmValuesHash +
+              "; this state has appeared " +
+              +this.stateCollection[index].count +
+              " times"
           );
+
           // Update links
           let index = this.linkCollection.findIndex(
             x => x.source === this.oldStateID && x.target === this.newStateID
@@ -571,6 +587,7 @@ export default {
         .attr("font-size", this.circleRadius)
         .attr("fill", "white");
       this.selectedStateID = d.id;
+      this.selectedStateCount = d.count;
     },
     // Manages the mouseout-event for the state elements of the State View
     mouseoutState(d, i, n) {
