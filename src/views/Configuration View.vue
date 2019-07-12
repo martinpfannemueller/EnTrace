@@ -11,13 +11,62 @@
       :group-instance-cardinality="groupInstanceCardinality"
       :group-type-cardinality="groupTypeCardinality"
     ></tooltip>
-    <vue-context ref="menu">
-      <li>
-        <a href="#" @click.prevent="sendFeature(selectedFeature)"
-          >Force select feature</a
+    <b-modal
+      ref="attributeModal"
+      :title="'Fixate value for ' + modalElementName + '?'"
+      size="sm"
+      @ok="sendAttribute(modalElementName, modalAttributeValue)"
+    >
+      <b-input-group :prepend="modalAttributeDomain" size="sm">
+        <b-form-input
+          v-model.number="modalAttributeValue"
+          :min="modalAttributeLowerBoundary"
+          :max="modalAttributeUpperBoundary"
+          type="number"
+          :state="checkModalValue()"
+          autofocus="true"
+        ></b-form-input>
+      </b-input-group>
+      <span class="text-muted interface-text">
+        Min: {{ modalAttributeLowerBoundary }}, Max:
+        {{ modalAttributeUpperBoundary }}
+      </span>
+      <br />
+      <span v-if="checkModalValue()">
+        Send attribute <strong>{{ modalElementName }}</strong> with value
+        <strong>{{ modalAttributeValue }}</strong> to the adaptation
+        logic?</span
+      >
+      <span v-else
+        >Please enter a value within the specified lower ({{
+          modalAttributeLowerBoundary
+        }}) and upper ({{ modalAttributeUpperBoundary }}) boundaries
+      </span>
+      <br />
+      <template slot="modal-footer" slot-scope="{ ok, cancel }">
+        <b-button @click="cancel()">
+          Cancel
+        </b-button>
+        <b-button
+          variant="primary"
+          :disabled="!checkModalValue()"
+          @click="ok()"
         >
-      </li>
-    </vue-context>
+          OK
+        </b-button>
+      </template>
+    </b-modal>
+    <b-modal
+      ref="featureModal"
+      :title="'Force select ' + modalElementName + '?'"
+      size="sm"
+      @ok="sendFeature(modalElementName)"
+    >
+      <span>
+        Send feature <strong>{{ modalElementName }}</strong> to the adaptation
+        logic for force selection?</span
+      >
+    </b-modal>
     <svg
       id="cfm-view"
       :width="treeWidth - 20"
@@ -91,12 +140,16 @@ export default {
       showCardinalities: true,
       i: 0,
       selectedElement: "",
-      selectedFeature: "",
       elementValue: "",
       elementRange: "",
       featureInstanceCardinality: "",
       groupInstanceCardinality: "",
-      groupTypeCardinality: ""
+      groupTypeCardinality: "",
+      modalElementName: "",
+      modalAttributeValue: undefined,
+      modalAttributeDomain: "",
+      modalAttributeLowerBoundary: undefined,
+      modalAttributeUpperBoundary: undefined
     };
   },
   computed: {
@@ -222,7 +275,7 @@ export default {
       let toggleCardinalities = this.toggleCardinalities;
       let stringifyDomain = this.stringifyDomain;
       let createAttributeDomainList = this.createAttributeDomainList;
-      let contextMenu = this.$refs.menu.open;
+      let setModalMenu = this.setModalMenu;
 
       if (!this.autoAdjustHeight) {
         // Normalize for fixed-depth if auto adjust is off
@@ -254,7 +307,7 @@ export default {
         .on("click", this.collapseElement)
         .on("contextmenu", function(d) {
           d3.event.preventDefault();
-          contextMenu(d);
+          setModalMenu(d);
         });
 
       // Add rectangle for GROUP INSTANCE cardinalites for the nodes (first, so it is in the background)
@@ -820,7 +873,6 @@ export default {
 
       // TOOLTIP SECTION
       this.setTooltipElements(d);
-      this.selectedFeature = d.data.name;
     },
     // Manages the mouseout-event for the elements of the CFM
     mouseout(d, i, n) {
@@ -866,14 +918,59 @@ export default {
           .attr("transform", "translate(-10, 20) scale(1)");
       }
     },
+    setModalMenu(d) {
+      console.log(d.data);
+      let openAttributeModalMenu = this.$refs["attributeModal"].show;
+      let openFeatureModalMenu = this.$refs["featureModal"].show;
+      if (!d.children && d.data.domain) {
+        this.modalElementName = d.data.name;
+        this.modalAttributeDomain = d.data.domain.domainType;
+        this.modalAttributeValue = d.data.value;
+        this.modalAttributeLowerBoundary = d.data.domain.lowerBoundary;
+        this.modalAttributeUpperBoundary = d.data.domain.upperBoundary;
+        openAttributeModalMenu();
+      }
+      if (d.data.system && !d.data.domain) {
+        this.modalElementName = d.data.name;
+        openFeatureModalMenu();
+      }
+    },
+    // Checks whether the input value for the selected attribute is within the lower and upper threshold domain range
+    // Does not check integer vs real
+    checkModalValue() {
+      return this.modalAttributeValue >= this.modalAttributeLowerBoundary &&
+        this.modalAttributeValue <= this.modalAttributeUpperBoundary
+        ? true
+        : false;
+    },
+    sendAttribute(attribute, value) {
+      // TODO: Implement
+      console.log(attribute + value);
+      let message = {
+        attribute: attribute,
+        value: value
+      };
+      sendMessage(message, this.$store.state.senderChannel);
+      createNewEvent(
+        "Configuration View",
+        "Attribute sent",
+        "The attribute '" +
+          attribute +
+          "' with a value of " +
+          value +
+          " has been sent to the adaptation logic",
+        false
+      );
+    },
     // Allows sending the feature selected to the adaptation logic, triggers the appropriate event
-    sendFeature(d) {
-      sendMessage(d, "startOfSimulation");
+    sendFeature(feature) {
+      sendMessage(feature, this.$store.state.senderChannel);
       createNewEvent(
         "Configuration View",
         "Feature sent",
-        "The following feature has been sent to the adaption logic for force adaptation: " +
-          d,
+        "The feature '" +
+          feature +
+          " has been sent to the adaptation logic for force adaptation",
         false
       );
     }

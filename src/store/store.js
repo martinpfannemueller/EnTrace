@@ -29,12 +29,7 @@ const store = new Vuex.Store({
     connected: false,
     edges: [],
     nodes: [],
-    weights: [
-      { weight: "mEndToEndDropRate", factor: 0.25 },
-      { weight: "mEndToEndLatency", factor: 0.25 },
-      { weight: "mEJain", factor: 0.25 },
-      { weight: "mEMean", factor: 0.25 }
-    ],
+    weights: [],
     metrics: [],
     timestamps: [],
     toggleMap: [
@@ -81,11 +76,335 @@ const store = new Vuex.Store({
         view: "event-view"
       }
     ],
-    cfm: "",
+    cfm: {
+      fm: {
+        root: {
+          binaryCardinals: "NO_DOT",
+          children: [
+            {
+              binaryCardinals: "NO_DOT",
+              children: [
+                {
+                  binaryCardinals: "NO_DOT",
+                  children: [],
+                  attributes: [
+                    {
+                      domain: {
+                        domainType: "REAL",
+                        lowerBoundary: 0,
+                        upperBoundary: 20
+                      },
+                      value: 0,
+                      name: "weightOptimizationThreshold",
+                      system: false,
+                      currentlyChosen: false
+                    }
+                  ],
+                  featureInstanceCardinality: { lb: 1, ub: 1 },
+                  groupInstanceCardinality: { lb: 1, ub: -1 },
+                  groupTypeCardinality: { lb: 1, ub: -1 },
+                  name: "fsWOpt",
+                  system: true,
+                  currentlyChosen: false
+                },
+                {
+                  binaryCardinals: "NO_DOT",
+                  children: [
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fsMAXPOWERTC",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [
+                        {
+                          domain: {
+                            domainType: "REAL",
+                            lowerBoundary: 1,
+                            upperBoundary: 2
+                          },
+                          value: 0,
+                          name: "parameterKtcK",
+                          system: false,
+                          currentlyChosen: false
+                        }
+                      ],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      groupInstanceCardinality: { lb: 1, ub: -1 },
+                      groupTypeCardinality: { lb: 1, ub: -1 },
+                      name: "fsDKTC",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [
+                        {
+                          domain: {
+                            domainType: "REAL",
+                            lowerBoundary: 1,
+                            upperBoundary: 2
+                          },
+                          value: 0,
+                          name: "parameterEKtcK",
+                          system: false,
+                          currentlyChosen: false
+                        }
+                      ],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      groupInstanceCardinality: { lb: 1, ub: -1 },
+                      groupTypeCardinality: { lb: 1, ub: -1 },
+                      name: "fsEKTC",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [
+                        {
+                          domain: {
+                            domainType: "REAL",
+                            lowerBoundary: 1,
+                            upperBoundary: 2
+                          },
+                          value: 0,
+                          name: "parameterLStarKtcK",
+                          system: false,
+                          currentlyChosen: false
+                        },
+                        {
+                          domain: {
+                            domainType: "REAL",
+                            lowerBoundary: 1,
+                            upperBoundary: 2
+                          },
+                          value: 0,
+                          name: "parameterLStarKtcA",
+                          system: false,
+                          currentlyChosen: false
+                        }
+                      ],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      groupInstanceCardinality: { lb: 1, ub: -1 },
+                      groupTypeCardinality: { lb: 1, ub: -1 },
+                      name: "fsLSTARKTC",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fsLMST",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fsGMST",
+                      system: true,
+                      currentlyChosen: false
+                    },
+                    {
+                      domain: {
+                        domainType: "INTEGER",
+                        lowerBoundary: 1,
+                        upperBoundary: 20
+                      },
+                      value: 0,
+                      name: "fsTCint",
+                      system: true,
+                      currentlyChosen: false
+                    }
+                  ],
+                  attributes: [
+                    {
+                      domain: {
+                        domainType: "INTEGER",
+                        lowerBoundary: 1,
+                        upperBoundary: 20
+                      },
+                      value: 0,
+                      name: "fsTCint",
+                      system: true,
+                      currentlyChosen: false
+                    }
+                  ],
+                  featureInstanceCardinality: { lb: 1, ub: 1 },
+                  groupInstanceCardinality: { lb: 1, ub: 1 },
+                  groupTypeCardinality: { lb: 1, ub: 1 },
+                  name: "fsTCAlgo",
+                  system: true,
+                  currentlyChosen: false
+                }
+              ],
+              attributes: [],
+              featureInstanceCardinality: { lb: 1, ub: 1 },
+              groupInstanceCardinality: { lb: 1, ub: -1 },
+              groupTypeCardinality: { lb: 1, ub: -1 },
+              name: "fsSystem",
+              system: true,
+              currentlyChosen: false
+            },
+            {
+              binaryCardinals: "NO_DOT",
+              children: [
+                {
+                  binaryCardinals: "NO_DOT",
+                  children: [],
+                  attributes: [
+                    {
+                      domain: {
+                        domainType: "REAL",
+                        lowerBoundary: 0,
+                        upperBoundary: 5
+                      },
+                      value: 0,
+                      name: "mobilitySpeed",
+                      system: false,
+                      currentlyChosen: false
+                    }
+                  ],
+                  featureInstanceCardinality: { lb: 1, ub: 1 },
+                  groupInstanceCardinality: { lb: 1, ub: -1 },
+                  groupTypeCardinality: { lb: 1, ub: -1 },
+                  name: "fcMobSpeed",
+                  system: false,
+                  currentlyChosen: false
+                },
+                {
+                  binaryCardinals: "NO_DOT",
+                  children: [
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fcPOINTTOPOINT",
+                      system: false,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fcGOSSIP",
+                      system: false,
+                      currentlyChosen: false
+                    },
+                    {
+                      binaryCardinals: "NO_DOT",
+                      children: [],
+                      attributes: [],
+                      featureInstanceCardinality: { lb: 0, ub: 1 },
+                      name: "fcDATACOLLECTION",
+                      system: false,
+                      currentlyChosen: false
+                    }
+                  ],
+                  attributes: [],
+                  featureInstanceCardinality: { lb: 1, ub: 1 },
+                  groupInstanceCardinality: { lb: 1, ub: 1 },
+                  groupTypeCardinality: { lb: 1, ub: 1 },
+                  name: "fcScenario",
+                  system: false,
+                  currentlyChosen: false
+                },
+                {
+                  binaryCardinals: "NO_DOT",
+                  children: [],
+                  attributes: [
+                    {
+                      domain: {
+                        domainType: "REAL",
+                        lowerBoundary: 0,
+                        upperBoundary: 500
+                      },
+                      value: 0,
+                      name: "topologyDensity",
+                      system: false,
+                      currentlyChosen: false
+                    },
+                    {
+                      domain: {
+                        domainType: "INTEGER",
+                        lowerBoundary: 0,
+                        upperBoundary: 1000
+                      },
+                      value: 0,
+                      name: "nodeCount",
+                      system: false,
+                      currentlyChosen: false
+                    },
+                    {
+                      domain: {
+                        domainType: "INTEGER",
+                        lowerBoundary: 0,
+                        upperBoundary: 1000000
+                      },
+                      value: 0,
+                      name: "edgeCount",
+                      system: false,
+                      currentlyChosen: false
+                    },
+                    {
+                      domain: {
+                        domainType: "INTEGER",
+                        lowerBoundary: 0,
+                        upperBoundary: 5000
+                      },
+                      value: 0,
+                      name: "worldSize",
+                      system: false,
+                      currentlyChosen: false
+                    }
+                  ],
+                  featureInstanceCardinality: { lb: 1, ub: 1 },
+                  groupInstanceCardinality: { lb: 1, ub: -1 },
+                  groupTypeCardinality: { lb: 1, ub: -1 },
+                  name: "fcTopology",
+                  system: false,
+                  currentlyChosen: false
+                }
+              ],
+              attributes: [],
+              featureInstanceCardinality: { lb: 1, ub: 1 },
+              groupInstanceCardinality: { lb: 1, ub: -1 },
+              groupTypeCardinality: { lb: 1, ub: -1 },
+              name: "fcContext",
+              system: false,
+              currentlyChosen: false
+            }
+          ],
+          attributes: [],
+          featureInstanceCardinality: { lb: 1, ub: 1 },
+          groupInstanceCardinality: { lb: 1, ub: -1 },
+          groupTypeCardinality: { lb: 1, ub: -1 },
+          name: "root",
+          system: false,
+          currentlyChosen: false
+        }
+      },
+      type: "fm"
+    },
     cfmValues: "",
     cfmAttributeDomainList: [],
     events: [],
-    hoverColor: "rgb(23, 162, 184)"
+    hoverColor: "rgb(23, 162, 184)",
+    senderChannel: "startOfSimulation" // Sets the channel on which the outgoing messages are send
   },
   mutations: {
     simulationStatusChange(state, payload) {

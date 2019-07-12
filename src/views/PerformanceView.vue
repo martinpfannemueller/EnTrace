@@ -63,8 +63,12 @@ export default {
       // Normalize weights before sending, also updates the store with the new weights
       this.normalizeWeights(this.displayedWeights, true);
 
-      // Send message to the connector
-      sendMessage(this.displayedWeights, "startOfSimulation");
+      try {
+        // Send message to the connector
+        sendMessage(this.displayedWeights, this.$store.state.senderChannel);
+      } catch (e) {
+        console.log("Erroer");
+      }
 
       // Create event in the event view
       var weightString = "";
@@ -79,7 +83,7 @@ export default {
         false
       );
     },
-    // Normalizes the weights so they sum up to one, store updating is turned off by default
+    // Normalizes the weights so they add up to one, store updating is turned off by default
     normalizeWeights(weights, update = false) {
       let normalizedWeights = weights;
       let sumOfWeights = 0;
