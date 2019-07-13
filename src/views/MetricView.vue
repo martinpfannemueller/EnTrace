@@ -98,7 +98,8 @@ export default {
         yaxis: {
           forceNiceScale: true,
           show: true,
-          decimalsInFloat: 0
+          decimalsInFloat: 0,
+          min: 0
         }
       },
       showDataLabels: false,

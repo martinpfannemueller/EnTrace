@@ -105,6 +105,14 @@
         >
       </b-col>
     </b-row>
+    <b-modal ref="notConnectedModal" title="No message send" size="sm">
+      <span>{{ this.$store.state.notConnectedErrorMessage }}</span>
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button variant="primary" @click="ok()">
+          OK
+        </b-button>
+      </template>
+    </b-modal>
   </view-header>
 </template>
 
@@ -919,7 +927,6 @@ export default {
       }
     },
     setModalMenu(d) {
-      console.log(d.data);
       let openAttributeModalMenu = this.$refs["attributeModal"].show;
       let openFeatureModalMenu = this.$refs["featureModal"].show;
       if (!d.children && d.data.domain) {
@@ -943,36 +950,43 @@ export default {
         ? true
         : false;
     },
+    // Allows sending the attributes and specified weights to the adaptation logic, triggers the appropriate event
     sendAttribute(attribute, value) {
-      // TODO: Implement
-      console.log(attribute + value);
-      let message = {
-        attribute: attribute,
-        value: value
-      };
-      sendMessage(message, this.$store.state.senderChannel);
-      createNewEvent(
-        "Configuration View",
-        "Attribute sent",
-        "The attribute '" +
-          attribute +
-          "' with a value of " +
-          value +
-          " has been sent to the adaptation logic",
-        false
-      );
+      try {
+        let message = {
+          attribute: attribute,
+          value: value
+        };
+        sendMessage(message, this.$store.state.senderChannel);
+        createNewEvent(
+          "Configuration View",
+          "Attribute sent",
+          "The attribute '" +
+            attribute +
+            "' with a value of " +
+            value +
+            " has been sent to the adaptation logic",
+          false
+        );
+      } catch (e) {
+        this.$refs["notConnectedModal"].show();
+      }
     },
     // Allows sending the feature selected to the adaptation logic, triggers the appropriate event
     sendFeature(feature) {
-      sendMessage(feature, this.$store.state.senderChannel);
-      createNewEvent(
-        "Configuration View",
-        "Feature sent",
-        "The feature '" +
-          feature +
-          " has been sent to the adaptation logic for force adaptation",
-        false
-      );
+      try {
+        sendMessage(feature, this.$store.state.senderChannel);
+        createNewEvent(
+          "Configuration View",
+          "Feature sent",
+          "The feature '" +
+            feature +
+            " has been sent to the adaptation logic for force adaptation",
+          false
+        );
+      } catch (e) {
+        this.$refs["notConnectedModal"].show();
+      }
     }
   }
 };

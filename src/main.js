@@ -30,7 +30,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { VueContext } from "vue-context";
 
 library.add(faPlusCircle);
 library.add(faMinusCircle);
@@ -54,11 +53,10 @@ library.add(faSignInAlt);
 library.add(faSignOutAlt);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
-Vue.component("vue-context", VueContext);
 Vue.use(Vuex);
 Vue.use(BootstrapVue);
 
-// Connec to CoalaViz connector
+// Connect to CoalaViz connector
 connectToConnector();
 
 new Vue({

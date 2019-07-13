@@ -29,7 +29,12 @@ const store = new Vuex.Store({
     connected: false,
     edges: [],
     nodes: [],
-    weights: [],
+    weights: [
+      { weight: "mEndToEndDropRate", factor: 0.25 },
+      { weight: "mEndToEndLatency", factor: 0.25 },
+      { weight: "mEJain", factor: 0.25 },
+      { weight: "mEMean", factor: 0.25 }
+    ],
     metrics: [],
     timestamps: [],
     toggleMap: [
@@ -404,7 +409,9 @@ const store = new Vuex.Store({
     cfmAttributeDomainList: [],
     events: [],
     hoverColor: "rgb(23, 162, 184)",
-    senderChannel: "startOfSimulation" // Sets the channel on which the outgoing messages are send
+    senderChannel: "startOfSimulation", // Sets the channel on which the outgoing messages are send
+    notConnectedErrorMessage:
+      "No message was sent to the connector because there is no connection. Please reconnect!"
   },
   mutations: {
     simulationStatusChange(state, payload) {

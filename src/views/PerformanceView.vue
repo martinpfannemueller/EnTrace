@@ -24,6 +24,14 @@
       </b-col>
       <b-col v-else class="no-weights" height="270px">&nbsp;</b-col>
     </b-row>
+    <b-modal ref="notConnectedModal" title="No message send" size="sm">
+      <span>{{ this.$store.state.notConnectedErrorMessage }}</span>
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button variant="primary" @click="ok()">
+          OK
+        </b-button>
+      </template>
+    </b-modal>
   </view-header>
 </template>
 
@@ -66,22 +74,21 @@ export default {
       try {
         // Send message to the connector
         sendMessage(this.displayedWeights, this.$store.state.senderChannel);
+        // Create event in the event view
+        var weightString = "";
+        this.displayedWeights.forEach(function(d) {
+          weightString = weightString + d.weight + ": " + d.factor + ", ";
+        });
+        weightString = weightString.slice(0, -2); // Slices off the last comma
+        createNewEvent(
+          "Performance View",
+          "Weights sent",
+          "The following weights have been sent: " + weightString,
+          false
+        );
       } catch (e) {
-        console.log("Erroer");
+        this.$refs["notConnectedModal"].show();
       }
-
-      // Create event in the event view
-      var weightString = "";
-      this.displayedWeights.forEach(function(d) {
-        weightString = weightString + d.weight + ": " + d.factor + ", ";
-      });
-      weightString = weightString.slice(0, -2); // Slices off the last comma
-      createNewEvent(
-        "Performance View",
-        "Weights sent",
-        "The following weights have been sent: " + weightString,
-        false
-      );
     },
     // Normalizes the weights so they add up to one, store updating is turned off by default
     normalizeWeights(weights, update = false) {
