@@ -133,7 +133,6 @@ const store = new Vuex.Store({
     },
     removeNode(state, removeNode) {
       let index = state.nodes.findIndex(x => x.nodeId === removeNode.nodeId);
-      console.log(index);
       state.nodes.splice(index, 1);
     },
     addEdge(state, newEdge) {

@@ -102,6 +102,7 @@ function connectToConnector() {
         newWeights(JSON.parse(message.payloadString));
         break;
       case "fm": // TODO: Create
+        console.time("Configuration View Initial CFM");
         createNewEvent(
           "Configuration View",
           "New context feature model",
@@ -110,6 +111,7 @@ function connectToConnector() {
         store.commit("updateCFM", JSON.parse(message.payloadString));
         break;
       case "cardyFMConfig": // TODO: Create
+        console.time("Configuration View Config");
         createNewEvent(
           "Configuration View",
           "New configuration",

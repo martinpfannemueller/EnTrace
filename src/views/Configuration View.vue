@@ -136,6 +136,7 @@ export default {
       tooltipDiv: "",
       tree: "",
       root: "",
+      addedAttributes: [],
       treeWidth: 680,
       treeHeight: 250,
       rectWidth: 23,
@@ -213,10 +214,8 @@ export default {
       this.establishRoot();
     }
 
-    // // Render the CFM
-    if (this.root == "") {
-      // console.log("CFM not ready yet");
-    } else {
+    // // Render the CFM if already available
+    if (this.root != "") {
       this.renderCFM(this.root);
     }
   },
@@ -240,16 +239,25 @@ export default {
     },
     // Uses D3.hierarchy on the CFM input data to create a child-node hierarchy
     establishRoot() {
+      let addedAttributes = this.addedAttributes;
+      // Create the hierarchy with x and y coordinates for the CFM diagram
       this.root = d3.hierarchy(this.cfm, function(d) {
         // Add attributes to children in case they are both existent
         if (d.children && d.children.length > 0 && d.attributes.length >= 1) {
-          d.attributes.forEach(function(k) {
-            d.children.push(k);
+          d.attributes.forEach(function(attribute) {
+            // Check whether attribute has already been added to the children array
+            if (addedAttributes.includes(attribute.name) == false) {
+              // Add attribute to children array so it is included in the CFM rendering
+              d.children.push(attribute);
+              // Add already added attribute to list of added Attributes to avoid further double adding
+              addedAttributes.push(attribute.name);
+            }
           });
         }
         if (d.children) {
           if (d.children.length == 0) {
             if (d.attributes.length >= 1) {
+              // If only attributes are available, return them as child nodes
               return d.attributes;
             }
           }
@@ -258,11 +266,13 @@ export default {
       });
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
+      this.addedAttributes = addedAttributes;
     },
     // Renders the CFM, calls most of the other functions, requires a root-hierarchy, inspired by http://bl.ocks.org/d3noob/8375092
     renderCFM(source) {
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;
+      // Scale factor uses power function to scale, based on the amounts of nodes (descendants)
       let scaleFactor = Math.min(
         Math.pow(30 / this.root.descendants().length, 0.6),
         2.75
@@ -686,6 +696,8 @@ export default {
         d.x0 = d.x;
         d.y0 = d.y;
       });
+      console.timeEnd("Configuration View Initial CFM");
+      console.timeEnd("Configuration View Config");
     },
     // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {

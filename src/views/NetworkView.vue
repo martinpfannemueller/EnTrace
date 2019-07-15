@@ -95,7 +95,10 @@ export default {
   },
   mounted() {
     this.initializeSelector();
-    this.renderNetwork(this.nodes, this.edges);
+    // // Render the Network View if already available
+    if (this.edges != "") {
+      this.renderNetwork(this.nodes, this.edges);
+    }
   },
   methods: {
     // Initializes the SVG handler variables for D3 as well as the tooltip
@@ -117,6 +120,7 @@ export default {
     },
     // Renders the network topology with nodes and edges, calls most of the other functions
     renderNetwork(nodes, edges) {
+      console.time("Network View");
       // Create local variables for colors and radius
       let defaultNodeColor = this.defaultNodeColor;
       let defaultEdgeColor = this.defaultEdgeColor;
@@ -124,7 +128,6 @@ export default {
       let fontSize = this.fontSize;
 
       this.determineSize(nodes);
-
       // ****************** NODES SECTION ***************************
 
       // Add IDs for each node (important, because otherwise move event do not work)
@@ -299,6 +302,7 @@ export default {
           return d.sourceIdy;
         })
         .remove();
+      console.timeEnd("Network View");
     },
     // Determines the x and y max size for the network which are used to center/zoom the network diagram
     determineSize(nodes) {
