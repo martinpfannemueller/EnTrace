@@ -64,7 +64,8 @@ export default {
       edgeWeight: "",
       edgeLength: "",
       sourceNode: "",
-      targetNode: ""
+      targetNode: "",
+      i: 0
     };
   },
   computed: {
@@ -123,16 +124,6 @@ export default {
       let fontSize = this.fontSize;
 
       this.determineSize(nodes);
-
-      // Load positions of nodes into edges
-      edges.forEach(function(d) {
-        let indexSource = nodes.findIndex(x => x.nodeId === d.sourceId);
-        let indexTarget = nodes.findIndex(x => x.nodeId === d.targetId);
-        d.sourceIdx = nodes[indexSource].x;
-        d.sourceIdy = nodes[indexSource].y;
-        d.targetIdx = nodes[indexTarget].x;
-        d.targetIdy = nodes[indexTarget].y;
-      });
 
       // ****************** NODES SECTION ***************************
 
@@ -212,6 +203,7 @@ export default {
         .exit()
         .transition()
         .duration(this.animationDuration)
+        .attr("r", 0)
         .remove();
 
       // On exit reduce the circles

@@ -7,8 +7,6 @@ const client = new Paho.Client("localhost", 8080, "clientId");
 // Function to connect, handles all incomming event messages
 function connectToConnector() {
   // Helper variables, will be committed to the store
-  var edges = [];
-  var nodes = [];
   var metrics = [];
   var timestamps = [];
   var weights = [];
@@ -75,24 +73,22 @@ function connectToConnector() {
         store.commit("simulationStatusChange", true);
         break;
       case "add-node":
-        nodes.push(JSON.parse(message.payloadString));
-        store.commit("updateNodes", nodes);
+        store.commit("addNode", JSON.parse(message.payloadString));
         break;
       case "mod-node":
-        modifyNodes(JSON.parse(message.payloadString), nodes);
+        store.commit("modNode", JSON.parse(message.payloadString));
         break;
       case "remove-node":
-        modifyNodes(JSON.parse(message.payloadString), nodes);
+        store.commit("removeNode", JSON.parse(message.payloadString));
         break;
       case "add-edge":
-        edges.push(JSON.parse(message.payloadString));
-        store.commit("updateEdges", edges);
+        store.commit("addEdge", JSON.parse(message.payloadString));
         break;
       case "mod-edge":
-        modifyEdges(JSON.parse(message.payloadString), edges);
+        store.commit("modEdge", JSON.parse(message.payloadString));
         break;
       case "remove-edge":
-        modifyEdges(JSON.parse(message.payloadString), edges);
+        store.commit("removeEdge", JSON.parse(message.payloadString));
         break;
       case "new-metric-value":
         newMetric(JSON.parse(message.payloadString), metrics);
@@ -121,63 +117,6 @@ function connectToConnector() {
         );
         store.commit("updateCFMValues", JSON.parse(message.payloadString));
         break;
-    }
-  }
-
-  // Called when nodes are modified/deleted
-  function modifyNodes(modNode, nodes) {
-    // Set index to determine which node element is to be modified
-
-    let index = nodes.findIndex(x => x.nodeId === modNode.nodeId);
-    if (modNode.type == "remove-node") {
-      // Remove node if type is set to remove (not yet specified)
-      nodes.splice(index, 1);
-      // console.log("Node removed");
-    } else if (modNode.type == "mod-node") {
-      // Determine what is to be changed
-      switch (modNode.property) {
-        case "color":
-          nodes[index]["color"] = modNode.newValue;
-          break;
-        case "GraphElementProperty-longitude":
-          nodes[index]["x"] = modNode.newValue;
-          break;
-        case "GraphElementProperty-latitude":
-          nodes[index]["y"] = modNode.newValue;
-          break;
-        default:
-          break;
-      }
-      store.commit("updateNodes", nodes);
-      // console.log("Node modified");
-      // console.log(nodes);
-    }
-  }
-
-  // Called when edges are modified/deleted
-  function modifyEdges(modEdge, edges) {
-    // Set index to determine which edge element is to be modified
-    let index = edges.findIndex(x => x.edgeId === modEdge.edgeId);
-
-    if (modEdge.type == "remove-edge") {
-      // Remove edge if type is set to remove
-      edges.splice(index, 1);
-      // console.log("Edge removed");
-    } else if (modEdge.type == "mod-edge") {
-      // Determine what is to be changed
-      switch (modEdge.property) {
-        case "color":
-          edges[index]["color"] = modEdge.newValue;
-          break;
-        case "weight":
-          edges[index]["weight"] = modEdge.newValue;
-          break;
-        default:
-          break;
-      }
-      store.commit("updateEdges", edges);
-      // console.log("Edge modified");
-      // console.log(edges);
     }
   }
 

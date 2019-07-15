@@ -68,12 +68,16 @@ export default {
   methods: {
     // Allows sending the newly entered weights to the adaptation logic, triggers the appropriate event
     sendWeights() {
-      // Normalize weights before sending, also updates the store with the new weights
-      this.normalizeWeights(this.displayedWeights, true);
-
       try {
+        // Normalize weights before sending, also updates the store with the new weights
+        this.normalizeWeights(this.displayedWeights);
+
         // Send message to the connector
         sendMessage(this.displayedWeights, this.$store.state.senderChannel);
+
+        // Update store
+        store.commit("updateWeights", this.displayedWeights);
+
         // Create event in the event view
         var weightString = "";
         this.displayedWeights.forEach(function(d) {
