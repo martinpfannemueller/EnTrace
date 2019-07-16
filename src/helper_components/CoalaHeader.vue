@@ -1,15 +1,32 @@
 <template>
   <div>
     <b-row class="header">
-      <b-col cols="9">
+      <b-col cols="8">
         <h4>
           🐨
           <strong>CoalaViz.<span style="color: #007bff;">js</span></strong
           >: Enhanced Traceability in Adaptive Communication Systems
         </h4>
       </b-col>
-      <b-col cols="3">
+      <b-col cols="4">
         <h4 class="float-right">
+          <b-button
+            variant="outline-success"
+            size="sm"
+            :disabled="connected"
+            @click="connectToConnector()"
+            ><font-awesome-icon icon="plug" />&nbsp;Connect</b-button
+          >
+          <b-button
+            variant="outline-danger"
+            size="sm"
+            :disabled="!connected"
+            @click="disconnectFromConnector()"
+            ><font-awesome-icon icon="times-circle" />&nbsp;Disconnect</b-button
+          >
+          <b-button variant="outline-danger" size="sm" @click="resetStore()">
+            &nbsp;<font-awesome-icon icon="trash-alt" />&nbsp;
+          </b-button>
           <b-button variant="outline-secondary" size="sm" @click="showModal()">
             <font-awesome-icon icon="cogs" />
           </b-button>
@@ -17,7 +34,7 @@
           <b-badge :variant="connected ? 'success' : 'danger'">
             <font-awesome-icon
               :icon="connected ? 'check-square' : 'times-circle'"
-            />&nbsp; {{ connected ? "Connected" : "Disconnected" }}
+            />
           </b-badge>
         </h4>
       </b-col>
@@ -180,6 +197,9 @@ export default {
     changeHoverColor() {
       this.hoverColorChanged = true;
       this.$store.commit("changeHoverColor", this.hoverColorEdit);
+    },
+    resetStore() {
+      this.$store.commit("resetStore");
     }
   }
 };

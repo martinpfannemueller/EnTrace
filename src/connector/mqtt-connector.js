@@ -67,57 +67,60 @@ function connectToConnector() {
 
   // Called when a new message arrives from broker
   function onMessageArrived(message) {
+    var event = JSON.parse(message.payloadString);
+    console.log(event);
     switch (message.destinationName) {
       case "startOfSimulation":
-        console.log(JSON.parse(message.payloadString));
+        console.log(event);
         store.commit("simulationStatusChange", true);
         break;
       case "add-node":
-        store.commit("addNode", JSON.parse(message.payloadString));
+        store.commit("addNode", transformEvaluationEvent(event));
         break;
       case "mod-node":
-        store.commit("modNode", JSON.parse(message.payloadString));
+        store.commit("modNode", transformEvaluationEvent(event));
         break;
       case "remove-node":
-        store.commit("removeNode", JSON.parse(message.payloadString));
+        store.commit("removeNode", transformEvaluationEvent(event));
         break;
       case "add-edge":
-        store.commit("addEdge", JSON.parse(message.payloadString));
+        store.commit("addEdge", transformEvaluationEvent(event));
         break;
       case "mod-edge":
-        store.commit("modEdge", JSON.parse(message.payloadString));
+        store.commit("modEdge", transformEvaluationEvent(event));
         break;
       case "remove-edge":
-        store.commit("removeEdge", JSON.parse(message.payloadString));
+        store.commit("removeEdge", transformEvaluationEvent(event));
         break;
       case "new-metric-value":
-        newMetric(JSON.parse(message.payloadString), metrics);
+        newMetric(transformEvaluationEvent(event), metrics);
         break;
       case "new-metricWeights":
+        newWeights(event);
         createNewEvent(
           "Performance View",
           "New metric weights arrived",
           "The adaptation logic has sent initial performance weights"
         );
-        newWeights(JSON.parse(message.payloadString));
+
         break;
-      case "fm": // TODO: Create
-        // console.time("Configuration View Initial CFM");
+      case "fm":
+        store.commit("updateCFM", transformEvaluationEvent(event));
         createNewEvent(
           "Configuration View",
           "New context feature model",
           "A new initial context feature model has arrived"
         );
-        store.commit("updateCFM", JSON.parse(message.payloadString));
+
         break;
-      case "cardyFMConfig": // TODO: Create
-        // console.time("Configuration View Config");
+      case "cardyFMConfig":
+        store.commit("updateCFMValues", transformEvaluationEvent(event));
         createNewEvent(
           "Configuration View",
           "New configuration",
           "The adaptation logic has changed the configuration"
         );
-        store.commit("updateCFMValues", JSON.parse(message.payloadString));
+
         break;
     }
   }
@@ -177,6 +180,14 @@ function sendMessage(payload, channel) {
   let message = new Paho.Message(stringMessage);
   message.destinationName = channel;
   client.send(message);
+}
+
+function transformEvaluationEvent(event) {
+  if (event.event) {
+    event.event.push(event.timedEventId);
+    event = event.event;
+  }
+  return event;
 }
 
 export { client, connectToConnector, disconnectFromConnector, sendMessage };

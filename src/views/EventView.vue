@@ -12,6 +12,14 @@
               :options="optionsChannel"
             ></b-form-checkbox-group>
           </b-form-group>
+          <b-button
+            variant="outline-danger"
+            size="sm"
+            :disabled="filteredEvents.length == 0"
+            @click="clearEvents()"
+          >
+            <font-awesome-icon icon="trash-alt" />&nbsp;Clear events
+          </b-button>
         </b-card>
       </b-col>
       <b-col style="padding-left: 0px">
@@ -67,6 +75,11 @@ export default {
       return this.$store.state.events.filter(function(event) {
         return selectedChannel.includes(event.eventChannel);
       });
+    }
+  },
+  methods: {
+    clearEvents() {
+      this.$store.commit("clearEvents");
     }
   }
 };

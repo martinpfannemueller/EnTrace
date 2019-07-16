@@ -270,6 +270,7 @@ export default {
     },
     // Renders the CFM, calls most of the other functions, requires a root-hierarchy, inspired by http://bl.ocks.org/d3noob/8375092
     renderCFM(source) {
+      console.time("Configuration View");
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;
       // Scale factor uses power function to scale, based on the amounts of nodes (descendants)
@@ -696,8 +697,7 @@ export default {
         d.x0 = d.x;
         d.y0 = d.y;
       });
-      console.timeEnd("Configuration View Initial CFM");
-      console.timeEnd("Configuration View Config");
+      console.timeEnd("Configuration View");
     },
     // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {

@@ -109,7 +109,7 @@ export default {
         sumOfWeights += d.factor;
       });
       normalizedWeights.forEach(function(d) {
-        d.factor = d.factor / sumOfWeights;
+        d.factor = Math.round((d.factor / sumOfWeights) * 1000) / 1000;
       });
       if (update) {
         store.commit("updateWeights", normalizedWeights);

@@ -26,7 +26,10 @@ import {
   faTools,
   faSignInAlt,
   faSignOutAlt,
-  faClock
+  faClock,
+  faTrashAlt,
+  faPlug,
+  faPowerOff
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -51,6 +54,9 @@ library.add(faTools);
 library.add(faClock);
 library.add(faSignInAlt);
 library.add(faSignOutAlt);
+library.add(faTrashAlt);
+library.add(faPlug);
+library.add(faPowerOff);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.use(Vuex);

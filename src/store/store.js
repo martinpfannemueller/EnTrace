@@ -92,6 +92,20 @@ const store = new Vuex.Store({
     connectionFailedErrorMessage: "The connection could not be established"
   },
   mutations: {
+    resetStore(state) {
+      state.edges = [];
+      state.nodes = [];
+      state.weights = [];
+      state.metrics = [];
+      state.timestamps = [];
+      state.cfm = "";
+      state.cfmValues = "";
+      state.cfmAttributeDomainList = "";
+      state.events = [];
+    },
+    clearEvents(state) {
+      state.events = [];
+    },
     simulationStatusChange(state, payload) {
       state.connected = payload;
     },
@@ -124,12 +138,9 @@ const store = new Vuex.Store({
         let d = state.edges[i];
         let indexSource = state.nodes.findIndex(x => x.nodeId === d.sourceId);
         let indexTarget = state.nodes.findIndex(x => x.nodeId === d.targetId);
-        if (indexSource == -1 || indexTarget == -1) {
-          console.log("Error");
-        } else if (
-          // Make sure only the affected links are updated
-          d.sourceId == modNode.nodeId ||
-          d.targetId == modNode.nodeId
+        if (
+          (indexSource != -1 || indexTarget != -1) &&
+          (d.sourceId == modNode.nodeId || d.targetId == modNode.nodeId)
         ) {
           d.sourceIdx = state.nodes[indexSource].x;
           d.sourceIdy = state.nodes[indexSource].y;
@@ -150,9 +161,7 @@ const store = new Vuex.Store({
       let indexTarget = state.nodes.findIndex(
         x => x.nodeId === newEdge.targetId
       );
-      if (indexSource == -1 || indexTarget == -1) {
-        console.log("Error");
-      } else {
+      if (indexSource != -1 || indexTarget != -1) {
         newEdge.sourceIdx = state.nodes[indexSource].x;
         newEdge.sourceIdy = state.nodes[indexSource].y;
         newEdge.targetIdx = state.nodes[indexTarget].x;

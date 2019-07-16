@@ -330,6 +330,7 @@ export default {
     },
     // Renders the State View, calls most of the other functions
     renderStateView(states, links) {
+      console.time("State View");
       this.centerState();
       let drawConnection = this.drawConnection;
       let circleDistance = this.circleDistance;
@@ -436,6 +437,7 @@ export default {
         .attr("d", function(d) {
           return drawConnection(d);
         });
+      console.timeEnd("State View");
     },
     // Draws the connection path for the links of the State View
     drawConnection(d) {
