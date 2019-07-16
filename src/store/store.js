@@ -85,14 +85,21 @@ const store = new Vuex.Store({
     cfmValues: "",
     cfmAttributeDomainList: [],
     events: [],
-    hoverColor: "rgb(23, 162, 184)",
+    hoverColor: "#17a2b8",
     senderChannel: "startOfSimulation", // Sets the channel on which the outgoing messages are send
     notConnectedErrorMessage:
-      "No message was sent to the connector because there is no connection. Please reconnect!"
+      "No message was sent to the connector because there is no connection. Please reconnect!",
+    connectionFailedErrorMessage: "The connection could not be established"
   },
   mutations: {
     simulationStatusChange(state, payload) {
       state.connected = payload;
+    },
+    changeSenderChannel(state, newChannel) {
+      state.senderChannel = newChannel;
+    },
+    changeHoverColor(state, hoverColor) {
+      state.hoverColor = hoverColor;
     },
     addNode(state, newNode) {
       state.nodes.push(newNode);

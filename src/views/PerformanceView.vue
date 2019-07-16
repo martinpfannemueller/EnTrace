@@ -72,8 +72,15 @@ export default {
         // Normalize weights before sending, also updates the store with the new weights
         this.normalizeWeights(this.displayedWeights);
 
+        let message = {
+          content: {
+            weights: this.displayedWeights
+          },
+          type: "send-weights"
+        };
+
         // Send message to the connector
-        sendMessage(this.displayedWeights, this.$store.state.senderChannel);
+        sendMessage(message, this.$store.state.senderChannel);
 
         // Update store
         store.commit("updateWeights", this.displayedWeights);

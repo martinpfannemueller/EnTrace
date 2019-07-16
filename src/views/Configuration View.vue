@@ -966,8 +966,11 @@ export default {
     sendAttribute(attribute, value) {
       try {
         let message = {
-          attribute: attribute,
-          value: value
+          content: {
+            attribute: attribute,
+            value: value
+          },
+          type: "send-attribute"
         };
         sendMessage(message, this.$store.state.senderChannel);
         createNewEvent(
@@ -986,8 +989,14 @@ export default {
     },
     // Allows sending the feature selected to the adaptation logic, triggers the appropriate event
     sendFeature(feature) {
+      let message = {
+        content: {
+          feature: feature
+        },
+        type: "send-feature"
+      };
       try {
-        sendMessage(feature, this.$store.state.senderChannel);
+        sendMessage(message, this.$store.state.senderChannel);
         createNewEvent(
           "Configuration View",
           "Feature sent",

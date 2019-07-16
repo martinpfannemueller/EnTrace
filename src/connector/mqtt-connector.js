@@ -102,7 +102,7 @@ function connectToConnector() {
         newWeights(JSON.parse(message.payloadString));
         break;
       case "fm": // TODO: Create
-        console.time("Configuration View Initial CFM");
+        // console.time("Configuration View Initial CFM");
         createNewEvent(
           "Configuration View",
           "New context feature model",
@@ -111,7 +111,7 @@ function connectToConnector() {
         store.commit("updateCFM", JSON.parse(message.payloadString));
         break;
       case "cardyFMConfig": // TODO: Create
-        console.time("Configuration View Config");
+        // console.time("Configuration View Config");
         createNewEvent(
           "Configuration View",
           "New configuration",
@@ -159,6 +159,18 @@ function connectToConnector() {
   }
 }
 
+function disconnectFromConnector() {
+  client.disconnect();
+  store.commit("simulationStatusChange", false);
+  createNewEvent(
+    "General",
+    "Connection disconnected",
+    "CoalaViz was disconnected from the connector",
+    true,
+    false,
+    true
+  );
+}
 // Called when a new messge is send back to the adaptation logic
 function sendMessage(payload, channel) {
   let stringMessage = JSON.stringify(payload);
@@ -167,4 +179,4 @@ function sendMessage(payload, channel) {
   client.send(message);
 }
 
-export { client, connectToConnector, sendMessage };
+export { client, connectToConnector, disconnectFromConnector, sendMessage };
