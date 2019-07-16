@@ -121,7 +121,7 @@ import ViewHeader from "../helper_components/ViewHeader";
 import Tooltip from "../tooltips/TooltipConfigurationView";
 import { sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
-import { createNewEvent, store } from "../store/store";
+import { store, createNewEvent } from "../store/store";
 import { mapMutations } from "vuex";
 export default {
   components: {
@@ -136,7 +136,6 @@ export default {
       tooltipDiv: "",
       tree: "",
       root: "",
-      addedAttributes: [],
       treeWidth: 680,
       treeHeight: 250,
       rectWidth: 23,
@@ -180,7 +179,10 @@ export default {
     },
     cfm: function(val) {
       if (val == "") {
-        console.log("Error");
+        // Reset everything
+        this.root = "";
+        this.tree = "";
+        this.cfmViewSVG.selectAll("*").remove();
       } else {
         this.establishRoot();
         this.renderCFM(this.root);
@@ -188,7 +190,10 @@ export default {
     },
     cfmValues: function(val) {
       if (val == "") {
-        console.log("Error");
+        // Reset everything
+        this.root = "";
+        this.tree = "";
+        this.cfmViewSVG.selectAll("*").remove();
       } else {
         this.setCurrentlyChosenAndValues(this.root);
         this.renderCFM(this.root);
@@ -239,7 +244,7 @@ export default {
     },
     // Uses D3.hierarchy on the CFM input data to create a child-node hierarchy
     establishRoot() {
-      let addedAttributes = this.addedAttributes;
+      let addedAttributes = this.$store.state.addedAttributes;
       // Create the hierarchy with x and y coordinates for the CFM diagram
       this.root = d3.hierarchy(this.cfm, function(d) {
         // Add attributes to children in case they are both existent
@@ -250,7 +255,7 @@ export default {
               // Add attribute to children array so it is included in the CFM rendering
               d.children.push(attribute);
               // Add already added attribute to list of added Attributes to avoid further double adding
-              addedAttributes.push(attribute.name);
+              store.commit("updateAddedAttribute", attribute);
             }
           });
         }
@@ -266,11 +271,9 @@ export default {
       });
       this.root.x0 = this.treeHeight / 2;
       this.root.y0 = 0;
-      this.addedAttributes = addedAttributes;
     },
     // Renders the CFM, calls most of the other functions, requires a root-hierarchy, inspired by http://bl.ocks.org/d3noob/8375092
     renderCFM(source) {
-      console.time("Configuration View");
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;
       // Scale factor uses power function to scale, based on the amounts of nodes (descendants)
@@ -697,7 +700,10 @@ export default {
         d.x0 = d.x;
         d.y0 = d.y;
       });
-      console.timeEnd("Configuration View");
+
+      // Evaluate end time
+      this.$store.commit("setCurrentEndTime", window.performance.now());
+      this.$store.commit("createEvaluationLog", "Configuration View");
     },
     // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {
@@ -816,7 +822,7 @@ export default {
         lowerBoundary: d.domain.lowerBoundary,
         upperBoundary: d.domain.upperBoundary
       };
-      store.commit("updateAttributeDomainList", newAttribute);
+      this.$store.commit("updateAttributeDomainList", newAttribute);
     },
     // Prepares the data of the selected element for the tooltip
     setTooltipElements(d) {

@@ -22,6 +22,8 @@ function connectToConnector() {
 
   // Connecting and subscribing to all necessary channels
   function onConnect() {
+    // Set "connected" status to true
+    store.commit("simulationStatusChange", true);
     // Connect
     createNewEvent(
       "General",
@@ -31,8 +33,7 @@ function connectToConnector() {
       true,
       false
     );
-    // Set "connected" status to true
-    store.commit("simulationStatusChange", true);
+
     client.subscribe("startOfSimulation");
     // Network View
     client.subscribe("add-edge");
@@ -67,33 +68,56 @@ function connectToConnector() {
 
   // Called when a new message arrives from broker
   function onMessageArrived(message) {
-    var event = JSON.parse(message.payloadString);
-    console.log(event);
+    var incommingMessage = JSON.parse(message.payloadString);
+    var event;
+
+    // Check if evaluation mode
+    if (incommingMessage.timedEventId || incommingMessage.timedEventId == 0) {
+      var timedEventId = incommingMessage.timedEventId;
+      event = incommingMessage.event;
+      store.commit("setCurrentTimedEventId", timedEventId);
+    } else {
+      event = incommingMessage;
+    }
     switch (message.destinationName) {
       case "startOfSimulation":
         console.log(event);
-        store.commit("simulationStatusChange", true);
+        // store.commit("simulationStatusChange", true);
         break;
       case "add-node":
-        store.commit("addNode", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("addNode", event);
         break;
       case "mod-node":
-        store.commit("modNode", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("modNode", event);
         break;
       case "remove-node":
-        store.commit("removeNode", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("removeNode", event);
         break;
       case "add-edge":
-        store.commit("addEdge", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("addEdge", event);
         break;
       case "mod-edge":
-        store.commit("modEdge", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("modEdge", event);
         break;
       case "remove-edge":
-        store.commit("removeEdge", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("removeEdge", event);
         break;
       case "new-metric-value":
-        newMetric(transformEvaluationEvent(event), metrics);
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        newMetric(event, metrics);
         break;
       case "new-metricWeights":
         newWeights(event);
@@ -105,7 +129,9 @@ function connectToConnector() {
 
         break;
       case "fm":
-        store.commit("updateCFM", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("updateCFM", event);
         createNewEvent(
           "Configuration View",
           "New context feature model",
@@ -114,7 +140,9 @@ function connectToConnector() {
 
         break;
       case "cardyFMConfig":
-        store.commit("updateCFMValues", transformEvaluationEvent(event));
+        // Start the evaluation by setting the time here
+        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("updateCFMValues", event);
         createNewEvent(
           "Configuration View",
           "New configuration",
@@ -182,12 +210,12 @@ function sendMessage(payload, channel) {
   client.send(message);
 }
 
-function transformEvaluationEvent(event) {
-  if (event.event) {
-    event.event.push(event.timedEventId);
-    event = event.event;
-  }
-  return event;
-}
+// function transformEvaluationEvent(event) {
+//   if (event.event) {
+//     event.event.push(event.timedEventId);
+//     event = event.event;
+//   }
+//   return event;
+// }
 
 export { client, connectToConnector, disconnectFromConnector, sendMessage };

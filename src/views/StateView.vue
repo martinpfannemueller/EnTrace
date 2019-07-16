@@ -113,8 +113,12 @@ export default {
   },
   watch: {
     cfmValues: function(val) {
+      // Reset everything
       if (val == "") {
-        console.log("Error");
+        this.stateCollection = [];
+        this.nodeCollection = [];
+        this.adjustedCFMValues = [];
+        this.stateViewSVG.selectAll("*").remove();
       } else {
         console.log("New CFM values in state view");
         // Compute the adjusted values based on the number of intervals variable
@@ -330,7 +334,6 @@ export default {
     },
     // Renders the State View, calls most of the other functions
     renderStateView(states, links) {
-      console.time("State View");
       this.centerState();
       let drawConnection = this.drawConnection;
       let circleDistance = this.circleDistance;
@@ -437,7 +440,9 @@ export default {
         .attr("d", function(d) {
           return drawConnection(d);
         });
-      console.timeEnd("State View");
+      // Evaluate end time
+      this.$store.commit("setCurrentEndTime", window.performance.now());
+      this.$store.commit("createEvaluationLog", "State View");
     },
     // Draws the connection path for the links of the State View
     drawConnection(d) {

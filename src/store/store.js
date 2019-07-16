@@ -84,12 +84,17 @@ const store = new Vuex.Store({
     cfm: "",
     cfmValues: "",
     cfmAttributeDomainList: [],
+    addedAttributes: [],
     events: [],
     hoverColor: "#17a2b8",
     senderChannel: "startOfSimulation", // Sets the channel on which the outgoing messages are send
     notConnectedErrorMessage:
       "No message was sent to the connector because there is no connection. Please reconnect!",
-    connectionFailedErrorMessage: "The connection could not be established"
+    connectionFailedErrorMessage: "The connection could not be established",
+    currentTimedEventId: "",
+    currentStartTime: "",
+    currentEndTime: "",
+    evaluationLogger: []
   },
   mutations: {
     resetStore(state) {
@@ -100,11 +105,33 @@ const store = new Vuex.Store({
       state.timestamps = [];
       state.cfm = "";
       state.cfmValues = "";
-      state.cfmAttributeDomainList = "";
+      state.cfmAttributeDomainList = [];
       state.events = [];
+      state.evaluationLogger = [];
     },
     clearEvents(state) {
       state.events = [];
+    },
+    setCurrentStartTime(state, startTime) {
+      state.currentStartTime = startTime;
+    },
+    setCurrentEndTime(state, endTime) {
+      state.currentEndTime = endTime;
+    },
+    createEvaluationLog(state, view) {
+      // Check whether a starting time exists -> only then do the logging
+      if (state.currentStartTime != "" || state.currentStartTime != 0) {
+        state.evaluationLogger.push({
+          id: state.currentTimedEventId,
+          startTime: state.currentStartTime,
+          endTime: state.currentEndTime,
+          Difference: state.currentEndTime - state.currentStartTime,
+          view: view
+        });
+      }
+    },
+    setCurrentTimedEventId(state, timedEventId) {
+      state.currentTimedEventId = timedEventId;
     },
     simulationStatusChange(state, payload) {
       state.connected = payload;
@@ -133,14 +160,20 @@ const store = new Vuex.Store({
         default:
           break;
       }
-      // Update links based on new node locations to move them
+      // Update links/edges based on new node locations to move them
       for (let i = 0; i < state.edges.length; i++) {
         let d = state.edges[i];
         let indexSource = state.nodes.findIndex(x => x.nodeId === d.sourceId);
         let indexTarget = state.nodes.findIndex(x => x.nodeId === d.targetId);
-        if (
-          (indexSource != -1 || indexTarget != -1) &&
-          (d.sourceId == modNode.nodeId || d.targetId == modNode.nodeId)
+        if (indexSource == -1 || indexTarget == -1) {
+          // Node does not exist
+          console.log(
+            "Mod node: Cannot draw edge because node(s) do not exist yet"
+          );
+        } else if (
+          // Make sure only the affected links are updated
+          d.sourceId == modNode.nodeId ||
+          d.targetId == modNode.nodeId
         ) {
           d.sourceIdx = state.nodes[indexSource].x;
           d.sourceIdy = state.nodes[indexSource].y;
@@ -154,19 +187,25 @@ const store = new Vuex.Store({
       state.nodes.splice(index, 1);
     },
     addEdge(state, newEdge) {
-      // Initialize position of each edge
+      // Initialize position of each edge/link
       let indexSource = state.nodes.findIndex(
         x => x.nodeId === newEdge.sourceId
       );
       let indexTarget = state.nodes.findIndex(
         x => x.nodeId === newEdge.targetId
       );
-      if (indexSource != -1 || indexTarget != -1) {
+      if (indexSource == -1 || indexTarget == -1) {
+        // Node does not exist
+        console.log(
+          "Add edge: Cannot draw edge because node(s) do not exist yet"
+        );
+      } else {
         newEdge.sourceIdx = state.nodes[indexSource].x;
         newEdge.sourceIdy = state.nodes[indexSource].y;
         newEdge.targetIdx = state.nodes[indexTarget].x;
         newEdge.targetIdy = state.nodes[indexTarget].y;
       }
+
       // Push edge into store
       state.edges.push(newEdge);
     },
@@ -203,6 +242,9 @@ const store = new Vuex.Store({
     },
     updateCFMValues(state, payload) {
       state.cfmValues = payload;
+    },
+    updateAddedAttribute(state, attribute) {
+      state.addedAttributes.push(attribute);
     },
     updateEvents(state, payload) {
       state.events.unshift(payload);

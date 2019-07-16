@@ -158,15 +158,12 @@ export default {
   methods: {
     // Used to call MQTT function to connect to the connector
     connectToConnector() {
-      // Use callback to only check after connection-try has worked--or not
-      connectToConnector(
-        () =>
-          function() {
-            if (!this.connected) {
-              this.$refs["notConnectedModal"].show();
-            }
-          }
-      );
+      // Callback function to ensure conneciton try is finished
+      connectToConnector(() => {
+        if (this.connected == false) {
+          this.$refs["notConnectedModal"].show();
+        }
+      });
     },
     // Used to cisconnect from the connector
     disconnectFromConnector() {

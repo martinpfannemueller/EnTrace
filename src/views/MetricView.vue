@@ -45,7 +45,7 @@
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
 import VueApexCharts from "vue-apexcharts";
-import { createNewEvent } from "../store/store";
+import { createNewEvent, store } from "../store/store";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -57,8 +57,16 @@ export default {
       id: 1,
       chartOptions: {
         chart: {
+          animations: { enabled: false },
           id: "Metric View",
           parentHeightOffset: -5,
+          events: {
+            updated: function() {
+              // Evaluate end time
+              store.commit("setCurrentEndTime", window.performance.now());
+              store.commit("createEvaluationLog", "Metric View");
+            }
+          },
           toolbar: {
             show: false
           }
@@ -126,6 +134,7 @@ export default {
     modifiedMetrics() {
       let lengthTimestamps = this.$store.state.timestamps.length;
       let timeInterval = this.timeInterval;
+      // Create deep clone because otherwise orignalMetrics will be changed as well since it is only a reference
       let helperMetrics = JSON.parse(JSON.stringify(this.originalMetrics));
       helperMetrics.forEach(function(d, index) {
         d.data = helperMetrics[index].data.slice(

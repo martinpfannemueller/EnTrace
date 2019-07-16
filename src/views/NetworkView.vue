@@ -120,7 +120,6 @@ export default {
     },
     // Renders the network topology with nodes and edges, calls most of the other functions
     renderNetwork(nodes, edges) {
-      console.time("Network View");
       // Create local variables for colors and radius
       let defaultNodeColor = this.defaultNodeColor;
       let defaultEdgeColor = this.defaultEdgeColor;
@@ -302,7 +301,10 @@ export default {
           return d.sourceIdy;
         })
         .remove();
-      console.timeEnd("Network View");
+
+      // Evaluate end time
+      this.$store.commit("setCurrentEndTime", window.performance.now());
+      this.$store.commit("createEvaluationLog", "Network View");
     },
     // Determines the x and y max size for the network which are used to center/zoom the network diagram
     determineSize(nodes) {
