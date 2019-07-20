@@ -238,15 +238,6 @@ const store = new Vuex.Store({
       );
       state.networkView.edges.splice(index, 1);
     },
-    updateMetrics(state, payload) {
-      state.metricView.metrics = payload;
-    },
-    updateTimestamps(state, payload) {
-      state.metricView.timestamps = payload;
-    },
-    updateWeights(state, payload) {
-      state.metricView.weights = payload;
-    },
     updateCFM(state, payload) {
       state.configurationView.cfm = payload;
     },
@@ -256,21 +247,30 @@ const store = new Vuex.Store({
     updateAddedAttribute(state, attribute) {
       state.configurationView.addedAttributes.push(attribute);
     },
+    updateMetrics(state, payload) {
+      state.metricView.metrics = payload;
+    },
+    updateTimestamps(state, payload) {
+      state.metricView.timestamps = payload;
+    },
+    updateWeights(state, payload) {
+      state.metricView.weights = payload;
+    },
+    updateAttributeDomainList(state, payload) {
+      state.stateView.cfmAttributeDomainList.push(payload);
+    },
     updateEvents(state, payload) {
       state.eventView.events.unshift(payload);
     },
     clearEvents(state) {
       state.eventView.events = [];
     },
-    updateAttributeDomainList(state, payload) {
-      state.stateView.cfmAttributeDomainList.push(payload);
-    },
     logStart(state, { timedEventId, timeStampMilliseconds, startTime, view }) {
       state.evaluation.evaluationLogger.push({
         timedEventId,
         view,
         timeStampMilliseconds,
-        startTime
+        startTime: startTime
       });
     },
     logEnd(state, { timedEventId, endTime, view }) {
@@ -279,6 +279,8 @@ const store = new Vuex.Store({
       );
       if (index >= 0) {
         state.evaluation.evaluationLogger[index].endTime = endTime;
+        state.evaluation.evaluationLogger[index].difference =
+          endTime - state.evaluation.evaluationLogger[index].startTime;
       }
     },
     setCurrentTimedEventId(state, timedEventId) {
