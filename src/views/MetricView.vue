@@ -57,14 +57,17 @@ export default {
       id: 1,
       chartOptions: {
         chart: {
-          animations: { enabled: false },
+          animations: { enabled: true },
           id: "Metric View",
           parentHeightOffset: -5,
           events: {
             updated: function() {
               // Evaluate end time
-              store.commit("setCurrentEndTime", window.performance.now());
-              store.commit("createEvaluationLog", "Metric View");
+              store.commit("logEnd", {
+                timedEventId: store.state.currentTimedEventId,
+                endTime: window.performance.now(),
+                view: "Metric View"
+              });
             }
           },
           toolbar: {

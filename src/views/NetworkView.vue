@@ -13,7 +13,7 @@
       :source-node="sourceNode"
       :target-node="targetNode"
     ></tooltip>
-    <svg id="network-view" :height="height" :width="width" margin="auto"></svg>
+    <svg id="network-view" :height="height" :width="width" margin="auto" />
     <b-row>
       <b-col>
         <b-button size="sm" variant="outline-primary" @click="centerNetwork">
@@ -32,6 +32,7 @@
 <script>
 import ViewHeader from "../helper_components/ViewHeader";
 import Tooltip from "../tooltips/TooltipNetworkView";
+import { store } from "../store/store";
 import * as d3 from "d3";
 export default {
   components: {
@@ -53,7 +54,7 @@ export default {
       fontSize: 14,
       maxY: 0,
       maxX: 0,
-      animationDuration: 1000,
+      animationDuration: 0,
       showTooltips: true,
       defaultNodeColor: "rgb(226, 245, 255)",
       defaultEdgeColor: "rgb(211, 19, 12)",
@@ -65,7 +66,8 @@ export default {
       edgeLength: "",
       sourceNode: "",
       targetNode: "",
-      i: 0
+      i: 0,
+      started: false
     };
   },
   computed: {
@@ -77,13 +79,13 @@ export default {
     },
     hoverColor() {
       return this.$store.state.hoverColor;
+    },
+    updateNetworkView() {
+      return this.$store.state.updateNetworkView;
     }
   },
   watch: {
-    nodes: function() {
-      this.renderNetwork(this.nodes, this.edges);
-    },
-    edges: function() {
+    updateNetworkView() {
       this.renderNetwork(this.nodes, this.edges);
     },
     maxX: function() {
@@ -95,10 +97,6 @@ export default {
   },
   mounted() {
     this.initializeSelector();
-    // // Render the Network View if already available
-    if (this.edges != "") {
-      this.renderNetwork(this.nodes, this.edges);
-    }
   },
   methods: {
     // Initializes the SVG handler variables for D3 as well as the tooltip
@@ -154,7 +152,7 @@ export default {
         .append("circle")
         .attr("class", "nodeCircle")
         .attr("fill", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultNodeColor;
@@ -178,8 +176,8 @@ export default {
       var nodeUpdate = nodeEnter.merge(node);
       // Transition to the proper position for the node
       nodeUpdate
-        .transition()
-        .duration(this.animationDuration)
+        // .transition()
+        // .duration(this.animationDuration)
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
         });
@@ -187,7 +185,7 @@ export default {
       nodeUpdate
         .selectAll("circle.nodeCircle")
         .attr("fill", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultNodeColor;
@@ -228,7 +226,7 @@ export default {
         .insert("line", "g")
         .attr("class", "link")
         .attr("stroke", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultEdgeColor;
@@ -257,10 +255,10 @@ export default {
       var edgeUpdate = edgeEnter.merge(edge);
       // Transition back to the parent element position
       edgeUpdate
-        .transition()
-        .duration(this.animationDuration)
+        // .transition()
+        // .duration(this.animationDuration)
         .attr("stroke", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultEdgeColor;
@@ -302,9 +300,14 @@ export default {
         })
         .remove();
 
-      // Evaluate end time
-      this.$store.commit("setCurrentEndTime", window.performance.now());
-      this.$store.commit("createEvaluationLog", "Network View");
+      if (!this.started) {
+        // Evaluate end time
+        store.commit("logEnd", {
+          timedEventId: this.$store.state.currentTimedEventId,
+          endTime: window.performance.now(),
+          view: "Network View"
+        });
+      }
     },
     // Determines the x and y max size for the network which are used to center/zoom the network diagram
     determineSize(nodes) {
@@ -332,8 +335,8 @@ export default {
         );
       }
       this.networkViewSVG
-        .transition()
-        .duration(this.animationDuration)
+        // .transition()
+        // .duration(this.animationDuration)
         .attr(
           "transform",
           "translate(" + width / 4 + ",0) scale(" + scale * 0.975 + ")"
@@ -376,7 +379,7 @@ export default {
         .transition()
         .duration(400)
         .attr("fill", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultNodeColor;
@@ -416,7 +419,7 @@ export default {
         .transition()
         .duration(400)
         .attr("stroke", function(d) {
-          if (d.color != null) {
+          if (d.color) {
             return d.color;
           } else {
             return defaultEdgeColor;

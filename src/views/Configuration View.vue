@@ -162,7 +162,7 @@ export default {
   },
   computed: {
     cfm() {
-      if (this.$store.state.cfm != "") {
+      if (this.$store.state.cfm !== "") {
         return this.$store.state.cfm.fm.root;
       } else return "";
     },
@@ -184,7 +184,10 @@ export default {
         this.tree = "";
         this.cfmViewSVG.selectAll("*").remove();
       } else {
-        this.establishRoot();
+        // Check if root is already created -> if not, create it
+        if (this.root == "") {
+          this.establishRoot();
+        }
         this.renderCFM(this.root);
       }
     },
@@ -212,14 +215,12 @@ export default {
     // Initilaize the d3 tree
     this.tree = d3.tree().size([this.treeWidth, this.treeHeight]);
 
-    // // Establish root
-    if (this.cfm == "") {
-      // console.log("Root not ready yet");
-    } else {
+    // // Establish root if CFM is already available
+    if (this.cfm !== "") {
       this.establishRoot();
     }
 
-    // // Render the CFM if already available
+    // Render the CFM if already available
     if (this.root != "") {
       this.renderCFM(this.root);
     }
@@ -702,8 +703,11 @@ export default {
       });
 
       // Evaluate end time
-      this.$store.commit("setCurrentEndTime", window.performance.now());
-      this.$store.commit("createEvaluationLog", "Configuration View");
+      store.commit("logEnd", {
+        timedEventId: store.state.currentTimedEventId,
+        endTime: window.performance.now(),
+        view: "Configuration View"
+      });
     },
     // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {

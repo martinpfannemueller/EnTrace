@@ -29,12 +29,7 @@ const store = new Vuex.Store({
     connected: false,
     edges: [],
     nodes: [],
-    weights: [
-      { weight: "mEndToEndDropRate", factor: 0.25 },
-      { weight: "mEndToEndLatency", factor: 0.25 },
-      { weight: "mEJain", factor: 0.25 },
-      { weight: "mEMean", factor: 0.25 }
-    ],
+    weights: [],
     metrics: [],
     timestamps: [],
     toggleMap: [
@@ -84,7 +79,7 @@ const store = new Vuex.Store({
     cfm: "",
     cfmValues: "",
     cfmAttributeDomainList: [],
-    addedAttributes: [],
+    addedAttributes: ["fsTCint"],
     events: [],
     hoverColor: "#17a2b8",
     senderChannel: "startOfSimulation", // Sets the channel on which the outgoing messages are send
@@ -92,9 +87,9 @@ const store = new Vuex.Store({
       "No message was sent to the connector because there is no connection. Please reconnect!",
     connectionFailedErrorMessage: "The connection could not be established",
     currentTimedEventId: "",
-    currentStartTime: "",
-    currentEndTime: "",
-    evaluationLogger: []
+    currentTimeStampMilliseconds: "",
+    evaluationLogger: [],
+    updateNetworkView: 0
   },
   mutations: {
     resetStore(state) {
@@ -112,26 +107,31 @@ const store = new Vuex.Store({
     clearEvents(state) {
       state.events = [];
     },
-    setCurrentStartTime(state, startTime) {
-      state.currentStartTime = startTime;
+    logStart(state, { timedEventId, timeStampMilliseconds, startTime, view }) {
+      state.evaluationLogger.push({
+        timedEventId,
+        view,
+        timeStampMilliseconds,
+        startTime
+      });
     },
-    setCurrentEndTime(state, endTime) {
-      state.currentEndTime = endTime;
-    },
-    createEvaluationLog(state, view) {
-      // Check whether a starting time exists -> only then do the logging
-      if (state.currentStartTime != "" || state.currentStartTime != 0) {
-        state.evaluationLogger.push({
-          id: state.currentTimedEventId,
-          startTime: state.currentStartTime,
-          endTime: state.currentEndTime,
-          Difference: state.currentEndTime - state.currentStartTime,
-          view: view
-        });
+    logEnd(state, { timedEventId, endTime, view }) {
+      let index = state.evaluationLogger.findIndex(
+        x => x.timedEventId == timedEventId && x.view == view
+      );
+      if (index >= 0) {
+        state.evaluationLogger[index].endTime = endTime;
       }
     },
     setCurrentTimedEventId(state, timedEventId) {
       state.currentTimedEventId = timedEventId;
+    },
+    setCurrentTimeStampMilliseconds(state, timeStampMilliseconds) {
+      // console.log(timeStampMilliseconds);
+      state.currentTimeStampMilliseconds = timeStampMilliseconds;
+    },
+    updateNetworkView(state, payload) {
+      state.updateNetworkView = state.updateNetworkView + payload;
     },
     simulationStatusChange(state, payload) {
       state.connected = payload;
@@ -233,7 +233,6 @@ const store = new Vuex.Store({
     updateTimestamps(state, payload) {
       state.timestamps = payload;
     },
-    // Used to update the weights comming from the connector
     updateWeights(state, payload) {
       state.weights = payload;
     },

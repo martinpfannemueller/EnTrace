@@ -3,6 +3,7 @@ import { createNewEvent, store } from "../store/store";
 
 // Create a client instance
 const client = new Paho.Client("localhost", 8080, "clientId");
+var newtimedEventId = 0;
 
 // Function to connect, handles all incomming event messages
 function connectToConnector() {
@@ -69,54 +70,110 @@ function connectToConnector() {
   // Called when a new message arrives from broker
   function onMessageArrived(message) {
     var incommingMessage = JSON.parse(message.payloadString);
-    var event;
+    // console.log(incommingMessage);
+    var event, timedEventId;
 
     // Check if evaluation mode
     if (incommingMessage.timedEventId || incommingMessage.timedEventId == 0) {
-      var timedEventId = incommingMessage.timedEventId;
-      event = incommingMessage.event;
+      // Set current event ID for store
+      timedEventId = incommingMessage.timedEventId;
       store.commit("setCurrentTimedEventId", timedEventId);
+
+      // Set current time stamp for store
+      var timeStampMilliseconds = incommingMessage.timeStampMilliseconds;
+      if (timeStampMilliseconds !== store.state.currentTimeStampMilliseconds) {
+        store.commit("setCurrentTimeStampMilliseconds", timeStampMilliseconds);
+      }
+
+      event = incommingMessage.event;
+
+      // No evaluation mode
     } else {
       event = incommingMessage;
+      // Create artificial IDs for the artificial cases
+      timedEventId = newtimedEventId;
+      store.commit("setCurrentTimedEventId", timedEventId);
+      newtimedEventId++;
     }
+
     switch (message.destinationName) {
       case "startOfSimulation":
         console.log(event);
-        // store.commit("simulationStatusChange", true);
         break;
       case "add-node":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("addNode", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "mod-node":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("modNode", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "remove-node":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("removeNode", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "add-edge":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("addEdge", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "mod-edge":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("modEdge", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "remove-edge":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Network View"
+        });
         store.commit("removeEdge", event);
+        store.commit("updateNetworkView", 1);
         break;
       case "new-metric-value":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Metric View"
+        });
         newMetric(event, metrics);
         break;
       case "new-metricWeights":
@@ -126,29 +183,42 @@ function connectToConnector() {
           "New metric weights arrived",
           "The adaptation logic has sent initial performance weights"
         );
-
         break;
       case "fm":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Configuration View"
+        });
         store.commit("updateCFM", event);
         createNewEvent(
           "Configuration View",
           "New context feature model",
           "A new initial context feature model has arrived"
         );
-
         break;
       case "cardyFMConfig":
         // Start the evaluation by setting the time here
-        store.commit("setCurrentStartTime", window.performance.now());
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "Configuration View"
+        });
+        store.commit("logStart", {
+          timedEventId,
+          timeStampMilliseconds,
+          startTime: window.performance.now(),
+          view: "State View"
+        });
         store.commit("updateCFMValues", event);
         createNewEvent(
           "Configuration View",
           "New configuration",
           "The adaptation logic has changed the configuration"
         );
-
         break;
     }
   }

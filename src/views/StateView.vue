@@ -66,7 +66,7 @@
 import ViewHeader from "../helper_components/ViewHeader";
 import * as d3 from "d3";
 import Tooltip from "../tooltips/TooltipStateView";
-import { createNewEvent } from "../store/store";
+import { store, createNewEvent } from "../store/store";
 export default {
   components: {
     "view-header": ViewHeader,
@@ -441,8 +441,11 @@ export default {
           return drawConnection(d);
         });
       // Evaluate end time
-      this.$store.commit("setCurrentEndTime", window.performance.now());
-      this.$store.commit("createEvaluationLog", "State View");
+      store.commit("logEnd", {
+        timedEventId: store.state.currentTimedEventId,
+        endTime: window.performance.now(),
+        view: "State View"
+      });
     },
     // Draws the connection path for the links of the State View
     drawConnection(d) {
