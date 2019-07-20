@@ -64,7 +64,7 @@ export default {
             updated: function() {
               // Evaluate end time
               store.commit("logEnd", {
-                timedEventId: store.state.currentTimedEventId,
+                timedEventId: store.state.evaluation.currentTimedEventId,
                 endTime: window.performance.now(),
                 view: "Metric View"
               });
@@ -124,7 +124,7 @@ export default {
     metrics() {
       if (
         this.cutInterval &&
-        this.$store.state.timestamps.length >= this.timeInterval
+        this.$store.state.metricView.timestamps.length >= this.timeInterval
       ) {
         return this.modifiedMetrics;
       } else {
@@ -132,10 +132,10 @@ export default {
       }
     },
     originalMetrics() {
-      return this.$store.state.metrics;
+      return this.$store.state.metricView.metrics;
     },
     modifiedMetrics() {
-      let lengthTimestamps = this.$store.state.timestamps.length;
+      let lengthTimestamps = this.$store.state.metricView.timestamps.length;
       let timeInterval = this.timeInterval;
       // Create deep clone because otherwise orignalMetrics will be changed as well since it is only a reference
       let helperMetrics = JSON.parse(JSON.stringify(this.originalMetrics));
@@ -150,7 +150,7 @@ export default {
     timestamps() {
       if (
         this.cutInterval &&
-        this.$store.state.timestamps.length >= this.timeInterval
+        this.$store.state.metricView.timestamps.length >= this.timeInterval
       ) {
         return this.modifiedTimestamps;
       } else {
@@ -158,12 +158,12 @@ export default {
       }
     },
     originalTimestamps() {
-      return this.$store.state.timestamps;
+      return this.$store.state.metricView.timestamps;
     },
     modifiedTimestamps() {
-      let lengthTimestamps = this.$store.state.timestamps.length;
+      let lengthTimestamps = this.$store.state.metricView.timestamps.length;
       let timeInterval = this.timeInterval;
-      return this.$store.state.timestamps.slice(
+      return this.$store.state.metricView.timestamps.slice(
         lengthTimestamps - timeInterval,
         lengthTimestamps
       );
@@ -218,7 +218,7 @@ export default {
     },
     originalTimestamps: function() {
       let checkValueChange = this.checkValueChange;
-      this.$store.state.metrics.forEach(function(d) {
+      this.$store.state.metricView.metrics.forEach(function(d) {
         checkValueChange(d);
       });
       this.changeTimestamps(this.timestamps);

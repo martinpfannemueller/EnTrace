@@ -72,7 +72,7 @@ export default {
   computed: {
     filteredEvents() {
       let selectedChannel = this.selectedChannel;
-      return this.$store.state.events.filter(function(event) {
+      return this.$store.state.eventView.events.filter(function(event) {
         return selectedChannel.includes(event.eventChannel);
       });
     }

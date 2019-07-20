@@ -25,7 +25,7 @@
       <b-col v-else class="no-weights" height="270px">&nbsp;</b-col>
     </b-row>
     <b-modal ref="notConnectedModal" title="No message send" size="sm">
-      <span>{{ this.$store.state.notConnectedErrorMessage }}</span>
+      <span>{{ this.$store.state.dashboard.notConnectedErrorMessage }}</span>
       <template slot="modal-footer" slot-scope="{ ok }">
         <b-button variant="primary" @click="ok()">
           OK
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     storeWeights() {
-      return this.$store.state.weights;
+      return this.$store.state.performanceView.weights;
     }
   },
   watch: {
@@ -80,7 +80,7 @@ export default {
         };
 
         // Send message to the connector
-        sendMessage(message, this.$store.state.senderChannel);
+        sendMessage(message, this.$store.state.settings.senderChannel);
 
         // Update store
         store.commit("updateWeights", this.displayedWeights);

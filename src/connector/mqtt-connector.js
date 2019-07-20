@@ -81,7 +81,10 @@ function connectToConnector() {
 
       // Set current time stamp for store
       var timeStampMilliseconds = incommingMessage.timeStampMilliseconds;
-      if (timeStampMilliseconds !== store.state.currentTimeStampMilliseconds) {
+      if (
+        timeStampMilliseconds !==
+        store.state.evaluation.currentTimeStampMilliseconds
+      ) {
         store.commit("setCurrentTimeStampMilliseconds", timeStampMilliseconds);
       }
 

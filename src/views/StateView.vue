@@ -102,13 +102,13 @@ export default {
   },
   computed: {
     cfmAttributeDomainList() {
-      return this.$store.state.cfmAttributeDomainList;
+      return this.$store.state.stateView.cfmAttributeDomainList;
     },
     cfmValues() {
-      return this.$store.state.cfmValues;
+      return this.$store.state.configurationView.cfmValues;
     },
     hoverColor() {
-      return this.$store.state.hoverColor;
+      return this.$store.state.settings.hoverColor;
     }
   },
   watch: {
@@ -442,7 +442,7 @@ export default {
         });
       // Evaluate end time
       store.commit("logEnd", {
-        timedEventId: store.state.currentTimedEventId,
+        timedEventId: store.state.evaluation.currentTimedEventId,
         endTime: window.performance.now(),
         view: "State View"
       });

@@ -115,7 +115,9 @@
       </template>
     </b-modal>
     <b-modal ref="notConnectedModal" title="Connection failed" size="sm">
-      <span>{{ this.$store.state.connectionFailedErrorMessage }}</span>
+      <span>{{
+        this.$store.state.dashboard.connectionFailedErrorMessage
+      }}</span>
       <template slot="modal-footer" slot-scope="{ ok }">
         <b-button variant="primary" @click="ok()">
           OK
@@ -141,13 +143,13 @@ export default {
   },
   computed: {
     connected() {
-      return this.$store.state.connected;
+      return this.$store.state.dashboard.connected;
     },
     senderChannel() {
-      return this.$store.state.senderChannel;
+      return this.$store.state.settings.senderChannel;
     },
     hoverColor() {
-      return this.$store.state.hoverColor;
+      return this.$store.state.settings.hoverColor;
     }
   },
   // Intializes the senderChannelEdit variable to match the one from the store

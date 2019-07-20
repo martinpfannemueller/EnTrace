@@ -72,16 +72,16 @@ export default {
   },
   computed: {
     nodes() {
-      return this.$store.state.nodes;
+      return this.$store.state.networkView.nodes;
     },
     edges() {
-      return this.$store.state.edges;
+      return this.$store.state.networkView.edges;
     },
     hoverColor() {
-      return this.$store.state.hoverColor;
+      return this.$store.state.settings.hoverColor;
     },
     updateNetworkView() {
-      return this.$store.state.updateNetworkView;
+      return this.$store.state.networkView.updateNetworkView;
     }
   },
   watch: {
@@ -303,7 +303,7 @@ export default {
       if (!this.started) {
         // Evaluate end time
         store.commit("logEnd", {
-          timedEventId: this.$store.state.currentTimedEventId,
+          timedEventId: this.$store.state.evaluation.currentTimedEventId,
           endTime: window.performance.now(),
           view: "Network View"
         });

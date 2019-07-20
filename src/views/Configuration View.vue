@@ -106,7 +106,7 @@
       </b-col>
     </b-row>
     <b-modal ref="notConnectedModal" title="No message send" size="sm">
-      <span>{{ this.$store.state.notConnectedErrorMessage }}</span>
+      <span>{{ this.$store.state.dashboard.notConnectedErrorMessage }}</span>
       <template slot="modal-footer" slot-scope="{ ok }">
         <b-button variant="primary" @click="ok()">
           OK
@@ -162,15 +162,15 @@ export default {
   },
   computed: {
     cfm() {
-      if (this.$store.state.cfm !== "") {
-        return this.$store.state.cfm.fm.root;
+      if (this.$store.state.configurationView.cfm !== "") {
+        return this.$store.state.configurationView.cfm.fm.root;
       } else return "";
     },
     cfmValues() {
-      return this.$store.state.cfmValues;
+      return this.$store.state.configurationView.cfmValues;
     },
     hoverColor() {
-      return this.$store.state.hoverColor;
+      return this.$store.state.settings.hoverColor;
     }
   },
   watch: {
@@ -245,7 +245,7 @@ export default {
     },
     // Uses D3.hierarchy on the CFM input data to create a child-node hierarchy
     establishRoot() {
-      let addedAttributes = this.$store.state.addedAttributes;
+      let addedAttributes = this.$store.state.configurationView.addedAttributes;
       // Create the hierarchy with x and y coordinates for the CFM diagram
       this.root = d3.hierarchy(this.cfm, function(d) {
         // Add attributes to children in case they are both existent
@@ -704,7 +704,7 @@ export default {
 
       // Evaluate end time
       store.commit("logEnd", {
-        timedEventId: store.state.currentTimedEventId,
+        timedEventId: store.state.evaluation.currentTimedEventId,
         endTime: window.performance.now(),
         view: "Configuration View"
       });
@@ -982,7 +982,7 @@ export default {
           },
           type: "send-attribute"
         };
-        sendMessage(message, this.$store.state.senderChannel);
+        sendMessage(message, this.$store.state.settings.senderChannel);
         createNewEvent(
           "Configuration View",
           "Attribute sent",
@@ -1006,7 +1006,7 @@ export default {
         type: "send-feature"
       };
       try {
-        sendMessage(message, this.$store.state.senderChannel);
+        sendMessage(message, this.$store.state.settings.senderChannel);
         createNewEvent(
           "Configuration View",
           "Feature sent",

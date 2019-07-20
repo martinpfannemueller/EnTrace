@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     toggleMap() {
-      return this.$store.state.toggleMap;
+      return this.$store.state.dashboard.toggleMap;
     }
   },
   methods: {
