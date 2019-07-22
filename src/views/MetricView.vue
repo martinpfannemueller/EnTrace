@@ -1,27 +1,11 @@
 <template>
   <view-header :id="id" :element-name="name">
-    <apexchart
-      ref="metricChart"
-      type="line"
-      :series="metrics"
-      height="219"
-      :options="chartOptions"
-      style="margin-top: -20px; margin-bottom: -10px"
-    ></apexchart>
+    <div id="metric-view"></div>
     <b-row>
-      <b-col>
-        <b-form-checkbox v-model="showDataLabels" class="interface-text" switch
-          >Data labels</b-form-checkbox
-        >
-      </b-col>
-      <b-col>
-        <b-form-checkbox v-model="showMarkers" class="interface-text" switch
-          >Data marker</b-form-checkbox
-        >
-      </b-col>
+      <b-col cols="2"> </b-col>
       <b-col>
         <b-input-group append="%" size="sm">
-          <b-form-input v-model="percentageThreshold"></b-form-input>
+          <b-form-input v-model.number="thresholdPercentage"></b-form-input>
         </b-input-group>
         <div style="margin-top: 0px" class="text-muted interface-text">
           Percentage threshold
@@ -32,214 +16,148 @@
           <b-input-group-prepend is-text>
             <input v-model="cutInterval" type="checkbox" />
           </b-input-group-prepend>
-          <b-form-input v-model="timeInterval"></b-form-input>
+          <b-form-input v-model.number="timeInterval"></b-form-input>
         </b-input-group>
         <div style="margin-top: 0px" class="text-muted interface-text">
           Limit interval
         </div>
       </b-col>
+      <b-col cols="2"> </b-col>
     </b-row>
   </view-header>
 </template>
 
 <script>
+import * as c3 from "c3";
 import ViewHeader from "../helper_components/ViewHeader";
-import VueApexCharts from "vue-apexcharts";
 import { createNewEvent, store } from "../store/store";
 export default {
   components: {
-    "view-header": ViewHeader,
-    apexchart: VueApexCharts
+    "view-header": ViewHeader
   },
   data() {
     return {
       name: "Metric View",
       id: 1,
-      chartOptions: {
-        chart: {
-          animations: { enabled: true },
-          id: "Metric View",
-          parentHeightOffset: -5,
-          events: {
-            updated: function() {
-              // Evaluate end time
-              store.commit("logEnd", {
-                timedEventId: store.state.evaluation.currentTimedEventId,
-                endTime: window.performance.now(),
-                view: "Metric View"
-              });
-            }
-          },
-          toolbar: {
-            show: false
-          }
-        },
-        theme: {
-          palette: "palette1"
-        },
-        dataLabels: {
-          enabled: false,
-          formatter: function(val) {
-            return Math.round(val);
-          }
-        },
-        markers: {
-          size: 0,
-          shape: "circle",
-          radius: 3
-        },
-        stroke: {
-          show: true,
-          curve: "smooth",
-          width: 5
-        },
-        legend: {
-          show: true,
-          showForSingleSeries: true,
-          position: "top",
-          offsetY: 16,
-          fontSize: "10px"
-        },
-        xaxis: {
-          categories: [],
-          labels: {
-            hideOverlappingLabels: true
-          }
-        },
-        yaxis: {
-          forceNiceScale: true,
-          show: true,
-          decimalsInFloat: 0,
-          min: 0
-        }
-      },
-      showDataLabels: false,
-      showMarkers: false,
       cutInterval: true,
-      timeInterval: 20,
-      percentageThreshold: 100
+      timeInterval: 10,
+      bindedChart: ""
     };
   },
   computed: {
     metrics() {
-      if (
-        this.cutInterval &&
-        this.$store.state.metricView.timestamps.length >= this.timeInterval
-      ) {
-        return this.modifiedMetrics;
-      } else {
-        return this.originalMetrics;
-      }
-    },
-    originalMetrics() {
       return this.$store.state.metricView.metrics;
     },
     modifiedMetrics() {
-      let lengthTimestamps = this.$store.state.metricView.timestamps.length;
-      let timeInterval = this.timeInterval;
-      // Create deep clone because otherwise orignalMetrics will be changed as well since it is only a reference
-      let helperMetrics = JSON.parse(JSON.stringify(this.originalMetrics));
-      helperMetrics.forEach(function(d, index) {
-        d.data = helperMetrics[index].data.slice(
-          lengthTimestamps - timeInterval,
-          lengthTimestamps
-        );
-      });
-      return helperMetrics;
-    },
-    timestamps() {
-      if (
-        this.cutInterval &&
-        this.$store.state.metricView.timestamps.length >= this.timeInterval
-      ) {
-        return this.modifiedTimestamps;
+      if (this.cutInterval) {
+        let helperMetrics = JSON.parse(JSON.stringify(this.metrics));
+        let timeInterval = this.timeInterval + 1; // Adjust by one
+        for (let i = 0; i < helperMetrics.length; i++) {
+          helperMetrics[i].splice(1, helperMetrics[i].length - timeInterval);
+        }
+        return helperMetrics;
       } else {
-        return this.originalTimestamps;
+        return this.metrics;
       }
     },
-    originalTimestamps() {
-      return this.$store.state.metricView.timestamps;
-    },
-    modifiedTimestamps() {
-      let lengthTimestamps = this.$store.state.metricView.timestamps.length;
-      let timeInterval = this.timeInterval;
-      return this.$store.state.metricView.timestamps.slice(
-        lengthTimestamps - timeInterval,
-        lengthTimestamps
-      );
+    thresholdPercentage: {
+      get() {
+        return this.$store.state.metricView.thresholdPercentage;
+      },
+      set(value) {
+        this.$store.commit("updateThresholdPercentage", value);
+      }
     }
   },
   watch: {
-    showDataLabels: function(val) {
-      if (val) {
-        this.chartOptions = {
-          ...this.chartOptions,
-          ...{
-            dataLabels: {
-              enabled: true
-            }
-          }
-        };
-      } else {
-        this.chartOptions = {
-          ...this.chartOptions,
-          ...{
-            dataLabels: {
-              enabled: false
-            }
-          }
-        };
-      }
-    },
-    showMarkers: function(val) {
-      if (val) {
-        this.chartOptions = {
-          ...this.chartOptions,
-          ...{
-            markers: {
-              size: 5
-            }
-          }
-        };
-      } else {
-        this.chartOptions = {
-          ...this.chartOptions,
-          ...{
-            markers: {
-              size: 0
-            }
-          }
-        };
-      }
+    modifiedMetrics(val) {
+      this.bindedChart.load({
+        columns: val
+      });
+      store.commit("logEnd", {
+        timedEventId: store.state.evaluation.currentTimedEventId,
+        endTime: window.performance.now(),
+        view: "Metric View"
+      });
     },
     cutInterval: function() {
-      this.changeTimestamps(this.timestamps);
-      this.$refs.metricChart.updateSeries();
-    },
-    originalTimestamps: function() {
-      let checkValueChange = this.checkValueChange;
-      this.$store.state.metricView.metrics.forEach(function(d) {
-        checkValueChange(d);
-      });
-      this.changeTimestamps(this.timestamps);
-    },
-    modifiedTimestamps: function() {
-      this.changeTimestamps(this.timestamps);
+      this.renderChart(this.modifiedMetrics);
     }
   },
-  methods: {
-    // Updates the timestamps by changing the approporiate properties in the options
-    changeTimestamps(d) {
-      this.chartOptions = {
-        ...this.chartOptions,
-        ...{
-          xaxis: {
-            categories: d
+  mounted() {
+    // Initilaiez the chart, bind it to "bindedChart"
+    this.bindedChart = c3.generate({
+      bindto: "#metric-view",
+      size: {
+        width: 640,
+        height: 190
+      },
+      axis: {
+        x: {
+          height: 20,
+          tick: {
+            outer: false,
+            culling: {
+              max: 40
+            }
+          }
+        },
+        y: {
+          tick: {
+            outer: false
           }
         }
-      };
-    },
+      },
+      data: {
+        x: "timestamps",
+        columns: [],
+        labels: false
+      },
+      color: {
+        pattern: [
+          "#1f77b4",
+          "#aec7e8",
+          "#ff7f0e",
+          "#ffbb78",
+          "#2ca02c",
+          "#98df8a",
+          "#d62728",
+          "#ff9896",
+          "#9467bd",
+          "#c5b0d5",
+          "#8c564b",
+          "#c49c94",
+          "#e377c2",
+          "#f7b6d2",
+          "#7f7f7f",
+          "#c7c7c7",
+          "#bcbd22",
+          "#dbdb8d",
+          "#17becf",
+          "#9edae5"
+        ]
+      },
+      transition: {
+        duration: 350
+      },
+      legend: {
+        position: "inset"
+      }
+    });
+  },
+  methods: {
     // Checks whether the threshold values as defined by the user (default 100) is reached, creates an event if it is the case
+    renderChart(chartData) {
+      this.bindedChart.load({
+        columns: chartData
+      });
+      // Evaluate end time
+      store.commit("logEnd", {
+        timedEventId: store.state.evaluation.currentTimedEventId,
+        endTime: window.performance.now(),
+        view: "Metric View"
+      });
+    },
     checkValueChange(d) {
       let percentageThreshold = this.percentageThreshold;
       if (d.data.length >= 2) {
@@ -269,4 +187,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.c3-line {
+  stroke-width: 3px !important;
+}
+.c3-circle {
+  r: 4px;
+}
+</style>

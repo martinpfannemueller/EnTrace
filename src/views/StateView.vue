@@ -97,7 +97,8 @@ export default {
       selectedStateID: 1,
       selectedStateCount: undefined,
       selectedLinkID: "",
-      selectedLinkCount: undefined
+      selectedLinkCount: undefined,
+      index: undefined
     };
   },
   computed: {
@@ -257,16 +258,16 @@ export default {
         // State collection already exists
       } else {
         // Set old stage ID to current (new) state ID (newStateID will be changed later)
-        console.log("The state collection already exists");
+        // console.log("The state collection already exists");
         this.oldStateID = this.newStateID;
-        let index = this.stateCollection.findIndex(
+        this.index = this.stateCollection.findIndex(
           x => x.hash === this.cfmValuesHash
         );
         // console.log("The calculated index is: " + index);
-        console.log("And the new hash is: " + this.cfmValuesHash);
+        // console.log("And the new hash is: " + this.cfmValuesHash);
         // Check if hash already exisits
-        if (index === -1) {
-          console.log("The new hash does not already exisit...");
+        if (this.index === -1) {
+          // console.log("The new hash does not already exisit...");
           // Update state ID (is +1 for the maximum link lenght)
           this.newStateID = this.stateCollection.length + 1;
           // Hash does not exist, push new hash into array
@@ -291,13 +292,13 @@ export default {
           );
         } else {
           // Hash already exists
-          console.log("The state (hash) already exisits");
+          // console.log("The state (hash) already exisits");
           // Update state ID (we are in the same state, so new = old)
-          this.newStateID = this.oldStateID;
+          this.newStateID = this.stateCollection[this.index].id;
 
           // Increase count
-          this.stateCollection[index].count =
-            this.stateCollection[index].count + 1;
+          this.stateCollection[this.index].count =
+            this.stateCollection[this.index].count + 1;
 
           // Create event
           createNewEvent(
@@ -306,28 +307,28 @@ export default {
             "The new reconfiguration was hashed before as: " +
               this.cfmValuesHash +
               "; this state has appeared " +
-              +this.stateCollection[index].count +
+              +this.stateCollection[this.index].count +
               " times"
           );
 
           // Update links
-          let index = this.linkCollection.findIndex(
+          this.index = this.linkCollection.findIndex(
             x => x.source === this.oldStateID && x.target === this.newStateID
           );
-          if (index == undefined || index == -1) {
-            console.log("But it is a new connection");
+          if (this.index == undefined || this.index == -1) {
+            // console.log("But it is a new connection");
             // Case when connection does not exist yet
             this.linkCollection.push({
               source: this.oldStateID,
               target: this.newStateID,
               count: 1,
-              id: this.oldStateID.toString + "->" + this.newStateID.toString
+              id: this.oldStateID + "->" + this.newStateID
             });
           } else {
-            console.log("The old state is equal to thew new state");
+            // console.log("The old state is equal to thew new state");
             // Case when connection already exists
-            this.linkCollection[index].count =
-              this.linkCollection[index].count + 1;
+            this.linkCollection[this.index].count =
+              this.linkCollection[this.index].count + 1;
           }
         }
       }

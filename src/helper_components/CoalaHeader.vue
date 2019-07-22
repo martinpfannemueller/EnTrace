@@ -15,14 +15,14 @@
             size="sm"
             :disabled="connected"
             @click="connectToConnector()"
-            ><font-awesome-icon icon="plug" />&nbsp;Connect</b-button
+            >&nbsp;<font-awesome-icon icon="plug" />&nbsp;</b-button
           >
           <b-button
             variant="outline-danger"
             size="sm"
             :disabled="!connected"
             @click="disconnectFromConnector()"
-            ><font-awesome-icon icon="times-circle" />&nbsp;Disconnect</b-button
+            >&nbsp;<font-awesome-icon icon="times-circle" />&nbsp;</b-button
           >
           <b-button variant="outline-danger" size="sm" @click="resetStore()">
             &nbsp;<font-awesome-icon icon="trash-alt" />&nbsp;
@@ -30,6 +30,9 @@
           <b-button variant="outline-secondary" size="sm" @click="showModal()">
             <font-awesome-icon icon="cogs" />
           </b-button>
+          <b-button variant="outline-info" size="sm" @click="saveFile()"
+            ><font-awesome-icon icon="download"
+          /></b-button>
           Status:
           <b-badge :variant="connected ? 'success' : 'danger'">
             <font-awesome-icon
@@ -132,9 +135,13 @@ import {
   connectToConnector,
   disconnectFromConnector
 } from "../connector/mqtt-connector.js";
+// eslint-disable-next-line no-unused-vars
+import { saveAs } from "file-saver";
 export default {
   data() {
     return {
+      FileSaver: undefined,
+      text: "",
       senderChannelEdit: "",
       channelChanged: false,
       hoverColorEdit: "",
@@ -156,9 +163,20 @@ export default {
   mounted() {
     this.senderChannelEdit = this.senderChannel;
     this.hoverColorEdit = this.hoverColor;
+    this.FileSaver = require("file-saver");
   },
   methods: {
     // Used to call MQTT function to connect to the connector
+    saveFile() {
+      this.text = new Blob(
+        [JSON.stringify(this.$store.state.evaluation.evaluationLogger)],
+        {
+          type: "text/plain;charset=utf-8"
+        }
+      );
+      let measurementText = "measeurement " + new Date().toLocaleTimeString();
+      this.FileSaver.saveAs(this.text, measurementText);
+    },
     connectToConnector() {
       // Callback function to ensure conneciton try is finished
       connectToConnector(() => {

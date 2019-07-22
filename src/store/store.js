@@ -88,11 +88,11 @@ const store = new Vuex.Store({
     configurationView: {
       cfm: "",
       cfmValues: "",
-      addedAttributes: ["fsTCint"]
+      addedAttributes: []
     },
     metricView: {
       metrics: [],
-      timestamps: []
+      thresholdPercentage: 100
     },
     performanceView: {
       weights: []
@@ -247,14 +247,75 @@ const store = new Vuex.Store({
     updateAddedAttribute(state, attribute) {
       state.configurationView.addedAttributes.push(attribute);
     },
-    updateMetrics(state, payload) {
-      state.metricView.metrics = payload;
+    updateMetrics(state, metricValue) {
+      var newMetric = true;
+      // Initialize array for first value
+      if (state.metricView.metrics.length == 0) {
+        // Load first timetstamp and first metric into array
+        state.metricView.metrics.push(
+          ["timestamps", metricValue.timestamp],
+          [metricValue.metric, Math.round(metricValue.value)]
+        );
+        // Array has already been initialised
+      } else {
+        // First, add the timestamps
+        if (
+          metricValue.timestamp !=
+          state.metricView.metrics[0][state.metricView.metrics[0].length - 1]
+        ) {
+          state.metricView.metrics[0].push(metricValue.timestamp);
+        }
+        // Second, check which metric arrives
+        for (let i = 1; i < state.metricView.metrics.length; i++) {
+          if (metricValue.metric == state.metricView.metrics[i][0]) {
+            state.metricView.metrics[i].push(Math.round(metricValue.value));
+            // Check whether new value is above thresholdPercentage
+            let oldValue =
+              state.metricView.metrics[i][
+                state.metricView.metrics[i].length - 2
+              ];
+            let newValue =
+              state.metricView.metrics[i][
+                state.metricView.metrics[i].length - 1
+              ];
+            let higher = Math.max(oldValue, newValue);
+            let lower = Math.min(oldValue, newValue);
+            if (
+              higher / lower - 1 >=
+              state.metricView.thresholdPercentage / 100
+            ) {
+              createNewEvent(
+                "Metric View",
+                "Threshold difference reached",
+                "For the metric '" +
+                  metricValue.metric +
+                  "', the new value (" +
+                  Math.round(newValue * 100) / 100 +
+                  ")" +
+                  " differs more than the threshold percentage (" +
+                  state.metricView.thresholdPercentage +
+                  "%) from the previous value (" +
+                  Math.round(oldValue * 100) / 100 +
+                  ")"
+              );
+            }
+            newMetric = false;
+          }
+        }
+        // Test, if a value was added in the loop, if not, it's a new metric which will be added
+        if (newMetric) {
+          state.metricView.metrics.push([
+            metricValue.metric,
+            Math.round(metricValue.value)
+          ]);
+        }
+      }
     },
-    updateTimestamps(state, payload) {
-      state.metricView.timestamps = payload;
+    updateThresholdPercentage(state, payload) {
+      state.metricView.thresholdPercentage = payload;
     },
     updateWeights(state, payload) {
-      state.metricView.weights = payload;
+      state.performanceView.weights = payload;
     },
     updateAttributeDomainList(state, payload) {
       state.stateView.cfmAttributeDomainList.push(payload);
@@ -270,14 +331,19 @@ const store = new Vuex.Store({
         timedEventId,
         view,
         timeStampMilliseconds,
-        startTime: startTime
+        startTime: startTime,
+        endTime: ""
       });
     },
     logEnd(state, { timedEventId, endTime, view }) {
       let index = state.evaluation.evaluationLogger.findIndex(
         x => x.timedEventId == timedEventId && x.view == view
       );
-      if (index >= 0) {
+      if (
+        index >= 0 &&
+        // Make sure the endTime is only recorded once
+        state.evaluation.evaluationLogger[index].endTime == ""
+      ) {
         state.evaluation.evaluationLogger[index].endTime = endTime;
         state.evaluation.evaluationLogger[index].difference =
           endTime - state.evaluation.evaluationLogger[index].startTime;

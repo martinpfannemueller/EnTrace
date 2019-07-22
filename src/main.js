@@ -29,7 +29,8 @@ import {
   faClock,
   faTrashAlt,
   faPlug,
-  faPowerOff
+  faPowerOff,
+  faDownload
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -57,6 +58,7 @@ library.add(faSignOutAlt);
 library.add(faTrashAlt);
 library.add(faPlug);
 library.add(faPowerOff);
+library.add(faDownload);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.use(Vuex);

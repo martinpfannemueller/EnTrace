@@ -8,8 +8,6 @@ var newtimedEventId = 0;
 // Function to connect, handles all incomming event messages
 function connectToConnector() {
   // Helper variables, will be committed to the store
-  var metrics = [];
-  var timestamps = [];
   var weights = [];
 
   // Set callback handlers
@@ -74,7 +72,7 @@ function connectToConnector() {
     var event, timedEventId;
 
     // Check if evaluation mode
-    if (incommingMessage.timedEventId || incommingMessage.timedEventId == 0) {
+    if (incommingMessage.timedEventId) {
       // Set current event ID for store
       timedEventId = incommingMessage.timedEventId;
       store.commit("setCurrentTimedEventId", timedEventId);
@@ -90,6 +88,24 @@ function connectToConnector() {
 
       event = incommingMessage.event;
 
+      // Network view poisson distribution
+    } else if (incommingMessage.timedEventId == 0) {
+      event = incommingMessage.event;
+      // Create artificial IDs for the artificial cases
+      timedEventId = newtimedEventId;
+
+      // Set current time stamp for store
+      timeStampMilliseconds = incommingMessage.timeStampMilliseconds;
+      if (
+        timeStampMilliseconds !==
+        store.state.evaluation.currentTimeStampMilliseconds
+      ) {
+        store.commit("setCurrentTimeStampMilliseconds", timeStampMilliseconds);
+      }
+
+      store.commit("setCurrentTimedEventId", timedEventId);
+      newtimedEventId++;
+      event = incommingMessage.event;
       // No evaluation mode
     } else {
       event = incommingMessage;
@@ -177,7 +193,7 @@ function connectToConnector() {
           startTime: window.performance.now(),
           view: "Metric View"
         });
-        newMetric(event, metrics);
+        store.commit("updateMetrics", event);
         break;
       case "new-metricWeights":
         newWeights(event);
@@ -226,36 +242,6 @@ function connectToConnector() {
     }
   }
 
-  // Called when new metric value arrives
-  function newMetric(newValue, metrics) {
-    if (metrics.length == 0) {
-      metrics.push({
-        name: newValue.metric,
-        data: [newValue.value]
-      });
-      timestamps.push(1);
-    } else {
-      // Find index of metric
-      let index = metrics.findIndex(x => x.name === newValue.metric);
-      // Case metric is not yet in metrics
-      if (index == undefined || index == -1) {
-        metrics.push({
-          name: newValue.metric,
-          data: [newValue.value]
-        });
-        // Case metric is already created
-      } else {
-        metrics[index].data.push(newValue.value);
-        // Increase timestamps when new metric is added
-        if (timestamps.length < metrics[index].data.length) {
-          timestamps.push(metrics[index].data.length);
-        }
-      }
-    }
-    store.commit("updateMetrics", metrics);
-    store.commit("updateTimestamps", timestamps);
-  }
-
   // Called when new metric weights arrive
   function newWeights(newWeights) {
     weights = newWeights.stringMetricWeights;
@@ -282,13 +268,5 @@ function sendMessage(payload, channel) {
   message.destinationName = channel;
   client.send(message);
 }
-
-// function transformEvaluationEvent(event) {
-//   if (event.event) {
-//     event.event.push(event.timedEventId);
-//     event = event.event;
-//   }
-//   return event;
-// }
 
 export { client, connectToConnector, disconnectFromConnector, sendMessage };
