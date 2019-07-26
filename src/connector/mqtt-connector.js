@@ -33,14 +33,14 @@ function connectToConnector() {
       false
     );
 
-    client.subscribe("startOfSimulation");
+    // client.subscribe("startOfSimulation");
     // Network View
-    client.subscribe("add-edge");
-    client.subscribe("mod-edge");
-    client.subscribe("remove-edge");
-    client.subscribe("add-node");
-    client.subscribe("mod-node");
-    client.subscribe("remove-node");
+    //client.subscribe("add-edge");
+    //client.subscribe("mod-edge");
+    //client.subscribe("remove-edge");
+    //client.subscribe("add-node");
+    //client.subscribe("mod-node");
+    //client.subscribe("remove-node");
     client.subscribe("new-metric-value"); // Metric View
     client.subscribe("new-metricWeights"); // Performance View
     client.subscribe("fm"); // Configuration View
@@ -71,6 +71,7 @@ function connectToConnector() {
     // console.log(incommingMessage);
     var event, timedEventId;
 
+    // EVALUATION MODE
     // Check if evaluation mode
     if (incommingMessage.timedEventId) {
       // Set current event ID for store
@@ -114,10 +115,10 @@ function connectToConnector() {
       store.commit("setCurrentTimedEventId", timedEventId);
       newtimedEventId++;
     }
+    // EVALUATION MODE
 
     switch (message.destinationName) {
       case "startOfSimulation":
-        console.log(event);
         break;
       case "add-node":
         // Start the evaluation by setting the time here

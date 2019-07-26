@@ -57,7 +57,7 @@ export default {
       animationDuration: 0,
       showTooltips: true,
       defaultNodeColor: "rgb(226, 245, 255)",
-      defaultEdgeColor: "rgb(211, 19, 12)",
+      defaultEdgeColor: "rgb(0, 0, 0)",
       selectedNode: "",
       x: "",
       y: "",
@@ -86,7 +86,7 @@ export default {
   },
   watch: {
     updateNetworkView() {
-      this.renderNetwork(this.nodes, this.edges);
+      this.renderNetworkView(this.nodes, this.edges);
     },
     maxX: function() {
       this.centerNetwork();
@@ -117,7 +117,7 @@ export default {
       this.tooltipDiv = d3.select(".tooltip-network");
     },
     // Renders the network topology with nodes and edges, calls most of the other functions
-    renderNetwork(nodes, edges) {
+    renderNetworkView(nodes, edges) {
       // Create local variables for colors and radius
       let defaultNodeColor = this.defaultNodeColor;
       let defaultEdgeColor = this.defaultEdgeColor;

@@ -121,7 +121,6 @@ export default {
         this.adjustedCFMValues = [];
         this.stateViewSVG.selectAll("*").remove();
       } else {
-        console.log("New CFM values in state view");
         // Compute the adjusted values based on the number of intervals variable
         this.adjustedCFMValues = this.adjustCFMValues(
           JSON.parse(JSON.stringify(this.cfmValues))

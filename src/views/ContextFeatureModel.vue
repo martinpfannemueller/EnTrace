@@ -114,14 +114,14 @@ export default {
   },
   watch: {
     autoAdjustHeight: function() {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     },
     new_CFM: function(val) {
       if (val == "") {
         console.log("Error");
       } else {
         this.establishRoot();
-        this.renderNewCFM(this.root);
+        this.renderCFM(this.root);
       }
     },
     cfmValues: function(val) {
@@ -129,11 +129,11 @@ export default {
         console.log("Error");
       } else {
         this.setCurrentlyChosenAndValues(this.root);
-        this.renderNewCFM(this.root);
+        this.renderCFM(this.root);
       }
     },
     showCardinalities: function() {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     },
     scaleFactor: function() {
       this.defaultCFMposition();
@@ -156,7 +156,7 @@ export default {
     if (this.root == "") {
       console.log("CFM not ready yet");
     } else {
-      this.renderNewCFM(this.root);
+      this.renderCFM(this.root);
     }
   },
   methods: {
@@ -192,7 +192,7 @@ export default {
       this.root.y0 = 0;
       // console.log(this.root);
     },
-    renderNewCFM(source) {
+    renderCFM(source) {
       // Load local variables as "this." does not work inside D3 node operations
       let i = this.i;
       let scaleFactor = Math.min(
@@ -791,7 +791,7 @@ export default {
         d.children = d._children;
         d._children = null;
       }
-      this.renderNewCFM(d);
+      this.renderCFM(d);
     },
     mouseover(d, i, n) {
       // SECTION FOR THE NODE

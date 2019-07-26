@@ -92,7 +92,7 @@ const store = new Vuex.Store({
     },
     metricView: {
       metrics: [],
-      thresholdPercentage: 100
+      thresholdPercentage: 1000
     },
     performanceView: {
       weights: []
@@ -165,10 +165,10 @@ const store = new Vuex.Store({
       for (let i = 0; i < state.networkView.edges.length; i++) {
         let d = state.networkView.edges[i];
         let indexSource = state.networkView.nodes.findIndex(
-          x => x.nodeId === d.sourceId
+          x => x.nodeId == d.sourceId
         );
         let indexTarget = state.networkView.nodes.findIndex(
-          x => x.nodeId === d.targetId
+          x => x.nodeId == d.targetId
         );
         if (indexSource == -1 || indexTarget == -1) {
           // Node does not exist
@@ -196,10 +196,10 @@ const store = new Vuex.Store({
     addEdge(state, newEdge) {
       // Initialize position of each edge/link
       let indexSource = state.networkView.nodes.findIndex(
-        x => x.nodeId === newEdge.sourceId
+        x => x.nodeId == newEdge.sourceId
       );
       let indexTarget = state.networkView.nodes.findIndex(
-        x => x.nodeId === newEdge.targetId
+        x => x.nodeId == newEdge.targetId
       );
       if (indexSource == -1 || indexTarget == -1) {
         // Node does not exist

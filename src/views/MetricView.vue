@@ -71,17 +71,10 @@ export default {
   },
   watch: {
     modifiedMetrics(val) {
-      this.bindedChart.load({
-        columns: val
-      });
-      store.commit("logEnd", {
-        timedEventId: store.state.evaluation.currentTimedEventId,
-        endTime: window.performance.now(),
-        view: "Metric View"
-      });
+      this.renderMetricChart(val);
     },
     cutInterval: function() {
-      this.renderChart(this.modifiedMetrics);
+      this.renderMetricChart(this.modifiedMetrics);
     }
   },
   mounted() {
@@ -147,7 +140,7 @@ export default {
   },
   methods: {
     // Checks whether the threshold values as defined by the user (default 100) is reached, creates an event if it is the case
-    renderChart(chartData) {
+    renderMetricChart(chartData) {
       this.bindedChart.load({
         columns: chartData
       });
