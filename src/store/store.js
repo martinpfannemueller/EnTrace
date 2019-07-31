@@ -110,6 +110,7 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    // Resets all store properties back to their default/initial value
     resetStore(state) {
       state.settings.hoverColor = "#17a2b8";
       state.settings.senderChannel = "startOfSimulation";
@@ -118,14 +119,18 @@ const store = new Vuex.Store({
       state.networkView.updateNetworkView = 0;
       state.configurationView.cfm = "";
       state.configurationView.cfmValues = "";
-      state.configurationView.cfmAttributeDomainList = [];
+      state.configurationView.addedAttributes = [];
       state.metricView.metrics = [];
-      state.metricView.timestamps = [];
+      state.metricView.thresholdPercentage = 100;
       state.performanceView.weights = [];
+      state.stateView.cfmAttributeDomainList = [];
       state.eventView.events = [];
+      state.evaluation.currentTimedEventId = [];
+      state.evaluation.currentTimeStampMilliseconds = [];
       state.evaluation.evaluationLogger = [];
     },
-    simulationStatusChange(state, payload) {
+    // Changes the status 
+    changeConnectionStatus(state, payload) {
       state.dashboard.connected = payload;
     },
     updateToggleMap(state, payload) {

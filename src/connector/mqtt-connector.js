@@ -22,7 +22,7 @@ function connectToConnector() {
   // Connecting and subscribing to all necessary channels
   function onConnect() {
     // Set "connected" status to true
-    store.commit("simulationStatusChange", true);
+    store.commit("changeConnectionStatus", true);
     // Connect
     createNewEvent(
       "General",
@@ -61,7 +61,7 @@ function connectToConnector() {
         false,
         true
       );
-      store.commit("simulationStatusChange", false);
+      store.commit("changeConnectionStatus", false);
     }
   }
 
@@ -253,7 +253,7 @@ function connectToConnector() {
 
 function disconnectFromConnector() {
   client.disconnect();
-  store.commit("simulationStatusChange", false);
+  store.commit("changeConnectionStatus", false);
   createNewEvent(
     "General",
     "Connection disconnected",
