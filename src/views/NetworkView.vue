@@ -201,8 +201,8 @@ export default {
       // Remove any exiting nodes
       var nodeExit = node
         .exit()
-        .transition()
-        .duration(this.animationDuration)
+        // .transition()
+        // .duration(this.animationDuration)
         .attr("r", 0)
         .remove();
 

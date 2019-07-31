@@ -15,14 +15,16 @@
             size="sm"
             :disabled="connected"
             @click="connectToConnector()"
-            >&nbsp;<font-awesome-icon icon="plug" />&nbsp;</b-button
+            >&nbsp;<font-awesome-icon icon="plug" />&nbsp;Connect</b-button
           >
           <b-button
             variant="outline-danger"
             size="sm"
             :disabled="!connected"
             @click="disconnectFromConnector()"
-            >&nbsp;<font-awesome-icon icon="times-circle" />&nbsp;</b-button
+            >&nbsp;<font-awesome-icon
+              icon="times-circle"
+            />&nbsp;Disconnect</b-button
           >
           <b-button variant="outline-danger" size="sm" @click="resetStore()">
             &nbsp;<font-awesome-icon icon="trash-alt" />&nbsp;
@@ -30,9 +32,6 @@
           <b-button variant="outline-secondary" size="sm" @click="showModal()">
             <font-awesome-icon icon="cogs" />
           </b-button>
-          <b-button variant="outline-info" size="sm" @click="saveFile()"
-            ><font-awesome-icon icon="download"
-          /></b-button>
           Status:
           <b-badge :variant="connected ? 'success' : 'danger'">
             <font-awesome-icon
@@ -61,6 +60,19 @@
             @click="disconnectFromConnector()"
             ><font-awesome-icon icon="times-circle" />&nbsp;Disconnect</b-button
           >
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <hr class="hr-settings" />
+          <h6>Evaluation log file</h6>
+          <b-button variant="info" size="sm" @click="saveFile()"
+            ><font-awesome-icon icon="download" />&nbsp;Save
+            evaluation</b-button
+          >
+          <div style="margin-top: 0px" class="text-muted interface-text">
+            Download a .txt file with the JSON objects of the evaluation
+          </div>
         </b-col>
       </b-row>
       <b-row>

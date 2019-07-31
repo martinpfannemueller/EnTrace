@@ -219,7 +219,6 @@ export default {
       return d;
     },
     // Hashes the current configuration as an integer (same state results in same hash), taken from https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript/8831937#8831937
-
     hashState(d) {
       let inputString = JSON.stringify(d);
       let hash = 0,

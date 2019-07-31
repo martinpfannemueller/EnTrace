@@ -18,9 +18,9 @@
         </span>
         <span style="text-align: right;">
           <!-- eslint-disable-next-line prettier/prettier -->
-        <b-badge style="font-size: 11px" :variant="eventIncomming ? 'info' : 'primary'">
+        <b-badge style="font-size: 11px" :variant="eventSystemEvent ? 'info' : 'primary'">
             <!-- eslint-disable-next-line prettier/prettier -->
-          <font-awesome-icon :icon="eventIncomming ? 'sign-in-alt' : 'sign-out-alt'"/>
+          <font-awesome-icon :icon="eventSystemEvent ? 'sign-in-alt' : 'sign-out-alt'"/>
             &nbsp;{{ eventChannel }}
           </b-badge>
         </span>
@@ -48,7 +48,7 @@ export default {
       type: String,
       default: ""
     },
-    eventIncomming: {
+    eventSystemEvent: {
       type: Boolean,
       default: true
     },

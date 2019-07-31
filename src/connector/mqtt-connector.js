@@ -33,14 +33,14 @@ function connectToConnector() {
       false
     );
 
-    // client.subscribe("startOfSimulation");
+    client.subscribe("startOfSimulation");
     // Network View
-    //client.subscribe("add-edge");
-    //client.subscribe("mod-edge");
-    //client.subscribe("remove-edge");
-    //client.subscribe("add-node");
-    //client.subscribe("mod-node");
-    //client.subscribe("remove-node");
+    client.subscribe("add-edge");
+    client.subscribe("mod-edge");
+    client.subscribe("remove-edge");
+    client.subscribe("add-node");
+    client.subscribe("mod-node");
+    client.subscribe("remove-node");
     client.subscribe("new-metric-value"); // Metric View
     client.subscribe("new-metricWeights"); // Performance View
     client.subscribe("fm"); // Configuration View
@@ -70,6 +70,7 @@ function connectToConnector() {
     var incommingMessage = JSON.parse(message.payloadString);
     // console.log(incommingMessage);
     var event, timedEventId;
+    // console.log(incommingMessage.timedEventId + ": " + Date.now());
 
     // EVALUATION MODE
     // Check if evaluation mode

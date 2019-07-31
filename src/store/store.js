@@ -7,7 +7,7 @@ function createNewEvent(
   channel,
   title,
   text,
-  incomming = true,
+  systemEvent = true,
   success = false,
   warn = false
 ) {
@@ -17,7 +17,7 @@ function createNewEvent(
     eventTimestamp: timestamp,
     eventTitle: title,
     eventText: text,
-    eventIncomming: incomming,
+    eventSystemEvent: systemEvent,
     eventSuccess: success,
     eventWarn: warn
   };
@@ -92,7 +92,7 @@ const store = new Vuex.Store({
     },
     metricView: {
       metrics: [],
-      thresholdPercentage: 1000
+      thresholdPercentage: 100
     },
     performanceView: {
       weights: []
@@ -148,42 +148,45 @@ const store = new Vuex.Store({
       let index = state.networkView.nodes.findIndex(
         x => x.nodeId === modNode.nodeId
       );
-      switch (modNode.property) {
-        case "color":
-          state.networkView.nodes[index]["color"] = modNode.newValue;
-          break;
-        case "GraphElementProperty-longitude":
-          state.networkView.nodes[index]["x"] = modNode.newValue;
-          break;
-        case "GraphElementProperty-latitude":
-          state.networkView.nodes[index]["y"] = modNode.newValue;
-          break;
-        default:
-          break;
-      }
-      // Update links/edges based on new node locations to move them
-      for (let i = 0; i < state.networkView.edges.length; i++) {
-        let d = state.networkView.edges[i];
-        let indexSource = state.networkView.nodes.findIndex(
-          x => x.nodeId == d.sourceId
-        );
-        let indexTarget = state.networkView.nodes.findIndex(
-          x => x.nodeId == d.targetId
-        );
-        if (indexSource == -1 || indexTarget == -1) {
-          // Node does not exist
-          console.log(
-            "Mod node: Cannot draw edge because node(s) do not exist yet"
+      // Catch if node exists yet
+      if (index != -1 && index != undefined) {
+        switch (modNode.property) {
+          case "color":
+            state.networkView.nodes[index]["color"] = modNode.newValue;
+            break;
+          case "GraphElementProperty-longitude":
+            state.networkView.nodes[index]["x"] = modNode.newValue;
+            break;
+          case "GraphElementProperty-latitude":
+            state.networkView.nodes[index]["y"] = modNode.newValue;
+            break;
+          default:
+            break;
+        }
+        // Update links/edges based on new node locations to move them
+        for (let i = 0; i < state.networkView.edges.length; i++) {
+          let d = state.networkView.edges[i];
+          let indexSource = state.networkView.nodes.findIndex(
+            x => x.nodeId == d.sourceId
           );
-        } else if (
-          // Make sure only the affected links are updated
-          d.sourceId == modNode.nodeId ||
-          d.targetId == modNode.nodeId
-        ) {
-          d.sourceIdx = state.networkView.nodes[indexSource].x;
-          d.sourceIdy = state.networkView.nodes[indexSource].y;
-          d.targetIdx = state.networkView.nodes[indexTarget].x;
-          d.targetIdy = state.networkView.nodes[indexTarget].y;
+          let indexTarget = state.networkView.nodes.findIndex(
+            x => x.nodeId == d.targetId
+          );
+          if (indexSource == -1 || indexTarget == -1) {
+            // Node does not exist
+            // console.log(
+            //   "Mod node: Cannot draw edge because node(s) do not exist yet"
+            // );
+          } else if (
+            // Make sure only the affected links are updated
+            d.sourceId == modNode.nodeId ||
+            d.targetId == modNode.nodeId
+          ) {
+            d.sourceIdx = state.networkView.nodes[indexSource].x;
+            d.sourceIdy = state.networkView.nodes[indexSource].y;
+            d.targetIdx = state.networkView.nodes[indexTarget].x;
+            d.targetIdy = state.networkView.nodes[indexTarget].y;
+          }
         }
       }
     },
@@ -191,7 +194,10 @@ const store = new Vuex.Store({
       let index = state.networkView.nodes.findIndex(
         x => x.nodeId === removeNode.nodeId
       );
-      state.networkView.nodes.splice(index, 1);
+      // Catch if node exists yet
+      if (index != -1 && index != undefined) {
+        state.networkView.nodes.splice(index, 1);
+      }
     },
     addEdge(state, newEdge) {
       // Initialize position of each edge/link
@@ -201,42 +207,48 @@ const store = new Vuex.Store({
       let indexTarget = state.networkView.nodes.findIndex(
         x => x.nodeId == newEdge.targetId
       );
-      if (indexSource == -1 || indexTarget == -1) {
-        // Node does not exist
-        console.log(
-          "Add edge: Cannot draw edge because node(s) do not exist yet"
-        );
-      } else {
+      // Check if nodes exist
+      if (
+        indexSource != -1 &&
+        indexSource != -1 &&
+        indexSource != undefined &&
+        indexSource != undefined
+      ) {
         newEdge.sourceIdx = state.networkView.nodes[indexSource].x;
         newEdge.sourceIdy = state.networkView.nodes[indexSource].y;
         newEdge.targetIdx = state.networkView.nodes[indexTarget].x;
         newEdge.targetIdy = state.networkView.nodes[indexTarget].y;
+        // Push edge into store
+        state.networkView.edges.push(newEdge);
       }
-
-      // Push edge into store
-      state.networkView.edges.push(newEdge);
     },
     modEdge(state, modEdge) {
       // Adjust other parameters of appropriate edge
       let index = state.networkView.edges.findIndex(
         x => x.edgeId === modEdge.edgeId
       );
-      switch (modEdge.property) {
-        case "color":
-          state.networkView.edges[index]["color"] = modEdge.newValue;
-          break;
-        case "weight":
-          state.networkView.edges[index]["weight"] = modEdge.newValue;
-          break;
-        default:
-          break;
+      // Catch if edge exists yet
+      if (index != -1 && index != undefined) {
+        switch (modEdge.property) {
+          case "color":
+            state.networkView.edges[index]["color"] = modEdge.newValue;
+            break;
+          case "weight":
+            state.networkView.edges[index]["weight"] = modEdge.newValue;
+            break;
+          default:
+            break;
+        }
       }
     },
     removeEdge(state, removeEdge) {
       let index = state.networkView.edges.findIndex(
         x => x.edgeId === removeEdge.edgeId
       );
-      state.networkView.edges.splice(index, 1);
+      // Catch if edge exists yet
+      if (index != -1 && index != undefined) {
+        state.networkView.edges.splice(index, 1);
+      }
     },
     updateCFM(state, payload) {
       state.configurationView.cfm = payload;

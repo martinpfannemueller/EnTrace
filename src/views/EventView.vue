@@ -31,7 +31,7 @@
             :event-channel="event.eventChannel"
             :event-text="event.eventText"
             :event-timestamp="event.eventTimestamp"
-            :event-incomming="event.eventIncomming"
+            :event-system-event="event.eventSystemEvent"
             :event-success="event.eventSuccess"
             :event-warn="event.eventWarn"
           ></event-message>
