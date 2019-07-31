@@ -65,7 +65,7 @@
 <script>
 import ViewWrapper from "../dashboard/ViewWrapper";
 import * as d3 from "d3";
-import Tooltip from "./tooltips/TooltipStateView";
+import Tooltip from "./sub_components/TooltipStateView";
 import { store, createNewEvent } from "../store/store";
 export default {
   components: {

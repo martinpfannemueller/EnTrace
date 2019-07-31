@@ -118,7 +118,7 @@
 
 <script>
 import ViewWrapper from "../dashboard/ViewWrapper";
-import Tooltip from "./tooltips/TooltipConfigurationView";
+import Tooltip from "./sub_components/TooltipConfigurationView";
 import { sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
 import { store, createNewEvent } from "../store/store";

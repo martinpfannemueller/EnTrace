@@ -31,7 +31,7 @@
 
 <script>
 import ViewWrapper from "../dashboard/ViewWrapper";
-import Tooltip from "./tooltips/TooltipNetworkView";
+import Tooltip from "./sub_components/TooltipNetworkView";
 import { store } from "../store/store";
 import * as d3 from "d3";
 export default {
