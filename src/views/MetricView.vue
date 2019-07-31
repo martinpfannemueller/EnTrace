@@ -29,11 +29,11 @@
 
 <script>
 import * as c3 from "c3";
-import ViewHeader from "../helper_components/ViewHeader";
+import ViewWrapper from "../dashboard/ViewWrapper";
 import { createNewEvent, store } from "../store/store";
 export default {
   components: {
-    "view-header": ViewHeader
+    "view-header": ViewWrapper
   },
   data() {
     return {

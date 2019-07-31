@@ -117,15 +117,15 @@
 </template>
 
 <script>
-import ViewHeader from "../helper_components/ViewHeader";
-import Tooltip from "../tooltips/TooltipConfigurationView";
+import ViewWrapper from "../dashboard/ViewWrapper";
+import Tooltip from "./tooltips/TooltipConfigurationView";
 import { sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
 import { store, createNewEvent } from "../store/store";
 import { mapMutations } from "vuex";
 export default {
   components: {
-    "view-header": ViewHeader,
+    "view-header": ViewWrapper,
     tooltip: Tooltip
   },
   data() {

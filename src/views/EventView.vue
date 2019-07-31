@@ -42,11 +42,11 @@
 </template>
 
 <script>
-import ViewHeader from "../helper_components/ViewHeader";
-import EventMessage from "../helper_components/EventMessage";
+import ViewWrapper from "../dashboard/ViewWrapper";
+import EventMessage from "./sub_components/EventMessage";
 export default {
   components: {
-    "view-header": ViewHeader,
+    "view-header": ViewWrapper,
     "event-message": EventMessage
   },
   data() {

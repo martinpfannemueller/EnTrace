@@ -36,12 +36,12 @@
 </template>
 
 <script>
-import ViewHeader from "../helper_components/ViewHeader";
+import ViewWrapper from "../dashboard/ViewWrapper";
 import { sendMessage } from "../connector/mqtt-connector";
 import { createNewEvent, store } from "../store/store";
 export default {
   components: {
-    "view-header": ViewHeader
+    "view-header": ViewWrapper
   },
   data() {
     return {

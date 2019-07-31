@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import ViewHeader from "../helper_components/ViewHeader";
-import Tooltip from "../helper_components/TooltipCFM";
+import ViewWrapper from "../dashboard/ViewWrapper";
+import Tooltip from "../dashboard/TooltipCFM";
 // eslint-disable-next-line no-unused-vars
 import { client, sendMessage } from "../connector/mqtt-connector";
 import * as d3 from "d3";
@@ -64,7 +64,7 @@ import { store } from "../store/store";
 import { mapMutations } from "vuex";
 export default {
   components: {
-    "view-header": ViewHeader,
+    "view-header": ViewWrapper,
     tooltip: Tooltip
   },
   data() {

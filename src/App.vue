@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import CoalaHeader from "./helper_components/CoalaHeader";
+import Header from "./dashboard/Header";
 import NetworkView from "./views/NetworkView.vue";
 import MetricView from "./views/MetricView.vue";
 import ConfigurationView from "./views/Configuration View.vue";
@@ -44,7 +44,7 @@ import { store } from "./store/store";
 
 export default {
   components: {
-    "coala-header": CoalaHeader,
+    "coala-header": Header,
     "network-view": NetworkView,
     "metric-view": MetricView,
     "configuration-view": ConfigurationView,

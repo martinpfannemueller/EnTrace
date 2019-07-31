@@ -30,13 +30,13 @@
 </template>
 
 <script>
-import ViewHeader from "../helper_components/ViewHeader";
-import Tooltip from "../tooltips/TooltipNetworkView";
+import ViewWrapper from "../dashboard/ViewWrapper";
+import Tooltip from "./tooltips/TooltipNetworkView";
 import { store } from "../store/store";
 import * as d3 from "d3";
 export default {
   components: {
-    "view-header": ViewHeader,
+    "view-header": ViewWrapper,
     tooltip: Tooltip
   },
   data() {
