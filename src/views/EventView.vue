@@ -78,6 +78,7 @@ export default {
     }
   },
   methods: {
+    // Clears the event view
     clearEvents() {
       this.$store.commit("clearEvents");
     }

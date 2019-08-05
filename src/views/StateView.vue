@@ -134,6 +134,7 @@ export default {
     }
   },
   mounted() {
+    // Initialize SVG selector for state view
     this.initializeSelector();
   },
   methods: {
@@ -515,25 +516,9 @@ export default {
         this.circleRadius / 3;
       return d;
     },
-    // adjusts the arrow of the State View based on the parameter circleRadius
-    adjustArrowSize() {
-      // @TODO: Implement
-      // let drawArrow = this.drawArrow;
-      // console.log(this.arrowsSVG);
-      // // this.arrowsSVG
-      // //   .selectAll("#triangle")
-      // //   .attr("refX", this.circleRadius / 3)
-      // //   .attr("refY", this.circleRadius / 3)
-      // //   .attr("markerWidth", this.circleRadius)
-      // //   .attr("markerHeight", this.circleRadius)
-      // //   .attr("d", function() {
-      // //     return drawArrow();
-      // //   });
-      // this.arrowsSVG.selectAll("marker").attr("refX", 300);
-    },
     // Centers the states and links of the State View, zooms to the appropriate level when too many states are there
     centerState() {
-      // this.adjustArrowSize();
+      // Initialize key variables
       let numberOfStates = this.stateCollection.length;
       let xTransform;
       let yTransform;
@@ -541,6 +526,7 @@ export default {
       let renderWidth =
         (numberOfStates - 1) * this.circleDistance + 2 * this.circleRadius;
 
+      // Determine scalce, x, and y transform based on number of states
       if (numberOfStates == 1) {
         // Center single state
         xTransform = this.width / 2 - this.circleDistance;
@@ -562,6 +548,7 @@ export default {
         }
       }
 
+      // transform the SVG holdng the state view based on the values determined above
       this.stateViewSVG
         .transition()
         .duration(this.animiationDuration)

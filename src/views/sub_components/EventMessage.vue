@@ -62,6 +62,8 @@ export default {
     }
   },
   methods: {
+    // Returns relevant icon for connected/disconnected events called "special events"
+    // (Channel general)
     specialEvent(success, warn) {
       // return "check-square";
       if (success) return "check-square";

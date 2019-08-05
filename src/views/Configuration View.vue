@@ -134,8 +134,8 @@ export default {
       id: 2,
       cfmViewSVG: "",
       tooltipDiv: "",
-      tree: "",
       root: "",
+      tree: "",
       treeWidth: 680,
       treeHeight: 250,
       rectWidth: 23,
@@ -210,6 +210,7 @@ export default {
     }
   },
   mounted() {
+    // Initialize SVG selector for CFM
     this.initializeSelector();
 
     // Initilaize the d3 tree
@@ -741,6 +742,8 @@ export default {
     },
     // Sets the text for the main label, trunctuates based on the style factor and upper case characters
     setMainLabel(d) {
+      // Based on length and number of large characters
+      // the text of the main lable is adjusted in size and/or length
       let scaleFactor = this.scaleFactor;
       if (scaleFactor > 1.6) {
         if (d.data.name.length > 14) {
@@ -948,9 +951,11 @@ export default {
           .attr("transform", "translate(-10, 20) scale(1)");
       }
     },
+    // Handles the modal menu for attributes and features
     setModalMenu(d) {
       let openAttributeModalMenu = this.$refs["attributeModal"].show;
       let openFeatureModalMenu = this.$refs["featureModal"].show;
+      // Checks whether element clicked is an attribute
       if (!d.children && d.data.domain) {
         this.modalElementName = d.data.name;
         this.modalAttributeDomain = d.data.domain.domainType;
@@ -959,6 +964,7 @@ export default {
         this.modalAttributeUpperBoundary = d.data.domain.upperBoundary;
         openAttributeModalMenu();
       }
+      // Checks whether element clicked is a feature
       if (d.data.system && !d.data.domain) {
         this.modalElementName = d.data.name;
         openFeatureModalMenu();

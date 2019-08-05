@@ -30,7 +30,7 @@
 <script>
 import * as c3 from "c3";
 import ViewWrapper from "../dashboard/ViewWrapper";
-import { createNewEvent, store } from "../store/store";
+import { store } from "../store/store";
 export default {
   components: {
     "view-header": ViewWrapper
@@ -78,7 +78,7 @@ export default {
     }
   },
   mounted() {
-    // Initilaiez the chart, bind it to "bindedChart"
+    // Initilaize the chart, bind it to "bindedChart"
     this.bindedChart = c3.generate({
       bindto: "#metric-view",
       size: {
@@ -150,31 +150,6 @@ export default {
         endTime: window.performance.now(),
         view: "Metric View"
       });
-    },
-    checkValueChange(d) {
-      let percentageThreshold = this.percentageThreshold;
-      if (d.data.length >= 2) {
-        let oldValue = d.data[d.data.length - 2];
-        let newValue = d.data[d.data.length - 1];
-        let higher = Math.max(oldValue, newValue);
-        let lower = Math.min(oldValue, newValue);
-        if (higher / lower - 1 >= percentageThreshold / 100) {
-          createNewEvent(
-            "Metric View",
-            "Threshold difference reached",
-            "For the metric '" +
-              d.name +
-              "', the new value (" +
-              Math.round(newValue * 100) / 100 +
-              ")" +
-              " differs more than the threshold percentage (" +
-              percentageThreshold +
-              "%) from the previous value (" +
-              Math.round(oldValue * 100) / 100 +
-              ")"
-          );
-        }
-      }
     }
   }
 };

@@ -35,6 +35,7 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
+// Import all necessary icons
 library.add(faPlusCircle);
 library.add(faMinusCircle);
 library.add(faExpand);
@@ -60,13 +61,17 @@ library.add(faPlug);
 library.add(faPowerOff);
 library.add(faDownload);
 
+// Initialize icon component
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+// Initialize VueX
 Vue.use(Vuex);
+// Initialize Bootstrap elements
 Vue.use(BootstrapVue);
 
 // Connect to CoalaViz connector
 connectToConnector();
 
+// Create new instance of Vue
 new Vue({
   el: "#app",
   store: store,

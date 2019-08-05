@@ -96,6 +96,7 @@ export default {
     }
   },
   mounted() {
+    // Initialize SVG selector for network view
     this.initializeSelector();
   },
   methods: {

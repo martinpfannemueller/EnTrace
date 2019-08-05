@@ -128,7 +128,6 @@ export default {
   mounted() {
     // eslint-disable-next-line no-unused-vars
     store.subscribe((mutation, state) => {
-      // TODO: Fix that this funciton is called so often i.e. use watch
       if (mutation.type == "updateToggleMap") {
         let toggleAll = this.toggleAll;
         toggleAll();

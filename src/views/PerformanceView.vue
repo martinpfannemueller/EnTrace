@@ -66,6 +66,20 @@ export default {
     this.normalizeWeights(this.displayedWeights);
   },
   methods: {
+    // Normalizes the weights so they add up to one, store updating is turned off by default
+    normalizeWeights(weights, update = false) {
+      let normalizedWeights = weights;
+      let sumOfWeights = 0;
+      normalizedWeights.forEach(function(d) {
+        sumOfWeights += d.factor;
+      });
+      normalizedWeights.forEach(function(d) {
+        d.factor = Math.round((d.factor / sumOfWeights) * 1000) / 1000;
+      });
+      if (update) {
+        store.commit("updateWeights", normalizedWeights);
+      }
+    },
     // Allows sending the newly entered weights to the adaptation logic, triggers the appropriate event
     sendWeights() {
       try {
@@ -99,20 +113,6 @@ export default {
         );
       } catch (e) {
         this.$refs["notConnectedModal"].show();
-      }
-    },
-    // Normalizes the weights so they add up to one, store updating is turned off by default
-    normalizeWeights(weights, update = false) {
-      let normalizedWeights = weights;
-      let sumOfWeights = 0;
-      normalizedWeights.forEach(function(d) {
-        sumOfWeights += d.factor;
-      });
-      normalizedWeights.forEach(function(d) {
-        d.factor = Math.round((d.factor / sumOfWeights) * 1000) / 1000;
-      });
-      if (update) {
-        store.commit("updateWeights", normalizedWeights);
       }
     }
   }
