@@ -52,6 +52,7 @@ export default {
     }
   },
   methods: {
+    // Handles clicking the minimize/extend button for each individual view
     click() {
       let index = this.id; // Get item by using the ID prop of each View
       let toggleMap = this.toggleMap; // Get current toggleMap from store

@@ -5,11 +5,8 @@ import { createNewEvent, store } from "../store/store";
 const client = new Paho.Client("localhost", 8080, "clientId");
 var newtimedEventId = 0;
 
-// Function to connect, handles all incomming event messages
+// Connects to the MQTT connector, handles all incomming event messages
 function connectToConnector() {
-  // Helper variables, will be committed to the store
-  var weights = [];
-
   // Set callback handlers
   client.onConnectionLost = onConnectionLost;
   client.onMessageArrived = onMessageArrived;
@@ -23,7 +20,7 @@ function connectToConnector() {
   function onConnect() {
     // Set "connected" status to true
     store.commit("changeConnectionStatus", true);
-    // Connect
+    // Create event in event view
     createNewEvent(
       "General",
       "Connection successful",
@@ -34,25 +31,25 @@ function connectToConnector() {
     );
 
     client.subscribe("startOfSimulation");
-    // Network View
-    client.subscribe("add-edge");
-    client.subscribe("mod-edge");
-    client.subscribe("remove-edge");
-    client.subscribe("add-node");
-    client.subscribe("mod-node");
-    client.subscribe("remove-node");
+    client.subscribe("add-edge"); // Network View
+    client.subscribe("mod-edge"); // Network View
+    client.subscribe("remove-edge"); // Network View
+    client.subscribe("add-node"); // Network View
+    client.subscribe("mod-node"); // Network View
+    client.subscribe("remove-node"); // Network View
     client.subscribe("new-metric-value"); // Metric View
     client.subscribe("new-metricWeights"); // Performance View
     client.subscribe("fm"); // Configuration View
-    client.subscribe("cardyFMConfig"); // Configuration View
+    client.subscribe("cardyFMConfig"); // Configuration/State View
   }
 
-  // Function to handle lost connections
+  // Handle lost connections
   function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
       let eventText =
         "CoalaViz lost its connection to the MQTT connector: " +
         responseObject.errorMessage;
+      // Create event in event view
       createNewEvent(
         "General",
         "Connection lost",
@@ -198,7 +195,7 @@ function connectToConnector() {
         store.commit("updateMetrics", event);
         break;
       case "new-metricWeights":
-        newWeights(event);
+        store.commit("updateWeights", event.stringMetricWeights);
         createNewEvent(
           "Performance View",
           "New metric weights arrived",
@@ -243,14 +240,9 @@ function connectToConnector() {
         break;
     }
   }
-
-  // Called when new metric weights arrive
-  function newWeights(newWeights) {
-    weights = newWeights.stringMetricWeights;
-    store.commit("updateWeights", weights);
-  }
 }
 
+// Called when disconnected
 function disconnectFromConnector() {
   client.disconnect();
   store.commit("changeConnectionStatus", false);
@@ -271,4 +263,5 @@ function sendMessage(payload, channel) {
   client.send(message);
 }
 
+// Export functions to make them available for other files
 export { client, connectToConnector, disconnectFromConnector, sendMessage };

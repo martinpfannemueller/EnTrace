@@ -25,6 +25,8 @@ function createNewEvent(
 }
 
 const store = new Vuex.Store({
+  // The "state" stores all relevant properties,
+  // for easier understanding, properties are clustered by view
   state: {
     dashboard: {
       connected: false,
@@ -129,26 +131,33 @@ const store = new Vuex.Store({
       state.evaluation.currentTimeStampMilliseconds = [];
       state.evaluation.evaluationLogger = [];
     },
-    // Changes the status 
+    // Changes the status
     changeConnectionStatus(state, payload) {
       state.dashboard.connected = payload;
     },
+    // Handles the toggleMap which stores the expand/minimize status of each view
     updateToggleMap(state, payload) {
       state.dashboard.toggleMap = payload;
     },
+    // Changes the sender channel for events sent to the adaption logic (e.g. metric weights, features)
     changeSenderChannel(state, newChannel) {
       state.settings.senderChannel = newChannel;
     },
+    // Changes the hover color for network, configurtion, and state view
     changeHoverColor(state, hoverColor) {
       state.settings.hoverColor = hoverColor;
     },
+    // Watcher that is updated when an element in the network view comes from the connector
+    // Is watched in the network view to call the render function of the network view
     updateNetworkView(state, payload) {
       state.networkView.updateNetworkView =
         state.networkView.updateNetworkView + payload;
     },
+    // Adds a node to the array that stores the nodes
     addNode(state, newNode) {
       state.networkView.nodes.push(newNode);
     },
+    // Mods a node in the array that stores the nodes
     modNode(state, modNode) {
       let index = state.networkView.nodes.findIndex(
         x => x.nodeId === modNode.nodeId
@@ -195,6 +204,7 @@ const store = new Vuex.Store({
         }
       }
     },
+    // Removes a node to the array that stores the nodes
     removeNode(state, removeNode) {
       let index = state.networkView.nodes.findIndex(
         x => x.nodeId === removeNode.nodeId
@@ -204,6 +214,7 @@ const store = new Vuex.Store({
         state.networkView.nodes.splice(index, 1);
       }
     },
+    // Adds an edge to the array that stores the edges
     addEdge(state, newEdge) {
       // Initialize position of each edge/link
       let indexSource = state.networkView.nodes.findIndex(
@@ -227,6 +238,7 @@ const store = new Vuex.Store({
         state.networkView.edges.push(newEdge);
       }
     },
+    // Adds an edge to the array that stores the edges
     modEdge(state, modEdge) {
       // Adjust other parameters of appropriate edge
       let index = state.networkView.edges.findIndex(
@@ -246,6 +258,7 @@ const store = new Vuex.Store({
         }
       }
     },
+    // Remvoes an edge to the array that stores the edges
     removeEdge(state, removeEdge) {
       let index = state.networkView.edges.findIndex(
         x => x.edgeId === removeEdge.edgeId
@@ -255,15 +268,24 @@ const store = new Vuex.Store({
         state.networkView.edges.splice(index, 1);
       }
     },
+    // Updates the initial CFM property
+    // Relevant for configuration view initizialization
     updateCFM(state, payload) {
       state.configurationView.cfm = payload;
     },
+    // Updates the CFM confifgurtion
+    // Relevant for the configuration view
+    // Relevant for the hashing of the states in the state view
     updateCFMValues(state, payload) {
       state.configurationView.cfmValues = payload;
     },
+    // Handles attributes that are added only once
+    // (Attributes in the CFM where the element has children AND attributes are stored here
+    // to avoid adding them again)
     updateAddedAttribute(state, attribute) {
       state.configurationView.addedAttributes.push(attribute);
     },
+    // Updates the metrics of the metric view
     updateMetrics(state, metricValue) {
       var newMetric = true;
       // Initialize array for first value
@@ -328,21 +350,27 @@ const store = new Vuex.Store({
         }
       }
     },
+    // Updates the threshold percentage used for event notifications of the metric view
     updateThresholdPercentage(state, payload) {
       state.metricView.thresholdPercentage = payload;
     },
+    // Updates the metric weights
     updateWeights(state, payload) {
       state.performanceView.weights = payload;
     },
+    // Updates the attribute domain list necessary for the state view
     updateAttributeDomainList(state, payload) {
       state.stateView.cfmAttributeDomainList.push(payload);
     },
+    // Adds an event at the beginning of the event array
     updateEvents(state, payload) {
       state.eventView.events.unshift(payload);
     },
+    // Deletes all events from the event view
     clearEvents(state) {
       state.eventView.events = [];
     },
+    // Starts the evaluation log
     logStart(state, { timedEventId, timeStampMilliseconds, startTime, view }) {
       state.evaluation.evaluationLogger.push({
         timedEventId,
@@ -352,6 +380,7 @@ const store = new Vuex.Store({
         endTime: ""
       });
     },
+    // Ends the evaluation log
     logEnd(state, { timedEventId, endTime, view }) {
       let index = state.evaluation.evaluationLogger.findIndex(
         x => x.timedEventId == timedEventId && x.view == view
@@ -366,9 +395,11 @@ const store = new Vuex.Store({
           endTime - state.evaluation.evaluationLogger[index].startTime;
       }
     },
+    // Sets the variable of the currentTimedEventId used to identfiy logged events
     setCurrentTimedEventId(state, timedEventId) {
       state.evaluation.currentTimedEventId = timedEventId;
     },
+    // Sets the timestamp (used to identify events at the same time in WSN case)
     setCurrentTimeStampMilliseconds(state, timeStampMilliseconds) {
       // console.log(timeStampMilliseconds);
       state.evaluation.currentTimeStampMilliseconds = timeStampMilliseconds;

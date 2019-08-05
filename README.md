@@ -1,6 +1,6 @@
 # coala-vue
 
-> A Vue.js project
+> CoalaViz.js
 
 ## Build Setup
 

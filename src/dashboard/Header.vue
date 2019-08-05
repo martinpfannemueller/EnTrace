@@ -171,14 +171,15 @@ export default {
       return this.$store.state.settings.hoverColor;
     }
   },
-  // Intializes the senderChannelEdit variable to match the one from the store
   mounted() {
+    // Intializes the senderChannelEdit variable to match the one from the store
     this.senderChannelEdit = this.senderChannel;
     this.hoverColorEdit = this.hoverColor;
+    // Initilaizes file saver to export evaluation log as .txt file
     this.FileSaver = require("file-saver");
   },
   methods: {
-    // Used to call MQTT function to connect to the connector
+    // Save file allows exporting the evaluation log as a .txt file for easier evaluations
     saveFile() {
       this.text = new Blob(
         [JSON.stringify(this.$store.state.evaluation.evaluationLogger)],
@@ -189,6 +190,7 @@ export default {
       let measurementText = "measeurement " + new Date().toLocaleTimeString();
       this.FileSaver.saveAs(this.text, measurementText);
     },
+    // Used to call MQTT function to connect to the connector
     connectToConnector() {
       // Callback function to ensure conneciton try is finished
       connectToConnector(() => {
@@ -227,6 +229,7 @@ export default {
       this.hoverColorChanged = true;
       this.$store.commit("changeHoverColor", this.hoverColorEdit);
     },
+    // Calls the mutation which resets all store properties to their default value
     resetStore() {
       this.$store.commit("resetStore");
     }
