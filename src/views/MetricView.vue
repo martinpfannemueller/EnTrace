@@ -40,7 +40,7 @@ export default {
       name: "Metric View",
       id: 1,
       cutInterval: true,
-      timeInterval: 10,
+      timeInterval: 20,
       bindedChart: ""
     };
   },
