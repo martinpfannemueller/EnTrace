@@ -745,21 +745,27 @@ export default {
       // Based on length and number of large characters
       // the text of the main lable is adjusted in size and/or length
       let scaleFactor = this.scaleFactor;
+      // Check scalefactor
       if (scaleFactor > 1.6) {
+        // Cut if text is longer than 14 characters
         if (d.data.name.length > 14) {
           return (
             d.data.name.substring(0, Math.round(9 * Math.sqrt(scaleFactor))) +
             "..."
           );
+          // If shorter, return the full name
         } else return d.data.name;
       } else {
+        // Check if text lenght is larger than 9
         if (d.data.name.length > 9) {
           let upperCount = d.data.name.replace(/[^A-Z]/g, "").length;
+          // Check if many capital letters are used -> when its the case, cut the text
           if (upperCount > 5) {
             return (
               d.data.name.substring(0, Math.round(7 * Math.sqrt(scaleFactor))) +
               "..."
             );
+            // Check if many capital letters are used -> when its the case, cut the text, but not so much
           } else {
             return (
               d.data.name.substring(0, Math.round(8 * Math.sqrt(scaleFactor))) +
