@@ -4,7 +4,7 @@
       <b-col cols="8">
         <svg id="state-view" :height="height" :width="width" margin="auto" />
         <b-row>
-          <b-col class="ui-col">
+          <!-- <b-col class="ui-col">
             <b-form-input v-model="circleDistance" size="sm"></b-form-input>
             <div style="margin-top: 0px" class="text-muted interface-text">
               Distance
@@ -15,14 +15,14 @@
             <div style="margin-top: 0px" class="text-muted interface-text">
               Circle radius
             </div>
-          </b-col>
+          </b-col> -->
           <b-col class="ui-col">
             <b-button
               size="sm"
               variant="outline-primary"
               @click="renderStateView(stateCollection, linkCollection)"
             >
-              <font-awesome-icon icon="tools" />&nbsp;Adjust
+              <font-awesome-icon icon="expand" />&nbsp;Center
             </b-button>
           </b-col>
           <b-col class="ui-col">
