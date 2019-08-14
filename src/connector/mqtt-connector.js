@@ -71,7 +71,7 @@ function connectToConnector() {
 
     // EVALUATION MODE
     // Check if evaluation mode
-    if (incommingMessage.timedEventId) {
+    if (incommingMessage.hasOwnProperty('timedEventId') && incommingMessage.timedEventId != 0) {
       // Set current event ID for store
       timedEventId = incommingMessage.timedEventId;
       store.commit("setCurrentTimedEventId", timedEventId);
@@ -88,7 +88,7 @@ function connectToConnector() {
       event = incommingMessage.event;
 
       // Network view poisson distribution
-    } else if (incommingMessage.timedEventId == 0) {
+    } else if (incommingMessage.hasOwnProperty('timedEventId') && incommingMessage.timedEventId == 0) {
       event = incommingMessage.event;
       // Create artificial IDs for the artificial cases
       timedEventId = newtimedEventId;
