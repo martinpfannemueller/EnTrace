@@ -31,3 +31,4 @@ Pull requests for any kind of improvement or addition are very welcome. Some pos
 - Add possibility to completely close view modules
 - Add possibility to show the same view module twice with different content
 - Migrate to Webpack 4
+- ...

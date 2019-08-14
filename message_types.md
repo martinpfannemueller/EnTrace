@@ -1,0 +1,636 @@
+# Message Types
+
+Currently, there is still a `type` attribute in each message which is always the same to the according MQTT channel. It is considered as legacy and is currently not used anmyore. It will be removed in the future.
+
+## Topology View
+
+### Channel: `add-node`
+```JSON
+{
+	"nodeId":32,
+	"x":10.0,
+	"y":20.0,
+	"type":"add-node"
+}
+```
+
+### Channel: `mod-node`
+
+Latitude and Longitude events will be renamed to x and y soon.
+
+```JSON
+{
+	"nodeId":23,
+	"property":"GraphElementProperty-latitude",
+	"newValue":"22",
+	"type":"mod-node"
+}
+```
+
+```JSON
+{
+	"nodeId":23,
+	"property":"GraphElementProperty-longitude",
+	"newValue":"25",
+	"type":"mod-node"
+}
+```
+
+```JSON
+{
+      "nodeId": 40,
+      "property": "color",
+      "newValue": "green",
+      "type": "mod-node"
+}
+```
+
+### Channel: `remove-node`
+```JSON
+{
+	"nodeId":"10",
+	"type":"remove-node"
+}
+```
+
+### Channel: `add-edge`
+```JSON
+{
+	"edgeId":"32->2",
+	"sourceId":2,
+	"targetId":5,
+	"weight":0,
+	"type":"add-edge"
+}
+```
+
+### Channel: `mod-edge`
+```JSON
+{
+	"edgeId":23,
+	"property":"color",
+	"newValue":"green",
+	"type":"mod-edge"
+}
+```
+
+```JSON
+{
+	"edgeId":23,
+	"property":"weight",
+	"newValue":10,
+	"type":"mod-edge"
+}
+```
+
+### Channel: `remove-edge`
+```JSON
+{
+	"edgeId":"10->2",
+	"type":"remove-edge"
+}
+```
+
+
+## Metric View
+
+### Channel: `new-metric-value`
+```JSON
+{
+	"metric":"Latency",
+	"timestamp":1,
+	"value":120,
+	"type":"new-metric-value"
+}
+```
+
+## CFM View
+
+Serialized context feature model (CFM) which is originally modelled using  [CardyGAn](https://dl.acm.org/citation.cfm?id=2866619)
+
+### Channel: `fm`
+
+```JSON
+{
+  "fm": {
+    "root": {
+      "binaryCardinals": "NO_DOT",
+      "children": [
+        {
+          "binaryCardinals": "NO_DOT",
+          "children": [
+            {
+              "binaryCardinals": "NO_DOT",
+              "children": [],
+              "attributes": [
+                {
+                  "domain": {
+                    "domainType": "REAL",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 20
+                  },
+                  "value": 0,
+                  "name": "weightOptimizationThreshold",
+                  "system": false,
+                  "currentlyChosen": false
+                }
+              ],
+              "featureInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupInstanceCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "groupTypeCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "name": "fsWOpt",
+              "system": true,
+              "currentlyChosen": false
+            },
+            {
+              "binaryCardinals": "NO_DOT",
+              "children": [
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fsMAXPOWERTC",
+                  "system": true,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [
+                    {
+                      "domain": {
+                        "domainType": "REAL",
+                        "lowerBoundary": 1,
+                        "upperBoundary": 2
+                      },
+                      "value": 0,
+                      "name": "parameterKtcK",
+                      "system": false,
+                      "currentlyChosen": false
+                    }
+                  ],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "groupInstanceCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "groupTypeCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "name": "fsDKTC",
+                  "system": true,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [
+                    {
+                      "domain": {
+                        "domainType": "REAL",
+                        "lowerBoundary": 1,
+                        "upperBoundary": 2
+                      },
+                      "value": 0,
+                      "name": "parameterEKtcK",
+                      "system": false,
+                      "currentlyChosen": false
+                    }
+                  ],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "groupInstanceCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "groupTypeCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "name": "fsEKTC",
+                  "system": true,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [
+                    {
+                      "domain": {
+                        "domainType": "REAL",
+                        "lowerBoundary": 1,
+                        "upperBoundary": 2
+                      },
+                      "value": 0,
+                      "name": "parameterLStarKtcK",
+                      "system": false,
+                      "currentlyChosen": false
+                    },
+                    {
+                      "domain": {
+                        "domainType": "REAL",
+                        "lowerBoundary": 1,
+                        "upperBoundary": 2
+                      },
+                      "value": 0,
+                      "name": "parameterLStarKtcA",
+                      "system": false,
+                      "currentlyChosen": false
+                    }
+                  ],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "groupInstanceCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "groupTypeCardinality": {
+                    "lb": 1,
+                    "ub": -1
+                  },
+                  "name": "fsLSTARKTC",
+                  "system": true,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fsLMST",
+                  "system": true,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fsGMST",
+                  "system": true,
+                  "currentlyChosen": false
+                }
+              ],
+              "attributes": [
+                {
+                  "domain": {
+                    "domainType": "INTEGER",
+                    "lowerBoundary": 1,
+                    "upperBoundary": 20
+                  },
+                  "value": 0,
+                  "name": "fsTCint",
+                  "system": true,
+                  "currentlyChosen": false
+                }
+              ],
+              "featureInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupTypeCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "name": "fsTCAlgo",
+              "system": true,
+              "currentlyChosen": false
+            }
+          ],
+          "attributes": [],
+          "featureInstanceCardinality": {
+            "lb": 1,
+            "ub": 1
+          },
+          "groupInstanceCardinality": {
+            "lb": 1,
+            "ub": -1
+          },
+          "groupTypeCardinality": {
+            "lb": 1,
+            "ub": -1
+          },
+          "name": "fsSystem",
+          "system": true,
+          "currentlyChosen": false
+        },
+        {
+          "binaryCardinals": "NO_DOT",
+          "children": [
+            {
+              "binaryCardinals": "NO_DOT",
+              "children": [],
+              "attributes": [
+                {
+                  "domain": {
+                    "domainType": "REAL",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 5
+                  },
+                  "value": 0,
+                  "name": "mobilitySpeed",
+                  "system": false,
+                  "currentlyChosen": false
+                }
+              ],
+              "featureInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupInstanceCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "groupTypeCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "name": "fcMobSpeed",
+              "system": false,
+              "currentlyChosen": false
+            },
+            {
+              "binaryCardinals": "NO_DOT",
+              "children": [
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fcPOINTTOPOINT",
+                  "system": false,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fcGOSSIP",
+                  "system": false,
+                  "currentlyChosen": false
+                },
+                {
+                  "binaryCardinals": "NO_DOT",
+                  "children": [],
+                  "attributes": [],
+                  "featureInstanceCardinality": {
+                    "lb": 0,
+                    "ub": 1
+                  },
+                  "name": "fcDATACOLLECTION",
+                  "system": false,
+                  "currentlyChosen": false
+                }
+              ],
+              "attributes": [],
+              "featureInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupTypeCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "name": "fcScenario",
+              "system": false,
+              "currentlyChosen": false
+            },
+            {
+              "binaryCardinals": "NO_DOT",
+              "children": [],
+              "attributes": [
+                {
+                  "domain": {
+                    "domainType": "REAL",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 500
+                  },
+                  "value": 0,
+                  "name": "topologyDensity",
+                  "system": false,
+                  "currentlyChosen": false
+                },
+                {
+                  "domain": {
+                    "domainType": "INTEGER",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 1000
+                  },
+                  "value": 0,
+                  "name": "nodeCount",
+                  "system": false,
+                  "currentlyChosen": false
+                },
+                {
+                  "domain": {
+                    "domainType": "INTEGER",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 1000000
+                  },
+                  "value": 0,
+                  "name": "edgeCount",
+                  "system": false,
+                  "currentlyChosen": false
+                },
+                {
+                  "domain": {
+                    "domainType": "INTEGER",
+                    "lowerBoundary": 0,
+                    "upperBoundary": 5000
+                  },
+                  "value": 0,
+                  "name": "worldSize",
+                  "system": false,
+                  "currentlyChosen": false
+                }
+              ],
+              "featureInstanceCardinality": {
+                "lb": 1,
+                "ub": 1
+              },
+              "groupInstanceCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "groupTypeCardinality": {
+                "lb": 1,
+                "ub": -1
+              },
+              "name": "fcTopology",
+              "system": false,
+              "currentlyChosen": false
+            }
+          ],
+          "attributes": [],
+          "featureInstanceCardinality": {
+            "lb": 1,
+            "ub": 1
+          },
+          "groupInstanceCardinality": {
+            "lb": 1,
+            "ub": -1
+          },
+          "groupTypeCardinality": {
+            "lb": 1,
+            "ub": -1
+          },
+          "name": "fcContext",
+          "system": false,
+          "currentlyChosen": false
+        }
+      ],
+      "attributes": [],
+      "featureInstanceCardinality": {
+        "lb": 1,
+        "ub": 1
+      },
+      "groupInstanceCardinality": {
+        "lb": 1,
+        "ub": -1
+      },
+      "groupTypeCardinality": {
+        "lb": 1,
+        "ub": -1
+      },
+      "name": "root",
+      "system": false,
+      "currentlyChosen": false
+    }
+  },
+  "type": "fm"
+}
+```
+
+### Channel: `cardyFMConfig`
+
+Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
+
+```JSON
+{
+  "stringFeatures": [
+    {
+      "name": "root"
+    },
+    {
+      "name": "fsSystem"
+    },
+    {
+      "name": "fsWOpt"
+    },
+    {
+      "name": "fsTCAlgo"
+    },
+    {
+      "name": "fsEKTC"
+    },
+    {
+      "name": "fcContext"
+    },
+    {
+      "name": "fcMobSpeed"
+    },
+    {
+      "name": "fcScenario"
+    },
+    {
+      "name": "fcDATACOLLECTION"
+    },
+    {
+      "name": "fcTopology"
+    }
+  ],
+  "stringAttributes": [
+    {
+      "realValue": 0,
+      "name": "weightOptimizationThreshold"
+    },
+    {
+      "intValue": 1,
+      "name": "fsTCint"
+    },
+    {
+      "realValue": 1,
+      "name": "parameterEKtcK"
+    },
+    {
+      "realValue": 0.005,
+      "name": "mobilitySpeed"
+    },
+    {
+      "realValue": 6.8,
+      "name": "topologyDensity"
+    },
+    {
+      "intValue": 40,
+      "name": "nodeCount"
+    },
+    {
+      "intValue": 136,
+      "name": "edgeCount"
+    },
+    {
+      "intValue": 700,
+      "name": "worldSize"
+    }
+  ],
+  "type": "cardyFMConfig"
+}
+```
+
+## Performance View
+
+### Channel: `new-metricWeights`
+
+```JSON
+{
+	"stringMetricWeights":[
+		{"weight":"mEndToEndDropRate","factor":1.0},
+		{"weight":"mEndToEndLatency","factor":1.0},
+		{"weight":"mEJain","factor":1.0},
+		{"weight":"mEMean","factor":1.0}
+	],
+	"type":"new-metricWeights"
+}
+```
