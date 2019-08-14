@@ -1,13 +1,29 @@
-var path = require("path");
-var webpack = require("webpack");
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   entry: "./src/main.js",
   output: {
     path: path.resolve(__dirname, "./dist"),
-    publicPath: "/dist/",
     filename: "build.js"
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'CoalaViz: Enhanced Traceability',
+      template: 'src/template.ejs'
+    }),
+    new CopyPlugin([
+      { from: 'src/c3.min.css', to: '.' }
+    ]),
+    new AddAssetHtmlPlugin({
+      includeSourcemap: false,
+      typeOfAsset: "css",
+      filepath: require.resolve('./src/c3.min.css')
+    })
+  ],
   module: {
     rules: [
       {
