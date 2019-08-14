@@ -543,7 +543,7 @@ Serialized context feature model (CFM) which is originally modelled using  [Card
 }
 ```
 
-### Channel: `cardyFMConfig`
+### Channel: `reconfiguration`
 
 Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 
@@ -615,7 +615,7 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
       "name": "worldSize"
     }
   ],
-  "type": "cardyFMConfig"
+  "type": "reconfiguration"
 }
 ```
 

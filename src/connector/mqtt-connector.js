@@ -40,7 +40,7 @@ function connectToConnector() {
     client.subscribe("new-metric-value"); // Metric View
     client.subscribe("new-metricWeights"); // Performance View
     client.subscribe("fm"); // Configuration View
-    client.subscribe("cardyFMConfig"); // Configuration/State View
+    client.subscribe("reconfiguration"); // Configuration/State View
   }
 
   // Handle lost connections
@@ -217,7 +217,7 @@ function connectToConnector() {
           "A new initial context feature model has arrived"
         );
         break;
-      case "cardyFMConfig":
+      case "reconfiguration":
         // Start the evaluation by setting the time here
         store.commit("logStart", {
           timedEventId,
