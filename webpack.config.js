@@ -1,5 +1,4 @@
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require("path");
 const webpack = require("webpack");
@@ -8,21 +7,11 @@ module.exports = {
   entry: "./src/main.js",
   output: {
     path: path.resolve(__dirname, "./dist"),
+    publicPath: "dist/",
     filename: "build.js"
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      title: 'CoalaViz: Enhanced Traceability',
-      template: 'src/template.ejs'
-    }),
-    new CopyPlugin([
-      { from: 'src/c3.min.css', to: '.' }
-    ]),
-    new AddAssetHtmlPlugin({
-      includeSourcemap: false,
-      typeOfAsset: "css",
-      filepath: require.resolve('./src/c3.min.css')
-    })
+    
   ],
   module: {
     rules: [
@@ -73,6 +62,7 @@ module.exports = {
 
 if (process.env.NODE_ENV === "production") {
   module.exports.devtool = "#source-map";
+  module.exports.output.publicPath = "./";
   // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
@@ -88,6 +78,15 @@ if (process.env.NODE_ENV === "production") {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
+    }),
+    new HtmlWebpackPlugin({
+      title: 'CoalaViz: Enhanced Traceability',
+      template: 'src/html_template.ejs'
+    }),
+    new AddAssetHtmlPlugin({
+      includeSourcemap: false,
+      typeOfAsset: "css",
+      filepath: require.resolve('./src/c3.min.css')
     })
   ]);
 }
