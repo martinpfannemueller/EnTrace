@@ -5,7 +5,7 @@ Currently, there is still a `type` attribute in each message which is always the
 ## Topology View
 
 ### Channel: `add-node`
-```JSON
+```json
 {
 	"nodeId":32,
 	"x":10.0,
@@ -18,7 +18,7 @@ Currently, there is still a `type` attribute in each message which is always the
 
 Latitude and Longitude events will be renamed to x and y soon.
 
-```JSON
+```json
 {
 	"nodeId":23,
 	"property":"x",
@@ -27,7 +27,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 }
 ```
 
-```JSON
+```json
 {
 	"nodeId":23,
 	"property":"y",
@@ -36,7 +36,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 }
 ```
 
-```JSON
+```json
 {
       "nodeId": 40,
       "property": "color",
@@ -46,7 +46,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```
 
 ### Channel: `remove-node`
-```JSON
+```json
 {
 	"nodeId":"10",
 	"type":"remove-node"
@@ -54,7 +54,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```
 
 ### Channel: `add-edge`
-```JSON
+```json
 {
 	"edgeId":"32->2",
 	"sourceId":2,
@@ -65,7 +65,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```
 
 ### Channel: `mod-edge`
-```JSON
+```json
 {
 	"edgeId":23,
 	"property":"color",
@@ -74,7 +74,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 }
 ```
 
-```JSON
+```json
 {
 	"edgeId":23,
 	"property":"weight",
@@ -84,7 +84,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```
 
 ### Channel: `remove-edge`
-```JSON
+```json
 {
 	"edgeId":"10->2",
 	"type":"remove-edge"
@@ -95,7 +95,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ## Metric View
 
 ### Channel: `new-metric-value`
-```JSON
+```json
 {
 	"metric":"Latency",
 	"timestamp":1,
@@ -110,7 +110,7 @@ Serialized context feature model (CFM) which is originally modelled using  [Card
 
 ### Channel: `fm`
 
-```JSON
+```json
 {
   "fm": {
     "root": {
@@ -547,7 +547,7 @@ Serialized context feature model (CFM) which is originally modelled using  [Card
 
 Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 
-```JSON
+```json
 {
   "stringFeatures": [
     {
@@ -623,7 +623,7 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 
 ### Channel: `new-metricWeights`
 
-```JSON
+```json
 {
 	"stringMetricWeights":[
 		{"weight":"mEndToEndDropRate","factor":1.0},
