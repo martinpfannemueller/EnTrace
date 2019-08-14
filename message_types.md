@@ -21,7 +21,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```JSON
 {
 	"nodeId":23,
-	"property":"GraphElementProperty-latitude",
+	"property":"x",
 	"newValue":"22",
 	"type":"mod-node"
 }
@@ -30,7 +30,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 ```JSON
 {
 	"nodeId":23,
-	"property":"GraphElementProperty-longitude",
+	"property":"y",
 	"newValue":"25",
 	"type":"mod-node"
 }

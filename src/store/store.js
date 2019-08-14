@@ -168,10 +168,10 @@ const store = new Vuex.Store({
           case "color":
             state.networkView.nodes[index]["color"] = modNode.newValue;
             break;
-          case "GraphElementProperty-longitude":
+          case "x":
             state.networkView.nodes[index]["x"] = modNode.newValue;
             break;
-          case "GraphElementProperty-latitude":
+          case "y":
             state.networkView.nodes[index]["y"] = modNode.newValue;
             break;
           default:
