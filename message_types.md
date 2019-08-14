@@ -1,7 +1,5 @@
 # Message Types
 
-Currently, there is still a `type` attribute in each message which is always the same to the according MQTT channel. It is considered as legacy and is currently not used anmyore. It will be removed in the future.
-
 ## Topology View
 
 ### Channel: `add-node`
@@ -9,8 +7,7 @@ Currently, there is still a `type` attribute in each message which is always the
 {
 	"nodeId":32,
 	"x":10.0,
-	"y":20.0,
-	"type":"add-node"
+	"y":20.0
 }
 ```
 
@@ -22,8 +19,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
 	"nodeId":23,
 	"property":"x",
-	"newValue":"22",
-	"type":"mod-node"
+	"newValue":"22"
 }
 ```
 
@@ -31,8 +27,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
 	"nodeId":23,
 	"property":"y",
-	"newValue":"25",
-	"type":"mod-node"
+	"newValue":"25"
 }
 ```
 
@@ -40,16 +35,14 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
       "nodeId": 40,
       "property": "color",
-      "newValue": "green",
-      "type": "mod-node"
+      "newValue": "green"
 }
 ```
 
 ### Channel: `remove-node`
 ```json
 {
-	"nodeId":"10",
-	"type":"remove-node"
+	"nodeId":"10"
 }
 ```
 
@@ -59,8 +52,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 	"edgeId":"32->2",
 	"sourceId":2,
 	"targetId":5,
-	"weight":0,
-	"type":"add-edge"
+	"weight":0
 }
 ```
 
@@ -69,8 +61,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
 	"edgeId":23,
 	"property":"color",
-	"newValue":"green",
-	"type":"mod-edge"
+	"newValue":"green"
 }
 ```
 
@@ -78,16 +69,14 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
 	"edgeId":23,
 	"property":"weight",
-	"newValue":10,
-	"type":"mod-edge"
+	"newValue":10
 }
 ```
 
 ### Channel: `remove-edge`
 ```json
 {
-	"edgeId":"10->2",
-	"type":"remove-edge"
+	"edgeId":"10->2"
 }
 ```
 
@@ -99,8 +88,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 {
 	"metric":"Latency",
 	"timestamp":1,
-	"value":120,
-	"type":"new-metric-value"
+	"value":120
 }
 ```
 
@@ -538,8 +526,7 @@ Serialized context feature model (CFM) which is originally modelled using  [Card
       "system": false,
       "currentlyChosen": false
     }
-  },
-  "type": "fm"
+  }
 }
 ```
 
@@ -614,8 +601,7 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
       "intValue": 700,
       "name": "worldSize"
     }
-  ],
-  "type": "reconfiguration"
+  ]
 }
 ```
 
@@ -630,7 +616,6 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 		{"weight":"mEndToEndLatency","factor":1.0},
 		{"weight":"mEJain","factor":1.0},
 		{"weight":"mEMean","factor":1.0}
-	],
-	"type":"new-metricWeights"
+	]
 }
 ```
