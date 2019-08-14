@@ -19,7 +19,9 @@ npm run build
 
 ## Using the System
 
-Currently, the system automatically connects to a MQTT broker on localhost via Websocket on port 8080. You can find a documentation of all available message types [here](message_types.md). In case you have any questions feel free to contact me via [martin.pfannemueller@uni-mannheim.de](mailto:martin.pfannemueller@uni-mannheim.de).
+Currently, the system automatically connects to a MQTT broker on localhost via Websocket on port 8080. You can find a documentation of all available message types [here](message_types.md).
+
+It exists an implementation of a generic module for using CoalaViz.js for the [OMNeT++](https://omnetpp.org/) simulator. In case you are interested in this implementation or have any questions feel free to contact me via [martin.pfannemueller@uni-mannheim.de](mailto:martin.pfannemueller@uni-mannheim.de).
 
 ## Improving the System
 
