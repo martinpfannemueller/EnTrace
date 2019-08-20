@@ -619,3 +619,33 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 	]
 }
 ```
+
+## Event View
+
+### Channel: `events`
+
+```json
+{
+	"channel": "General",
+	"title": "Warning",
+	"text": "This is a warning",
+	"warn": true
+}
+```
+
+```json
+{
+	"channel": "General",
+	"title": "Success",
+	"text": "Successfully sent",
+	"success": true
+}
+```
+
+```json
+{
+	"channel": "General",
+	"title": "General Message",
+	"text": "No warning, no success"
+}
+```

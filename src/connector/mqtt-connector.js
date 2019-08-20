@@ -41,6 +41,7 @@ function connectToConnector() {
     client.subscribe("new-metricWeights"); // Performance View
     client.subscribe("fm"); // Configuration View
     client.subscribe("reconfiguration"); // Configuration/State View
+    client.subscribe("events"); // Event View
   }
 
   // Handle lost connections
@@ -236,6 +237,16 @@ function connectToConnector() {
           "Configuration View",
           "New configuration",
           "The adaptation logic has changed the configuration"
+        );
+        break;
+        case "events":
+        createNewEvent(
+          event.channel,
+          event.title,
+          event.text,
+          false,
+          event.success,
+          event.warn
         );
         break;
     }
