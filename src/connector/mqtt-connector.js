@@ -196,7 +196,7 @@ function connectToConnector() {
         store.commit("updateMetrics", event);
         break;
       case "new-metricWeights":
-        store.commit("updateWeights", event.stringMetricWeights);
+        store.commit("updateWeights", event.weights);
         createNewEvent(
           "Performance View",
           "New metric weights arrived",

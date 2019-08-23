@@ -611,7 +611,7 @@ Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
 
 ```json
 {
-	"stringMetricWeights":[
+	"weights":[
 		{"weight":"mEndToEndDropRate","factor":1.0},
 		{"weight":"mEndToEndLatency","factor":1.0},
 		{"weight":"mEJain","factor":1.0},
