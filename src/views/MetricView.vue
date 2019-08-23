@@ -144,12 +144,6 @@ export default {
       this.bindedChart.load({
         columns: chartData
       });
-      // Evaluate end time
-      store.commit("logEnd", {
-        timedEventId: store.state.evaluation.currentTimedEventId,
-        endTime: window.performance.now(),
-        view: "Metric View"
-      });
     }
   }
 };

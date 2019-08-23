@@ -440,12 +440,6 @@ export default {
         .attr("d", function(d) {
           return drawConnection(d);
         });
-      // Evaluate end time
-      store.commit("logEnd", {
-        timedEventId: store.state.evaluation.currentTimedEventId,
-        endTime: window.performance.now(),
-        view: "State View"
-      });
     },
     // Draws the connection path for the links of the State View
     drawConnection(d) {

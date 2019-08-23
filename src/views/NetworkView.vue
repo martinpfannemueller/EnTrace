@@ -300,15 +300,6 @@ export default {
           return d.sourceIdy;
         })
         .remove();
-
-      if (!this.started) {
-        // Evaluate end time
-        store.commit("logEnd", {
-          timedEventId: this.$store.state.evaluation.currentTimedEventId,
-          endTime: window.performance.now(),
-          view: "Network View"
-        });
-      }
     },
     // Determines the x and y max size for the network which are used to center/zoom the network diagram
     determineSize(nodes) {

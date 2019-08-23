@@ -120,79 +120,30 @@ function connectToConnector() {
       case "startOfSimulation":
         break;
       case "add-node":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("addNode", event);
         store.commit("updateNetworkView", 1);
         break;
       case "mod-node":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("modNode", event);
         store.commit("updateNetworkView", 1);
         break;
       case "remove-node":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("removeNode", event);
         store.commit("updateNetworkView", 1);
         break;
       case "add-edge":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("addEdge", event);
         store.commit("updateNetworkView", 1);
         break;
       case "mod-edge":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("modEdge", event);
         store.commit("updateNetworkView", 1);
         break;
       case "remove-edge":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Network View"
-        });
         store.commit("removeEdge", event);
         store.commit("updateNetworkView", 1);
         break;
       case "new-metric-value":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Metric View"
-        });
         store.commit("updateMetrics", event);
         break;
       case "new-metricWeights":
@@ -204,13 +155,6 @@ function connectToConnector() {
         );
         break;
       case "fm":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Configuration View"
-        });
         store.commit("updateCFM", event);
         createNewEvent(
           "Configuration View",
@@ -219,19 +163,6 @@ function connectToConnector() {
         );
         break;
       case "reconfiguration":
-        // Start the evaluation by setting the time here
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "Configuration View"
-        });
-        store.commit("logStart", {
-          timedEventId,
-          timeStampMilliseconds,
-          startTime: window.performance.now(),
-          view: "State View"
-        });
         store.commit("updateCFMValues", event);
         createNewEvent(
           "Configuration View",

@@ -702,13 +702,6 @@ export default {
         d.x0 = d.x;
         d.y0 = d.y;
       });
-
-      // Evaluate end time
-      store.commit("logEnd", {
-        timedEventId: store.state.evaluation.currentTimedEventId,
-        endTime: window.performance.now(),
-        view: "Configuration View"
-      });
     },
     // Sets the appropriate color for an element/node in the CFM
     colorNodes(d) {
