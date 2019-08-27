@@ -4,29 +4,48 @@ This project is an improved and completely rewritten version of CoalaViz present
 
 ![Screenshot](screenshot.png)
 
-## Build Setup
+## Quick Start
 
-``` bash
-# install dependencies
+```bash
+# Install dependencies
 npm install
 
-# optionally run a provided Node-based broker
+# 1st terminal
 npm run broker
 
-# serve with hot reload at localhost:8008
+# 2nd terminal
 npm run dev
 
-# build for production with minification (see dist folder)
+# 3rd terminal
+npm run demo
+```
+
+## Available Commands
+
+``` bash
+# Install dependencies
+npm install
+
+# Run a provided Node-based broker
+npm run broker
+
+# Serve with hot reload at localhost:8008
+npm run dev
+
+# Build for production with minification (see dist folder)
 npm run build
+
+# Run WSN-based demo publishing MQTT events on localhost
+npm run demo
 ```
 
 ## Using the System
 
-Currently, the system automatically connects to an MQTT broker on localhost via a websocket connection on port 8080. As a quickstart, you can start a provided Node-based MQTT broker by running `npm run broker`.
+Currently, the system automatically connects to an MQTT broker on localhost via a websocket connection on port 8080. As a quickstart, you can start the provided Node-based MQTT broker by running `npm run broker`.
 
 You can find a documentation of all available message types [here](message_types.md).
 
-It exists an implementation of a generic module for using CoalaViz.js with the [OMNeT++](https://omnetpp.org/) simulator. In case you are interested in this implementation or have any questions feel free to contact me via [martin.pfannemueller@uni-mannheim.de](mailto:martin.pfannemueller@uni-mannheim.de) or Slack.
+There exists an implementation of a generic module for using CoalaViz.js with the [OMNeT++](https://omnetpp.org/) simulator. In case you are interested in this implementation or have any questions feel free to contact me via [martin.pfannemueller@uni-mannheim.de](mailto:martin.pfannemueller@uni-mannheim.de) or Slack.
 
 ## Improving the System
 
