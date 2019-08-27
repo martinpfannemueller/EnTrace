@@ -1,6 +1,6 @@
 # CoalaViz.js
 
-This project is an improved and completely rewritten version of CoalaViz presented in the Paper [CoalaViz: Supporting Traceability of Adaptation Decisions in Pervasive Communication Systems](https://ieeexplore.ieee.org/abstract/document/8730818). The development was done as part of a master thesis with the title *Enhanced Traceability in Adaptive Communication Systems* at University of Mannheim.
+This project is an improved and completely rewritten version of CoalaViz presented in the Paper [CoalaViz: Supporting Traceability of Adaptation Decisions in Pervasive Communication Systems](https://ieeexplore.ieee.org/abstract/document/8730818). Originally, it was intended as addon for CoALa (Context-Aware DSPL-Based Planner, see [Optimal reconfiguration of dynamic software product lines based on performance-influence models](https://dl.acm.org/citation.cfm?id=3233030)).The development of this version was done as part of a master thesis with the title *Enhanced Traceability in Adaptive Communication Systems* at University of Mannheim.
 
 ![Screenshot](screenshot.png)
 
