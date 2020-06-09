@@ -1,4 +1,4 @@
-# Message Types
+# Event Types
 
 ## Topology View
 
@@ -12,8 +12,6 @@
 ```
 
 ### Channel: `mod-node`
-
-Latitude and Longitude events will be renamed to x and y soon.
 
 ```json
 {
@@ -94,7 +92,7 @@ Latitude and Longitude events will be renamed to x and y soon.
 
 ## CFM View
 
-Serialized context feature model (CFM) which is originally modelled using  [CardyGAn](https://dl.acm.org/citation.cfm?id=2866619)
+Serialized context feature model (CFM). In our case we typically used manually serialized modeels originally using [CardyGAn](https://dl.acm.org/citation.cfm?id=2866619).
 
 ### Channel: `fm`
 
@@ -532,7 +530,7 @@ Serialized context feature model (CFM) which is originally modelled using  [Card
 
 ### Channel: `reconfiguration`
 
-Reconfigurations originating from a(n) (CardyGAn-based) adaptation logic
+Reconfigurations originating from the self-aware computing system.
 
 ```json
 {

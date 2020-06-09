@@ -43,7 +43,7 @@ npm run demo
 
 Currently, the system automatically connects to an MQTT broker on localhost via a websocket connection on port 8080. As a quickstart, you can start the provided Node-based MQTT broker by running `npm run broker`.
 
-You can find a documentation of all available message types [here](message_types.md).
+You can find a documentation of all available event types [here](event_types.md).
 
 ## Improving the System
 
