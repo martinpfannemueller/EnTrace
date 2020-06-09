@@ -24,7 +24,7 @@ function connectToConnector() {
     createNewEvent(
       "General",
       "Connection successful",
-      "CoalaViz is now connected to the MQTT connector",
+      "EnTrace is now connected to the MQTT connector",
       true,
       true,
       false
@@ -48,7 +48,7 @@ function connectToConnector() {
   function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
       let eventText =
-        "CoalaViz lost its connection to the MQTT connector: " +
+        "EnTrace lost its connection to the MQTT connector: " +
         responseObject.errorMessage;
       // Create event in event view
       createNewEvent(
@@ -191,7 +191,7 @@ function disconnectFromConnector() {
   createNewEvent(
     "General",
     "Connection disconnected",
-    "CoalaViz was disconnected from the connector",
+    "EnTrace was disconnected from the connector",
     true,
     false,
     true

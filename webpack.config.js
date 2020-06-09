@@ -80,7 +80,7 @@ if (process.env.NODE_ENV === "production") {
       minimize: true
     }),
     new HtmlWebpackPlugin({
-      title: 'CoalaViz: Enhanced Traceability',
+      title: 'EnTrace: Enhanced Traceability',
       template: 'src/html_template.ejs'
     }),
     new AddAssetHtmlPlugin({

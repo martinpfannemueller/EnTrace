@@ -68,7 +68,7 @@ Vue.use(Vuex);
 // Initialize Bootstrap elements
 Vue.use(BootstrapVue);
 
-// Connect to CoalaViz connector
+// Connect to MQTT
 connectToConnector();
 
 // Create new instance of Vue

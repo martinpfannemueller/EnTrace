@@ -3,9 +3,7 @@
     <b-row class="header">
       <b-col cols="8">
         <h4>
-          🐨
-          <strong>CoalaViz.<span style="color: #007bff;">js</span></strong
-          >: Enhanced Traceability in Adaptive Communication Systems
+          <strong>EnTrace</strong>: Enhanced Traceability
         </h4>
       </b-col>
       <b-col cols="4">
@@ -42,7 +40,7 @@
       </b-col>
     </b-row>
     <hr />
-    <b-modal ref="settingsModal" title="CoalaViz Settings" size="sm">
+    <b-modal ref="settingsModal" title="EnTrace Settings" size="sm">
       <b-row>
         <b-col>
           <h6>Connect and disconnect</h6>

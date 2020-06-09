@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <coala-header class="header" />
+    <main-header class="header" />
     <grid-layout
       ref="GridInstance"
       :layout.sync="layout"
@@ -44,7 +44,7 @@ import { store } from "./store/store";
 
 export default {
   components: {
-    "coala-header": Header,
+    "main-header": Header,
     "network-view": NetworkView,
     "metric-view": MetricView,
     "configuration-view": ConfigurationView,
